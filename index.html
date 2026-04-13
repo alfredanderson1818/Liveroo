@@ -426,9 +426,9 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 /* ═══ STREAM — FULL IMMERSIVE ═══ */
 #s-stream{background:#000;position:relative}
 /* Stream page */
-.sv{position:relative;width:100%;height:62vh;min-height:320px;overflow:hidden;background:#000;flex-shrink:0}
+.sv{position:relative;width:100%;height:52vh;min-height:280px;overflow:hidden;background:#000;flex-shrink:0}
 .sv img{width:100%;height:100%;object-fit:cover;opacity:.9;display:block}
-.sv-gradient{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.55) 0%,transparent 28%,transparent 42%,rgba(0,0,0,.85) 100%);pointer-events:none}
+.sv-gradient{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.55) 0%,transparent 25%,transparent 40%,rgba(0,0,0,.9) 100%);pointer-events:none}
 /* Top bar inside stream */
 .sv-topbar{position:absolute;top:0;left:0;right:0;padding:max(var(--sat),14px) 14px 0;display:flex;align-items:center;justify-content:space-between;z-index:5}
 .sv-top-left{display:flex;align-items:center;gap:8px}
@@ -437,48 +437,43 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 .sv-title-pill{background:rgba(0,0,0,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:5px 10px;display:flex;align-items:center;gap:7px}
 .sv-title-pill .sv-avsmall{width:22px;height:22px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
 .sv-title-pill .sv-seller-mini{font-size:11px;font-weight:800;color:#fff}
-.sv-top-right{display:flex;flex-direction:column;gap:20px;align-items:center;position:absolute;right:14px;bottom:100px;z-index:6}
-.sv-act{width:52px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;background:none;border:none;padding:0;-webkit-tap-highlight-color:transparent;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.sv-top-right{display:flex;flex-direction:column;gap:16px;align-items:center;position:absolute;right:14px;bottom:80px;z-index:6}
+.sv-act{width:48px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;background:none;border:none;padding:0;-webkit-tap-highlight-color:transparent;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
 .sv-act:active{transform:scale(.88)}
-.sv-act-ico{width:52px;height:52px;border-radius:50%;background:rgba(20,20,28,.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:background .2s,border-color .2s}
-.sv-act svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.sv-act-lbl{font-size:10px;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8);letter-spacing:.1px}
+.sv-act-ico{width:48px;height:48px;border-radius:50%;background:rgba(20,20,28,.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:background .2s,border-color .2s}
+.sv-act svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sv-act-lbl{font-size:9px;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8);letter-spacing:.1px}
 .sv-act.liked .sv-act-ico{background:rgba(255,59,59,.45);border-color:rgba(255,59,59,.7)}
 /* Viewer + live pills */
 .sv-pills{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
 /* Bottom overlay: seller + stats */
-.sv-bottom-overlay{position:absolute;bottom:0;left:0;right:0;padding:12px 14px 14px;z-index:5}
-.sv-stats-row{display:flex;gap:8px;margin-bottom:10px}
-.sv-stat{background:rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:800;color:#fff;display:flex;align-items:center;gap:4px}
+.sv-bottom-overlay{position:absolute;bottom:0;left:0;right:68px;padding:10px 14px 12px;z-index:5}
+.sv-stats-row{display:flex;gap:6px;margin-bottom:8px}
+.sv-stat{background:rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:3px 9px;font-size:10px;font-weight:800;color:#fff;display:flex;align-items:center;gap:4px}
 .sv-seller-row{display:flex;align-items:center;gap:10px}
-.sv-av{width:38px;height:38px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:19px;border:2px solid var(--y);flex-shrink:0;box-shadow:0 0 0 2px rgba(255,208,0,.3)}
+.sv-av{width:36px;height:36px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:17px;border:2px solid var(--y);flex-shrink:0;box-shadow:0 0 0 2px rgba(255,208,0,.3)}
 .sv-sinfo{flex:1}
-.sv-sname{font-size:14px;font-weight:900;color:#fff;line-height:1.2}
-.sv-sfoll{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
-.fol{background:var(--y);color:var(--dk);border:none;border-radius:18px;padding:7px 16px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;flex-shrink:0;transition:all .2s cubic-bezier(.34,1.3,.64,1)}
+.sv-sname{font-size:13px;font-weight:900;color:#fff;line-height:1.2}
+.sv-sfoll{font-size:9px;color:rgba(255,255,255,.6);margin-top:1px}
+.fol{background:var(--y);color:var(--dk);border:none;border-radius:18px;padding:6px 14px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0;transition:all .2s cubic-bezier(.34,1.3,.64,1)}
 .fol:active{transform:scale(.93)}
 .fol.on{background:transparent;color:var(--y);border:1.5px solid var(--y)}
-/* Product strip — horizontal scroll of products in stream */
-.spbar{background:var(--dk2);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
-.spthumb{width:52px;height:52px;border-radius:10px;overflow:hidden;background:var(--dk4);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid rgba(255,255,255,.07)}
-.spthumb img{width:100%;height:100%;object-fit:cover}
-.spinfo{flex:1;min-width:0}
-.spname{font-size:12px;font-weight:900;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sp-price-row{display:flex;align-items:baseline;gap:5px}
-.spprice{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--y);line-height:1}
-.spold{font-size:10px;color:var(--mu);text-decoration:line-through}
-.sp-discount{background:var(--rd);color:#fff;font-size:9px;font-weight:900;padding:2px 5px;border-radius:4px;margin-left:3px}
-.spbuy{background:var(--y);color:var(--dk);border:none;border-radius:9px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;flex-shrink:0;transition:all .18s cubic-bezier(.34,1.3,.64,1);white-space:nowrap}
-.spbuy:active{transform:scale(.93)}
-/* chat overlay — TikTok style */
-.chat-overlay{position:absolute;bottom:72px;left:0;right:80px;padding:0 14px 10px;pointer-events:none;z-index:6;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;max-height:45%;overflow:hidden}
+/* Auction timer ring on video */
+#sv-auc-ring{position:absolute;top:calc(max(var(--sat),14px) + 50px);right:14px;z-index:7;display:none;flex-direction:column;align-items:center;gap:2px}
+#sv-ring-inner{width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);border:2.5px solid var(--rd);display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 0 16px rgba(255,59,59,.5),0 0 32px rgba(255,59,59,.2)}
+#sv-ring-time{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--rd);letter-spacing:1px;line-height:1}
+#sv-ring-label{font-size:7px;font-weight:900;color:rgba(255,255,255,.7);letter-spacing:.3px;margin-top:1px}
+#sv-auc-ring.urgent #sv-ring-inner{border-color:#ff6b35;box-shadow:0 0 20px rgba(255,107,53,.7)}
+#sv-auc-ring.urgent #sv-ring-time{color:#ff6b35;animation:pulse-live .6s infinite}
+/* chat overlay */
+.chat-overlay{position:absolute;bottom:60px;left:0;right:72px;padding:0 14px 8px;pointer-events:none;z-index:6;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;max-height:40%;overflow:hidden}
 .cmsg{display:flex;gap:7px;align-items:flex-end;animation:fi .25s cubic-bezier(.34,1.2,.64,1);pointer-events:auto}
 @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .cmsg-bubble{background:rgba(0,0,0,.52);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:18px;padding:6px 11px;max-width:100%;border:1px solid rgba(255,255,255,.08)}
 .cu{font-size:10px;font-weight:900;color:var(--y);margin-bottom:1px;display:inline}
 .ct{font-size:12px;color:rgba(255,255,255,.9);line-height:1.4;display:inline;margin-left:4px}
 /* chat input bar */
-.chat-bar{display:flex;align-items:center;gap:8px;padding:10px 14px 10px;background:rgba(10,10,15,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.07);flex-shrink:0}
+.chat-bar{display:flex;align-items:center;gap:8px;padding:10px 14px calc(var(--sab) + 10px);background:rgba(10,10,15,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.07);flex-shrink:0}
 .ci{flex:1;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.12);border-radius:22px;padding:9px 16px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
 .ci:focus{border-color:rgba(255,208,0,.5);background:rgba(255,255,255,.13)}
 .ci::placeholder{color:rgba(255,255,255,.4)}
@@ -486,6 +481,56 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 .sendbtn:active{transform:scale(.88)}
 .giftbtn{width:36px;height:36px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.12);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:transform .15s}
 .giftbtn:active{transform:scale(.88)}
+/* ── ACTION PANEL (replaces bid-sheet) ── */
+#sv-action-panel{flex-shrink:0;background:var(--dk2);border-top:1px solid rgba(255,255,255,.06);overflow:hidden}
+/* Product slider */
+#sv-slide-wrap{padding:12px 0 6px;overflow:hidden;position:relative}
+#sv-slide-track{display:flex;gap:10px;padding:0 16px;will-change:transform;touch-action:pan-y;cursor:grab}
+#sv-slide-track:active{cursor:grabbing}
+.sv-slide{flex-shrink:0;width:76px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:transform .18s;-webkit-tap-highlight-color:transparent}
+.sv-slide:active{transform:scale(.92)}
+.sv-slide-img{width:68px;height:68px;border-radius:12px;overflow:hidden;background:var(--dk4);border:2.5px solid transparent;display:flex;align-items:center;justify-content:center;font-size:26px;position:relative;transition:border-color .2s}
+.sv-slide-img img{width:100%;height:100%;object-fit:cover}
+.sv-slide.active .sv-slide-img{border-color:var(--y);box-shadow:0 0 12px rgba(255,208,0,.35)}
+.sv-slide-live-dot{position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:var(--rd);border:2px solid var(--dk2);animation:pulse-live 1s infinite;display:none}
+.sv-slide.selling .sv-slide-live-dot{display:block}
+.sv-slide-name{font-size:9px;font-weight:800;color:rgba(255,255,255,.65);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72px}
+.sv-slide-price{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--y);line-height:1}
+/* CTA area */
+#sv-cta-area{padding:6px 16px 12px}
+/* — Idle state — */
+#sv-cta-idle{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 0}
+.sv-cta-idle-dot{width:8px;height:8px;border-radius:50%;background:var(--rd);animation:pulse-live 1.2s infinite;flex-shrink:0}
+.sv-cta-idle-txt{font-size:12px;font-weight:700;color:rgba(255,255,255,.45)}
+/* — Auction state — */
+#sv-cta-auc{display:none}
+.sv-cta-auc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sv-cta-auc-left{}
+.sv-cta-auc-lbl{font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:2px}
+#sv-cta-bid{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--rd);line-height:1}
+.sv-cta-timer-wrap{display:flex;flex-direction:column;align-items:center;background:rgba(255,59,59,.1);border:1.5px solid rgba(255,59,59,.3);border-radius:14px;padding:6px 14px;min-width:80px}
+.sv-cta-timer-lbl{font-size:8px;font-weight:900;color:rgba(255,59,59,.7);letter-spacing:.4px}
+#sv-cta-timer{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--rd);letter-spacing:3px;line-height:1;font-variant-numeric:tabular-nums}
+#sv-cta-timer.urgent{color:#ff6b35;animation:pulse-live .5s infinite}
+.sv-cta-presets{display:flex;gap:7px;margin-bottom:10px}
+.sv-cta-preset{flex:1;padding:8px 2px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;cursor:pointer;text-align:center;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.sv-cta-preset:active{background:rgba(255,208,0,.15);border-color:rgba(255,208,0,.5);color:var(--y)}
+.sv-cta-input-row{display:flex;gap:10px;align-items:stretch}
+.sv-cta-input-wrap{flex:1;display:flex;align-items:center;background:rgba(0,0,0,.5);border:2px solid rgba(255,59,59,.4);border-radius:13px;padding:10px 13px;gap:6px}
+.sv-cta-input-wrap input{flex:1;background:none;border:none;outline:none;font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;min-width:0;width:100%}
+.sv-cta-cur{font-size:11px;font-weight:800;color:var(--mu)}
+#sv-cta-bid-btn{background:var(--rd);color:#fff;border:none;border-radius:13px;padding:0 22px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(255,59,59,.4);white-space:nowrap;transition:all .15s;-webkit-tap-highlight-color:transparent}
+#sv-cta-bid-btn:active{transform:scale(.95)}
+.sv-cta-wallet-row{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:9px;color:rgba(255,255,255,.35)}
+.sv-cta-wallet-val{color:rgba(255,208,0,.7);font-weight:800}
+.sv-cta-recharge{color:var(--y);font-weight:900;cursor:pointer}
+/* — Fixed sale state — */
+#sv-cta-fixed{display:none}
+.sv-cta-fixed-inner{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.3);border:1.5px solid rgba(255,208,0,.25);border-radius:14px;padding:12px 14px;gap:12px}
+#sv-cta-buy-btn{background:var(--y);color:var(--dk);border:none;border-radius:13px;padding:14px 22px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(255,208,0,.35);flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent}
+#sv-cta-buy-btn:active{transform:scale(.95)}
+/* hidden compat */
+.spbar{display:none}
 .sv-prods{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px 80px}
 .sv-prod-card{background:var(--dk3);border-radius:12px;overflow:hidden;cursor:pointer;border:1px solid rgba(255,255,255,.05);transition:transform .18s}
 .sv-prod-card:active{transform:scale(.96)}
@@ -494,6 +539,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 .sv-prod-body{padding:9px 10px}
 .sv-prod-name{font-size:12px;font-weight:800;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sv-prod-price{font-family:"Bebas Neue",sans-serif;font-size:18px;color:var(--y)}
+/* compat hidden stuff */
+.spthumb,.spinfo,.spname,.spprice,.spold,.sp-discount,.spbuy{}
 
 /* ═══ PRODUCT DETAIL ═══ */
 #s-prod{background:var(--dk)}
@@ -1670,11 +1717,14 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 
 <!-- STREAM -->
 <div id="s-stream" class="scr">
-  <!-- Video hero -->
+
+  <!-- ═══ VIDEO HERO ═══ -->
   <div class="sv" id="sv">
     <img id="sv-img" src="" onerror="this.style.display='none'">
     <div id="sv-agora-video" style="position:absolute;inset:0;z-index:2;display:none;background:#000"></div>
     <div class="sv-gradient"></div>
+
+    <!-- TOP BAR -->
     <div class="sv-topbar">
       <div class="sv-top-left">
         <button class="bk" onclick="goBack()">←</button>
@@ -1685,27 +1735,38 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
         </div>
       </div>
     </div>
-    <!-- Right action buttons -->
+
+    <!-- RIGHT ACTIONS -->
     <div class="sv-top-right">
       <button class="sv-act" id="sv-like" onclick="likeStream()">
         <div class="sv-act-ico">
-          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" id="sv-like-path" stroke="#fff" stroke-width="1.8" fill="none"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" id="sv-like-path" stroke="#fff" stroke-width="1.8" fill="none"/></svg>
         </div>
         <div class="sv-act-lbl" id="sv-likes">0</div>
       </button>
       <button class="sv-act" onclick="openSeller(curStream)">
         <div class="sv-act-ico">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <svg viewBox="0 0 24 24" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
         <div class="sv-act-lbl">Perfil</div>
       </button>
       <button class="sv-act" onclick="shareStream()">
         <div class="sv-act-ico">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <svg viewBox="0 0 24 24" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         </div>
         <div class="sv-act-lbl">Compartir</div>
       </button>
     </div>
+
+    <!-- AUCTION TIMER RING — overlaid on video, shows when auction active -->
+    <div id="sv-auc-ring">
+      <div id="sv-ring-inner">
+        <div id="sv-ring-time">2:00</div>
+        <div id="sv-ring-label">SUBASTA</div>
+      </div>
+    </div>
+
+    <!-- BOTTOM OVERLAY -->
     <div class="sv-bottom-overlay">
       <div class="sv-stats-row">
         <div class="sv-stat">👁 <span id="sv-viewers">389</span> viendo</div>
@@ -1723,79 +1784,98 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     </div>
   </div>
 
-  <!-- Chat overlay sobre el video -->
+  <!-- CHAT OVERLAY -->
   <div class="chat-overlay" id="chat-msgs"></div>
 
-  <!-- Product bar (hidden, kept for JS compat) -->
+  <!-- Hidden compat elements -->
   <div id="spbar" style="display:none">
     <div id="spthumb"></div>
     <div><div id="spname"></div><div><div id="spprice"></div><span id="spold"></span><span id="sp-disc"></span></div></div>
     <button id="spbuy"></button>
   </div>
+  <!-- compat aliases for old sheet code -->
+  <span id="sv-sheet-auc-name" style="display:none"></span>
+  <span id="sv-sheet-auc-bid" style="display:none"></span>
+  <span id="sv-sheet-auc-timer" style="display:none"></span>
+  <span id="sv-sheet-wallet" style="display:none"></span>
+  <div id="sv-sheet-presets" style="display:none"></div>
+  <input id="sv-sheet-bid-input" style="display:none">
+  <span id="sv-sheet-fixed-name" style="display:none"></span>
+  <span id="sv-sheet-fixed-price" style="display:none"></span>
+  <div id="sv-bid-sheet" style="display:none"></div>
+  <button id="sv-bid-pill" style="display:none"></button>
 
-  <!-- BID SHEET — slides up from bottom when auction/sale is active -->
-  <div id="sv-bid-sheet" style="position:fixed;bottom:0;left:0;right:0;z-index:999;transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.2,.64,1);border-radius:20px 20px 0 0;background:rgba(13,13,20,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,.1)">
-    <div style="width:36px;height:3px;background:rgba(255,255,255,.25);border-radius:2px;margin:12px auto;cursor:pointer" onclick="svToggleBidSheet()"></div>
+  <!-- ═══ ACTION PANEL — always visible, replaces bid-sheet ═══ -->
+  <div id="sv-action-panel">
 
-    <!-- SUBASTA -->
-    <div id="sv-sheet-auc" style="display:none;padding:4px 16px 20px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:7px;height:7px;border-radius:50%;background:var(--rd);animation:pulse-live 1s infinite"></div>
-          <span id="sv-sheet-auc-name" style="font-family:'Bebas Neue',sans-serif;font-size:19px;color:#fff;letter-spacing:.5px">Subasta</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;background:rgba(255,59,59,.12);border:1px solid rgba(255,59,59,.35);border-radius:20px;padding:5px 12px">
-          <span style="font-size:11px">⏱</span>
-          <span id="sv-sheet-auc-timer" style="font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--rd);letter-spacing:2px;min-width:40px">--:--</span>
-        </div>
-      </div>
-      <div style="background:rgba(0,0,0,.35);border-radius:14px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:3px">OFERTA MÁS ALTA</div>
-          <div id="sv-sheet-auc-bid" style="font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--rd);line-height:1">$0</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:9px;font-weight:800;color:var(--mu);margin-bottom:3px">TU SALDO</div>
-          <div id="sv-sheet-wallet" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--y)">0 IC</div>
-          <div onclick="openDeposit()" style="font-size:10px;font-weight:900;color:var(--y);cursor:pointer;margin-top:3px">+ Recargar ›</div>
-        </div>
-      </div>
-      <div id="sv-sheet-presets" style="display:flex;gap:7px;margin-bottom:12px"></div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <div style="flex:1;display:flex;align-items:center;background:rgba(0,0,0,.5);border:2px solid rgba(255,59,59,.4);border-radius:13px;padding:9px 13px;gap:6px">
-          <span style="font-size:20px;font-weight:900;color:var(--rd)">$</span>
-          <input type="number" id="sv-sheet-bid-input" placeholder="0" oninput="svUpdateBidBtn()" style="flex:1;background:none;border:none;outline:none;font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;min-width:0">
-          <span style="font-size:10px;font-weight:800;color:var(--mu)">IC</span>
-        </div>
-        <button id="sv-sheet-bid-btn" onclick="svSheetPlaceBid()" style="background:var(--rd);color:#fff;border:none;border-radius:13px;padding:13px 18px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(255,59,59,.4)">🔨 Ofertar</button>
+    <!-- PRODUCT SLIDES -->
+    <div id="sv-slide-wrap">
+      <div id="sv-slide-track">
+        <!-- populated by JS -->
       </div>
     </div>
 
-    <!-- PRECIO FIJO -->
-    <div id="sv-sheet-fixed" style="display:none;padding:4px 16px 20px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-        <span style="font-size:16px">🏷️</span>
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--y);letter-spacing:.5px">En Venta Ahora</span>
+    <!-- CTA AREA -->
+    <div id="sv-cta-area">
+
+      <!-- IDLE STATE -->
+      <div id="sv-cta-idle">
+        <div class="sv-cta-idle-dot"></div>
+        <div class="sv-cta-idle-txt">Esperando próxima subasta…</div>
       </div>
-      <div style="background:rgba(0,0,0,.35);border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div id="sv-sheet-fixed-name" style="font-size:15px;font-weight:900;color:#fff;margin-bottom:6px">—</div>
-          <div id="sv-sheet-fixed-price" style="font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--y);line-height:1">$0</div>
+
+      <!-- AUCTION STATE -->
+      <div id="sv-cta-auc">
+        <div class="sv-cta-auc-header">
+          <div class="sv-cta-auc-left">
+            <div class="sv-cta-auc-lbl">OFERTA MÁS ALTA</div>
+            <div id="sv-cta-bid">$0</div>
+          </div>
+          <div class="sv-cta-timer-wrap">
+            <div class="sv-cta-timer-lbl">⏱ TIEMPO</div>
+            <div id="sv-cta-timer">--:--</div>
+          </div>
         </div>
-        <button onclick="buyFixedItem()" style="background:var(--y);color:var(--dk);border:none;border-radius:13px;padding:14px 20px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(255,208,0,.35)">Comprar 🛒</button>
+        <div class="sv-cta-presets" id="sv-cta-presets"></div>
+        <div class="sv-cta-input-row">
+          <div class="sv-cta-input-wrap">
+            <span style="font-size:20px;font-weight:900;color:var(--rd);line-height:1">$</span>
+            <input type="number" id="sv-cta-input" placeholder="0" oninput="svCtaUpdateBtn()">
+            <span class="sv-cta-cur">IC</span>
+          </div>
+          <button id="sv-cta-bid-btn" onclick="svCtaPlaceBid()">🔨 Ofertar</button>
+        </div>
+        <div class="sv-cta-wallet-row">
+          Saldo: <span class="sv-cta-wallet-val" id="sv-cta-wallet">0 IC</span>
+          <span class="sv-cta-recharge" onclick="openDeposit()">+ Recargar ›</span>
+        </div>
       </div>
+
+      <!-- FIXED SALE STATE -->
+      <div id="sv-cta-fixed">
+        <div class="sv-cta-fixed-inner">
+          <div style="min-width:0">
+            <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.4px;margin-bottom:3px">🏷️ EN VENTA AHORA</div>
+            <div id="sv-cta-fname" style="font-size:14px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">—</div>
+            <div id="sv-cta-fprice" style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--y);line-height:1">$0</div>
+            <div style="font-size:9px;color:var(--mu);margin-top:2px">Pago con InstaCreditos</div>
+          </div>
+          <button id="sv-cta-buy-btn" onclick="buyFixedItem()">🛒 Comprar</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- Chat input -->
+  <!-- CHAT INPUT -->
   <div class="chat-bar">
     <input class="ci" type="text" placeholder="Comenta algo…" id="chat-in" onkeydown="if(event.key==='Enter')sendChat()">
     <button class="giftbtn" onclick="spawnGift()">🎁</button>
     <button class="sendbtn" onclick="sendChat()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--dk)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     </button>
-    <button id="sv-bid-pill" onclick="svToggleBidSheet()" style="display:none;background:var(--rd);color:#fff;border:none;border-radius:20px;padding:9px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 12px rgba(255,59,59,.4);animation:pulse-live 1.5s infinite">🔨 Subastar</button>
   </div>
+
 </div>
 
 <!-- PRODUCT -->
@@ -3674,10 +3754,7 @@ function goHome(){
 
 // ═══ STREAM ═══
 function svTab(tab){
-  // sv-chat-panel removed — chat is overlay
-  document.getElementById('sv-prods-panel').style.display=tab==='prods'?'block':'none';
-  document.getElementById('sv-tab-chat').classList.toggle('on',tab==='chat');
-  document.getElementById('sv-tab-prods').classList.toggle('on',tab==='prods');
+  // No-op — tab bar removed, chat is overlay, products are slides
 }
 
 let curStreamProd=0;
@@ -3697,36 +3774,27 @@ function openStream(idx){
   const fb=document.getElementById('sv-fol');
   fb.textContent=following.has(idx)?'Siguiendo':'Seguir';
   fb.className='fol'+(following.has(idx)?' on':'');
+  // compat hidden bar
   const th=document.getElementById('spthumb');
-  th.innerHTML=prod.img?`<img src="${prod.img}" onerror="this.style.display='none'">`:`<span>${prod.e}</span>`;
-  document.getElementById('spname').textContent=prod.n;
-  document.getElementById('spprice').textContent=`$${prod.p}`;
-  document.getElementById('spold').textContent=`$${prod.op}`;
+  if(th)th.innerHTML=prod.img?`<img src="${prod.img}" onerror="this.style.display='none'">`:`<span>${prod.e}</span>`;
+  const _spn=document.getElementById('spname');if(_spn)_spn.textContent=prod.n;
+  const _spp=document.getElementById('spprice');if(_spp)_spp.textContent=`$${prod.p}`;
+  const _spo=document.getElementById('spold');if(_spo)_spo.textContent=`$${prod.op}`;
   const disc=Math.round((1-prod.p/prod.op)*100);
-  document.getElementById('sp-disc').textContent=`-${disc}%`;
-  document.getElementById('spbuy').onclick=()=>{
+  const _spd=document.getElementById('sp-disc');if(_spd)_spd.textContent=`-${disc}%`;
+  const _spb=document.getElementById('spbuy');if(_spb)_spb.onclick=()=>{
     if(requireAccount('🛒','Para comprar necesitas cuenta','Crea tu cuenta gratis.'))return;
     quickAdd(curStreamProd);
-    const btn=document.getElementById('spbuy');
-    btn.textContent='✅ Agregado!';btn.style.background='var(--gn)';
-    setTimeout(()=>{btn.textContent='🛒 Comprar';btn.style.background='var(--y)';},1500);
   };
   likes=Math.floor(s.v*6);
   document.getElementById('sv-like').classList.remove('liked');const _lp=document.getElementById('sv-like-path');if(_lp)_lp.setAttribute('fill','none');
   document.getElementById('sv-likes').textContent=fmt(likes);
   document.getElementById('chat-msgs').innerHTML='';
   startChat(idx);startViewers(idx);startTimer();
-  // populate products panel
+  // populate product slides
   const sellerProds=PRODS.filter(p=>p.s===idx);
-  const gridProds=sellerProds.length?sellerProds:PRODS.slice(0,6);
-  document.getElementById('sv-prods-grid').innerHTML=gridProds.map((p,i)=>`
-    <div class="sv-prod-card" onclick="openProd(${PRODS.indexOf(p)})">
-      <div class="sv-prod-img ${BG[i%4]}">${p.img?`<img src="${p.img}" onerror="this.style.display='none'">`:`<span>${p.e}</span>`}</div>
-      <div class="sv-prod-body">
-        <div class="sv-prod-name">${p.n}</div>
-        <div class="sv-prod-price">$${p.p} <span style="font-family:'Nunito',sans-serif;font-size:10px;color:var(--mu)">USD</span></div>
-      </div>
-    </div>`).join('');
+  const slideProds=sellerProds.length?sellerProds:PRODS.slice(0,6);
+  _svPopulateSlides(slideProds, null);
   svTab('chat');
   go('stream');
   // Join Agora channel as viewer
@@ -6931,81 +6999,196 @@ async function loadHomeFeed(){
   }
 }
 
-// ═══ VIEWER BID SHEET ═══
-let _svBidSheetOpen=false,_svBidMode=null;
+// ═══ VIEWER ACTION PANEL ═══
+let _svBidMode=null; // compat alias
 let _svAucPollIv=null,_svFixedPollIv=null;
 let _svCurrentAucId=null,_svCurrentAucEndsAt=0,_svAucTimerIv=null;
+let _svSlideIdx=0,_svSlideProds=[];
 
-function svToggleBidSheet(){
-  _svBidSheetOpen=!_svBidSheetOpen;
-  const s=document.getElementById('sv-bid-sheet');
-  if(s)s.style.transform=_svBidSheetOpen?'translateY(0)':'translateY(100%)';
-  if(_svBidSheetOpen&&_svBidMode==='auc'){const w=document.getElementById('sv-sheet-wallet');if(w)w.textContent=(walletBalance||0)+' IC';}
-}
-function _svShowPill(mode){
+// ── State switcher ──────────────────────────────────────────────────────────
+function _svCtaSetState(mode){
   _svBidMode=mode;
-  const pill=document.getElementById('sv-bid-pill');if(!pill)return;
-  pill.style.display='flex';
-  if(mode==='auc'){pill.textContent='🔨 Subastar';pill.style.background='var(--rd)';}
-  else{pill.textContent='🏷️ Comprar';pill.style.background='var(--y)';pill.style.color='var(--dk)';}
-  const aucDiv=document.getElementById('sv-sheet-auc');
-  const fixDiv=document.getElementById('sv-sheet-fixed');
-  if(aucDiv)aucDiv.style.display=mode==='auc'?'block':'none';
-  if(fixDiv)fixDiv.style.display=mode==='fixed'?'block':'none';
-  // Auto-open sheet on first trigger
-  if(!_svBidSheetOpen){
-    _svBidSheetOpen=true;
-    const s=document.getElementById('sv-bid-sheet');if(s)s.style.transform='translateY(0)';
-  }
+  const idle=document.getElementById('sv-cta-idle');
+  const auc=document.getElementById('sv-cta-auc');
+  const fixed=document.getElementById('sv-cta-fixed');
+  const ring=document.getElementById('sv-auc-ring');
+  if(idle)idle.style.display=mode==='idle'?'flex':'none';
+  if(auc)auc.style.display=mode==='auc'?'block':'none';
+  if(fixed)fixed.style.display=mode==='fixed'?'block':'none';
+  if(ring)ring.style.display=mode==='auc'?'flex':'none';
 }
-function _svHidePill(){
-  _svBidMode=null;_svBidSheetOpen=false;
-  const pill=document.getElementById('sv-bid-pill');if(pill)pill.style.display='none';
-  const s=document.getElementById('sv-bid-sheet');if(s)s.style.transform='translateY(100%)';
-}
+
+// ── Timer tick — updates both panel and video ring ──────────────────────────
 function _svAucTimerTick(){
   const left=Math.max(0,Math.round((_svCurrentAucEndsAt-Date.now())/1000));
-  const el=document.getElementById('sv-sheet-auc-timer');
-  if(el){const m=~~(left/60),s=String(left%60).padStart(2,'0');el.textContent=m+':'+s;el.style.color=left<=10?'#ff6b35':left<=30?'#ffaa00':'var(--rd)';}
-  if(left===0){clearInterval(_svAucTimerIv);_svAucTimerIv=null;}
+  const m=~~(left/60),s=String(left%60).padStart(2,'0');
+  const timeStr=m+':'+s;
+  const urgent=left<=30;
+  // Panel timer
+  const ct=document.getElementById('sv-cta-timer');
+  if(ct){ct.textContent=timeStr;ct.className=urgent?'urgent':'';}
+  // Video ring timer
+  const rt=document.getElementById('sv-ring-time');
+  if(rt)rt.textContent=timeStr;
+  const ring=document.getElementById('sv-auc-ring');
+  if(ring){ring.className=urgent?'urgent':'';}
+  // Compat hidden span
+  const old=document.getElementById('sv-sheet-auc-timer');
+  if(old)old.textContent=timeStr;
+  if(left===0){clearInterval(_svAucTimerIv);_svAucTimerIv=null;_svCtaSetState('idle');}
 }
-function _svUpdatePresets(bid){
-  const c=document.getElementById('sv-sheet-presets');if(!c)return;
-  [bid+1,bid+5,bid+10,bid+25].forEach(v=>{
+
+// ── Preset quick-bid buttons ────────────────────────────────────────────────
+function _svCtaBuildPresets(currentBid){
+  const c=document.getElementById('sv-cta-presets');
+  if(!c)return;
+  c.innerHTML='';
+  [currentBid+1,currentBid+5,currentBid+10,currentBid+25].forEach(v=>{
     const b=document.createElement('button');
+    b.className='sv-cta-preset';
     b.textContent='+$'+v;
-    b.style.cssText="flex:1;padding:8px 2px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:15px;cursor:pointer";
-    b.onclick=()=>{const inp=document.getElementById('sv-sheet-bid-input');if(inp){inp.value=v;svUpdateBidBtn();}};
+    b.onclick=()=>{
+      const inp=document.getElementById('sv-cta-input');
+      if(inp){inp.value=v;svCtaUpdateBtn();}
+    };
     c.appendChild(b);
   });
 }
-function svUpdateBidBtn(){
-  const inp=document.getElementById('sv-sheet-bid-input');
-  const btn=document.getElementById('sv-sheet-bid-btn');
-  if(inp&&btn)btn.style.opacity=parseFloat(inp.value)>0?'1':'.5';
+
+// ── Input validation ────────────────────────────────────────────────────────
+function svCtaUpdateBtn(){
+  const inp=document.getElementById('sv-cta-input');
+  const btn=document.getElementById('sv-cta-bid-btn');
+  if(!inp||!btn)return;
+  const v=parseFloat(inp.value)||0;
+  btn.style.opacity=v>0?'1':'.55';
 }
-async function svSheetPlaceBid(){
+
+// ── Place bid from new panel ─────────────────────────────────────────────────
+async function svCtaPlaceBid(){
   if(requireAccount('🔨','Para ofertar necesitas cuenta','Crea tu cuenta gratis.'))return;
   if(!_svCurrentAucId){toast('⚠️ No hay subasta activa');return;}
-  const inp=document.getElementById('sv-sheet-bid-input');
+  const inp=document.getElementById('sv-cta-input');
   const v=parseFloat(inp?.value)||0;
   if(v<=0){toast('⚠️ Ingresa una oferta válida');return;}
-  const auc=await fsGet('auctions',_svCurrentAucId);
-  if(!auc||auc.status!=='active'){toast('❌ La subasta terminó');_svHidePill();return;}
+  const btn=document.getElementById('sv-cta-bid-btn');
+  // Fetch latest auction state
+  const auc=await fsGet('auctions',_svCurrentAucId).catch(()=>null);
+  if(!auc||auc.status!=='active'){toast('❌ La subasta terminó');_svCtaSetState('idle');return;}
   const minBid=(auc.currentBid||auc.startPrice||0)+1;
-  if(v<minBid){toast('⚠️ Oferta mínima: $'+minBid);return;}
+  if(v<minBid){toast(`⚠️ Oferta mínima: $${minBid}`);return;}
   if((walletBalance||0)<v){toast('❌ Saldo insuficiente');openDeposit();return;}
   const me=window.fbUser?.username||window.fbUser?.displayName||window.fbUser?.uid||'comprador';
-  const btn=document.getElementById('sv-sheet-bid-btn');
   if(btn){btn.textContent='Enviando…';btn.disabled=true;}
   await fsSet('auctions',_svCurrentAucId,{currentBid:v,currentWinner:me,lastBidAt:Date.now()}).catch(()=>{});
-  const bidEl=document.getElementById('sv-sheet-auc-bid');if(bidEl)bidEl.textContent='$'+v;
+  // Update panel
+  const bidEl=document.getElementById('sv-cta-bid');if(bidEl)bidEl.textContent='$'+v;
+  const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' IC';
   if(inp)inp.value='';
+  _svCtaBuildPresets(v);
+  svCtaUpdateBtn();
   if(btn){btn.textContent='✅ ¡Ofertado!';setTimeout(()=>{btn.textContent='🔨 Ofertar';btn.disabled=false;},1800);}
-  toast('🔨 ¡Oferta de $'+v+' enviada!');
-  const w=document.getElementById('sv-sheet-wallet');if(w)w.textContent=(walletBalance||0)+' IC';
-  const c=document.getElementById('sv-sheet-presets');if(c){c.innerHTML='';_svUpdatePresets(v);}
+  spawnParticle(btn,'🔨');
+  toast(`🔒 Oferta $${v} reservada — ¡Vas ganando!`);
+  // compat hidden elements
+  const old=document.getElementById('sv-sheet-auc-bid');if(old)old.textContent='$'+v;
+  const oldW=document.getElementById('sv-sheet-wallet');if(oldW)oldW.textContent=(walletBalance||0)+' IC';
 }
+
+// ── Compat shims for old code that still calls these ───────────────────────
+function svToggleBidSheet(){}
+function _svShowPill(mode){_svCtaSetState(mode);}
+function _svHidePill(){_svCtaSetState('idle');}
+function svUpdateBidBtn(){svCtaUpdateBtn();}
+async function svSheetPlaceBid(){await svCtaPlaceBid();}
+function _svUpdatePresets(bid){_svCtaBuildPresets(bid);}
+
+// ── Product slides ───────────────────────────────────────────────────────────
+function _svPopulateSlides(prods, activeProdId){
+  _svSlideProds=prods||[];
+  _svSlideIdx=0;
+  const track=document.getElementById('sv-slide-track');
+  if(!track)return;
+  if(!prods||!prods.length){track.innerHTML='<div style="padding:0 16px;font-size:11px;color:rgba(255,255,255,.3)">Sin productos disponibles</div>';return;}
+  track.innerHTML=prods.map((p,i)=>{
+    const id=p._id||p.id||String(i);
+    const isActive=activeProdId?id===activeProdId:i===0;
+    const name=p.name||p.n||'Producto';
+    const price=p.price||p.p||0;
+    const img=p.img||p.image||'';
+    const emoji=p.emoji||p.e||'🛍️';
+    return `<div class="sv-slide${isActive?' active':''}" data-idx="${i}" onclick="_svSlideSelect(${i})">
+      <div class="sv-slide-img">
+        ${img?`<img src="${img}" onerror="this.style.display='none'" loading="lazy">`:
+               `<span>${emoji}</span>`}
+        <div class="sv-slide-live-dot"></div>
+      </div>
+      <div class="sv-slide-name">${name}</div>
+      <div class="sv-slide-price">$${price}</div>
+    </div>`;
+  }).join('');
+  // Touch swipe support
+  _svInitSlideSwipe();
+}
+
+async function _svPopulateSlidesFS(channelName, streamDoc){
+  // Try to load seller's store products
+  try{
+    const uid=streamDoc?.sellerUid||streamDoc?.uid||null;
+    let prods=[];
+    if(uid){prods=await fsQuery('storeProducts',[{field:'sellerId',value:uid}]).catch(()=>[]);}
+    if(!prods.length&&channelName){
+      prods=await fsQuery('products',[{field:'sellerChannel',value:channelName}]).catch(()=>[]);
+    }
+    if(prods.length>0){
+      _svPopulateSlides(prods, null);
+      return;
+    }
+  }catch(e){}
+  // Fallback: single slide from stream thumb
+  const name=streamDoc?.title||streamDoc?.sellerName||'Stream';
+  const price=streamDoc?.minPrice||0;
+  const img=streamDoc?.thumb||'';
+  _svPopulateSlides([{name,price,img}], null);
+}
+
+function _svSlideSelect(idx){
+  _svSlideIdx=idx;
+  const track=document.getElementById('sv-slide-track');
+  if(!track)return;
+  track.querySelectorAll('.sv-slide').forEach((el,i)=>{
+    el.classList.toggle('active',i===idx);
+  });
+  // Scroll selected slide into view
+  const slide=track.querySelectorAll('.sv-slide')[idx];
+  if(slide)slide.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+
+function _svMarkSlideSelling(prodId){
+  const track=document.getElementById('sv-slide-track');
+  if(!track)return;
+  track.querySelectorAll('.sv-slide').forEach((el,i)=>{
+    const p=_svSlideProds[i];
+    const id=p?._id||p?.id||String(i);
+    const match=prodId?id===prodId:false;
+    el.classList.toggle('selling',match);
+    el.classList.toggle('active',match);
+  });
+}
+
+// Touch/mouse swipe for slide track
+function _svInitSlideSwipe(){
+  const track=document.getElementById('sv-slide-track');
+  if(!track||track._swipeInited)return;
+  track._swipeInited=true;
+  let startX=0,isDragging=false,scrollStart=0;
+  const wrap=document.getElementById('sv-slide-wrap');
+  track.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;scrollStart=wrap.scrollLeft||0;isDragging=true;},{passive:true});
+  track.addEventListener('touchmove',e=>{if(!isDragging)return;},{passive:true});
+  track.addEventListener('touchend',()=>{isDragging=false;},{passive:true});
+}
+
+// ── Poll auction & fixed sales ───────────────────────────────────────────────
 function _startViewerAucPoll(channelName){
   if(_svAucPollIv)clearInterval(_svAucPollIv);
   if(_svFixedPollIv)clearInterval(_svFixedPollIv);
@@ -7020,19 +7203,25 @@ function _startViewerAucPoll(channelName){
         const a=live[0];
         const isNew=a._id!==_svCurrentAucId;
         _svCurrentAucId=a._id;_svCurrentAucEndsAt=a.endsAt||0;
-        const nameEl=document.getElementById('sv-sheet-auc-name');
-        const bidEl=document.getElementById('sv-sheet-auc-bid');
-        if(nameEl)nameEl.textContent=a.prodName||'Subasta';
-        if(bidEl)bidEl.textContent='$'+(a.currentBid||a.startPrice||0);
+        // Update panel bid display
+        const bidEl=document.getElementById('sv-cta-bid');if(bidEl)bidEl.textContent='$'+(a.currentBid||a.startPrice||0);
+        const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' IC';
+        // compat
+        const old=document.getElementById('sv-sheet-auc-bid');if(old)old.textContent='$'+(a.currentBid||a.startPrice||0);
         if(isNew){
           clearInterval(_svAucTimerIv);_svAucTimerIv=setInterval(_svAucTimerTick,1000);_svAucTimerTick();
-          const c=document.getElementById('sv-sheet-presets');if(c){c.innerHTML='';_svUpdatePresets(a.currentBid||a.startPrice||0);}
-          const inp=document.getElementById('sv-sheet-bid-input');if(inp)inp.value='';
+          _svCtaBuildPresets(a.currentBid||a.startPrice||0);
+          const inp=document.getElementById('sv-cta-input');if(inp)inp.value='';
+          svCtaUpdateBtn();
+          // Highlight selling product in slide
+          if(a.prodId)_svMarkSlideSelling(a.prodId);
+          // Update idle text with product name
+          const idleTxt=document.querySelector('.sv-cta-idle-txt');
+          if(idleTxt)idleTxt.textContent='Subasta: '+(a.prodName||'Producto');
         }
-        _svShowPill('auc');
-        const w=document.getElementById('sv-sheet-wallet');if(w)w.textContent=(walletBalance||0)+' IC';
+        _svCtaSetState('auc');
       }else{
-        if(_svCurrentAucId){_svCurrentAucId=null;clearInterval(_svAucTimerIv);_svAucTimerIv=null;_svHidePill();}
+        if(_svCurrentAucId){_svCurrentAucId=null;clearInterval(_svAucTimerIv);_svAucTimerIv=null;_svCtaSetState('idle');}
       }
     }catch(e){}
   }
@@ -7043,15 +7232,20 @@ function _startViewerAucPoll(channelName){
       const active=all.find(s=>s.status==='active'&&s.qtyLeft>0);
       if(active){
         _currentFixedSaleId=active._id;_currentFixedSaleDoc=active;
-        const n=document.getElementById('sv-sheet-fixed-name');if(n)n.textContent=active.name;
-        const p=document.getElementById('sv-sheet-fixed-price');if(p)p.textContent='$'+active.price;
-        _svShowPill('fixed');
+        const fn=document.getElementById('sv-cta-fname');if(fn)fn.textContent=active.name;
+        const fp=document.getElementById('sv-cta-fprice');if(fp)fp.textContent='$'+active.price;
+        // compat
+        const old=document.getElementById('sv-sheet-fixed-name');if(old)old.textContent=active.name;
+        const oldP=document.getElementById('sv-sheet-fixed-price');if(oldP)oldP.textContent='$'+active.price;
+        if(active.prodId)_svMarkSlideSelling(active.prodId);
+        _svCtaSetState('fixed');
       }else{
         _currentFixedSaleId=null;_currentFixedSaleDoc=null;
-        if(_svBidMode==='fixed')_svHidePill();
+        if(_svBidMode==='fixed')_svCtaSetState('idle');
       }
     }catch(e){}
   }
+  _svCtaSetState('idle');
   checkAuc();setTimeout(checkFixed,2000);
   _svAucPollIv=setInterval(checkAuc,3000);
   _svFixedPollIv=setInterval(checkFixed,4000);
@@ -7059,7 +7253,7 @@ function _startViewerAucPoll(channelName){
 function _stopViewerAucPoll(){
   clearInterval(_svAucPollIv);clearInterval(_svFixedPollIv);clearInterval(_svAucTimerIv);
   _svAucPollIv=null;_svFixedPollIv=null;_svAucTimerIv=null;_svCurrentAucId=null;
-  _svHidePill();
+  _svCtaSetState('idle');
 }
 
 // Opens a real stream from Firestore by channelName/docId
@@ -7068,8 +7262,17 @@ async function openStreamFS(channelName){
   try{
     let s=window._fsLiveCache&&window._fsLiveCache[channelName]?window._fsLiveCache[channelName]:null;
     if(!s){s=await fsGet('streams',channelName);if(!s){await _refreshToken();s=await fsGet('streams',channelName);}}
-    if(!s||!s.isLive){toast('⚠️ Este live ya terminó');_refreshLiveStrip();return;}
-    // Build a fake seller object from Firestore data to populate stream UI
+    // Always navigate — show "ended" state if not live instead of blocking
+    if(!s){
+      // Stream doc not found at all — fallback to static
+      openStream(0);return;
+    }
+    if(!s.isLive){
+      toast('⚠️ Este vendedor ya no está en vivo');
+      _refreshLiveStrip();
+      // Still navigate so user can see their products
+    }
+    // Build a seller object from Firestore data
     const sellerObj={
       n:s.sellerName||s.shopName||'Vendedor',
       e:s.sellerEmoji||'📡',
@@ -7079,9 +7282,9 @@ async function openStreamFS(channelName){
       logo:s.sellerAvatar||'',
       cat:s.cat||'General'
     };
-    // Populate stream screen manually
     curStream=-1; // -1 = real FS stream
     window._fsStreamData=s;
+    window._fsStreamChannel=channelName;
     const svImg=document.getElementById('sv-img');
     if(svImg)svImg.src=s.thumb||'';
     document.getElementById('sv-viewers').textContent=s.viewerCount||1;
@@ -7098,27 +7301,33 @@ async function openStreamFS(channelName){
     document.getElementById('sv-foll').textContent=`${sellerObj.f} seguidores`;
     document.getElementById('sv-fol').textContent='Seguir';
     document.getElementById('sv-fol').className='fol';
-    // Featured product — first product or placeholder
-    document.getElementById('spname').textContent=s.title||sellerObj.n;
-    document.getElementById('spprice').textContent=`$${s.minPrice||0}`;
-    document.getElementById('spold').textContent='';
-    document.getElementById('sp-disc').textContent='';
+    // compat hidden bar
+    const _spn=document.getElementById('spname');if(_spn)_spn.textContent=s.title||sellerObj.n;
+    const _spp=document.getElementById('spprice');if(_spp)_spp.textContent=`$${s.minPrice||0}`;
+    const _spo=document.getElementById('spold');if(_spo)_spo.textContent='';
+    const _spd=document.getElementById('sp-disc');if(_spd)_spd.textContent='';
     document.getElementById('chat-msgs').innerHTML='';
+    // Populate slides from FS products
+    _svPopulateSlidesFS(channelName, s);
+    // Set idle state initially
+    _svCtaSetState('idle');
     svTab('chat');
     go('stream');
     window._chatChannel=channelName;
     startChat(-1);
     startTimer();
-    _startFixedSalePoll(channelName);
-    _startViewerAucPoll(channelName);
-    // Join Agora as audience
-    joinAsAudience(channelName);
+    if(s.isLive){
+      _startFixedSalePoll(channelName);
+      _startViewerAucPoll(channelName);
+      // Join Agora as audience
+      joinAsAudience(channelName);
+    }
     // Poll viewer count
     clearInterval(window._fsViewerIv);
     window._fsViewerIv=setInterval(async()=>{
       const cur=document.getElementById('s-stream');
       if(!cur?.classList.contains('on')){clearInterval(window._fsViewerIv);return;}
-      const fresh=await fsGet('streams',channelName);
+      const fresh=await fsGet('streams',channelName).catch(()=>null);
       if(fresh){
         const el=document.getElementById('sv-viewers');
         if(el)el.textContent=fresh.viewerCount||1;
