@@ -426,7 +426,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 /* ═══ STREAM — FULL IMMERSIVE ═══ */
 #s-stream{background:#000;position:relative}
 /* Stream page */
-.sv{position:relative;width:100%;height:62vh;min-height:320px;overflow:hidden;background:#000;flex-shrink:0}
+.sv{position:absolute;inset:0;overflow:hidden;background:#000}
 .sv img{width:100%;height:100%;object-fit:cover;opacity:.9;display:block}
 .sv-gradient{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.55) 0%,transparent 28%,transparent 42%,rgba(0,0,0,.85) 100%);pointer-events:none}
 /* Top bar inside stream */
@@ -437,7 +437,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 .sv-title-pill{background:rgba(0,0,0,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:5px 10px;display:flex;align-items:center;gap:7px}
 .sv-title-pill .sv-avsmall{width:22px;height:22px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
 .sv-title-pill .sv-seller-mini{font-size:11px;font-weight:800;color:#fff}
-.sv-top-right{display:flex;flex-direction:column;gap:20px;align-items:center;position:absolute;right:14px;bottom:100px;z-index:6}
+.sv-top-right{display:flex;flex-direction:column;gap:20px;align-items:center;position:absolute;right:14px;bottom:calc(80px + var(--sab));z-index:10}
 .sv-act{width:52px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;background:none;border:none;padding:0;-webkit-tap-highlight-color:transparent;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
 .sv-act:active{transform:scale(.88)}
 .sv-act-ico{width:52px;height:52px;border-radius:50%;background:rgba(20,20,28,.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:background .2s,border-color .2s}
@@ -447,7 +447,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 /* Viewer + live pills */
 .sv-pills{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
 /* Bottom overlay: seller + stats */
-.sv-bottom-overlay{position:absolute;bottom:0;left:0;right:0;padding:12px 14px 14px;z-index:5}
+.sv-bottom-overlay{display:none}
 .sv-stats-row{display:flex;gap:8px;margin-bottom:10px}
 .sv-stat{background:rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:800;color:#fff;display:flex;align-items:center;gap:4px}
 .sv-seller-row{display:flex;align-items:center;gap:10px}
@@ -471,7 +471,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 .spbuy{background:var(--y);color:var(--dk);border:none;border-radius:9px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;flex-shrink:0;transition:all .18s cubic-bezier(.34,1.3,.64,1);white-space:nowrap}
 .spbuy:active{transform:scale(.93)}
 /* chat overlay — TikTok style */
-.chat-overlay{position:absolute;bottom:72px;left:0;right:80px;padding:0 14px 10px;pointer-events:none;z-index:6;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;max-height:38%;overflow:hidden}
+.chat-overlay{position:absolute;bottom:calc(66px + var(--sab));left:0;right:82px;padding:0 14px 10px;pointer-events:none;z-index:8;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;max-height:40%;overflow:hidden}
 .cmsg{display:flex;gap:7px;align-items:flex-end;animation:fi .25s cubic-bezier(.34,1.2,.64,1);pointer-events:auto}
 @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .cmsg-bubble{background:rgba(0,0,0,.52);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:18px;padding:6px 11px;max-width:100%;border:1px solid rgba(255,255,255,.08)}
@@ -1669,125 +1669,160 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 </div>
 
 <!-- STREAM -->
-<div id="s-stream" class="scr">
-  <!-- Video hero -->
-  <div class="sv" id="sv">
-    <img id="sv-img" src="" onerror="this.style.display='none'">
+<div id="s-stream" class="scr" style="position:relative;overflow:hidden;background:#000;display:flex;flex-direction:column">
+
+  <!-- Full-screen video (absolute) -->
+  <div id="sv" style="position:absolute;inset:0;z-index:1;background:#000">
+    <img id="sv-img" src="" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;opacity:.92;display:block">
     <div id="sv-agora-video" style="position:absolute;inset:0;z-index:2;display:none;background:#000"></div>
     <div class="sv-gradient"></div>
-    <div class="sv-topbar">
-      <div class="sv-top-left">
-        <button class="bk" onclick="goBack()">←</button>
-        <div class="sv-title-pill">
-          <div class="sv-avsmall" id="sv-av-small">🛍️</div>
-          <span class="sv-seller-mini" id="sv-name-mini">MarisolShop</span>
-          <div class="lbadge" style="font-size:8px;padding:2px 6px">EN VIVO</div>
-        </div>
-      </div>
-    </div>
-    <!-- Right action buttons -->
-    <div class="sv-top-right">
-      <button class="sv-act" id="sv-like" onclick="likeStream()">
-        <div class="sv-act-ico">
-          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" id="sv-like-path" stroke="#fff" stroke-width="1.8" fill="none"/></svg>
-        </div>
-        <div class="sv-act-lbl" id="sv-likes">0</div>
-      </button>
-      <button class="sv-act" onclick="openSeller(curStream)">
-        <div class="sv-act-ico">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <div class="sv-act-lbl">Perfil</div>
-      </button>
-      <button class="sv-act" onclick="shareStream()">
-        <div class="sv-act-ico">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        </div>
-        <div class="sv-act-lbl">Compartir</div>
-      </button>
-    </div>
-    <div class="sv-bottom-overlay">
-      <div class="sv-stats-row">
-        <div class="sv-stat">👁 <span id="sv-viewers">389</span> viendo</div>
-        <div class="sv-stat">🔥 <span id="sv-hot">12</span> compraron</div>
-        <div class="sv-stat" id="sv-timer-pill">⏱ 14:32</div>
-      </div>
-      <div class="sv-seller-row" style="cursor:pointer" onclick="openSeller(curStream)">
-        <div class="sv-av" id="sv-av">🛍️</div>
-        <div class="sv-sinfo">
-          <div class="sv-sname" id="sv-name">MarisolShop</div>
-          <div class="sv-sfoll" id="sv-foll">12.4k seguidores</div>
-        </div>
-        <button class="fol" id="sv-fol" onclick="event.stopPropagation();toggleFollow()">Seguir</button>
-      </div>
-    </div>
   </div>
 
-  <!-- Chat overlay sobre el video -->
+  <!-- TOP BAR -->
+  <div class="sv-topbar" style="z-index:10">
+    <div class="sv-top-left">
+      <button class="bk" onclick="goBack()">←</button>
+      <div class="sv-title-pill">
+        <div class="sv-avsmall" id="sv-av-small">🛍️</div>
+        <span class="sv-seller-mini" id="sv-name-mini">Vendedor</span>
+        <div class="lbadge" style="font-size:8px;padding:2px 6px">EN VIVO</div>
+      </div>
+    </div>
+    <div class="sv-stat">👁 <span id="sv-viewers">0</span></div>
+  </div>
+
+  <!-- RIGHT ACTION BUTTONS -->
+  <div class="sv-top-right" style="z-index:10">
+    <button class="sv-act" id="sv-like" onclick="likeStream()">
+      <div class="sv-act-ico">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" id="sv-like-path" stroke="#fff" stroke-width="1.8" fill="none"/></svg>
+      </div>
+      <div class="sv-act-lbl" id="sv-likes">0</div>
+    </button>
+    <button class="sv-act" onclick="openSeller(curStream)">
+      <div class="sv-act-ico">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="sv-act-lbl">Perfil</div>
+    </button>
+    <button class="sv-act" onclick="shareStream()">
+      <div class="sv-act-ico">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="#fff" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </div>
+      <div class="sv-act-lbl">Compartir</div>
+    </button>
+  </div>
+
+  <!-- SELLER ROW (bottom of video, above bottom bar) -->
+  <div style="position:absolute;bottom:calc(64px + var(--sab));left:14px;right:90px;z-index:8;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="openSeller(curStream)">
+    <div class="sv-av" id="sv-av">🛍️</div>
+    <div class="sv-sinfo">
+      <div class="sv-sname" id="sv-name">Vendedor</div>
+      <div class="sv-sfoll" id="sv-foll">0 seguidores</div>
+    </div>
+    <button class="fol" id="sv-fol" onclick="event.stopPropagation();toggleFollow()">Seguir</button>
+  </div>
+
+  <!-- STATS PILLS -->
+  <div style="position:absolute;bottom:calc(116px + var(--sab));left:14px;z-index:8;display:flex;gap:6px">
+    <div class="sv-stat">🔥 <span id="sv-hot">0</span> compraron</div>
+    <div class="sv-stat" id="sv-timer-pill">⏱ 00:00</div>
+  </div>
+
+  <!-- CHAT MESSAGES (left side, floats above bottom bar) -->
   <div class="chat-overlay" id="chat-msgs"></div>
 
-  <!-- Viewer Action Panel: auction / fixed sale / idle -->
-  <div id="sv-action-panel" style="display:none;flex-direction:column;background:var(--dk2);border-top:1px solid rgba(255,255,255,.07);flex-shrink:0">
+  <!-- SLIDE-UP BID SHEET (hidden by default) -->
+  <div id="sv-bid-sheet" style="position:absolute;bottom:0;left:0;right:0;z-index:20;transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.2,.64,1);border-radius:22px 22px 0 0;overflow:hidden;background:linear-gradient(180deg,rgba(15,15,22,.97) 0%,rgba(10,10,15,1) 100%);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-top:1px solid rgba(255,255,255,.1);padding-bottom:calc(72px + var(--sab))">
+    <!-- drag handle -->
+    <div style="width:36px;height:3px;background:rgba(255,255,255,.25);border-radius:2px;margin:12px auto 0;cursor:pointer" onclick="svToggleBidSheet()"></div>
 
-    <!-- SUBASTA ACTIVA -->
-    <div id="svap-auc" style="display:none;padding:12px 16px 14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div style="display:flex;align-items:center;gap:7px">
-          <span style="font-size:15px">🔨</span>
-          <span id="svap-auc-name" style="font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--rd);letter-spacing:.5px">Subasta</span>
+    <!-- AUCTION MODE -->
+    <div id="sv-sheet-auc" style="display:none;padding:14px 16px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--rd);animation:pulse-live 1s infinite;flex-shrink:0"></div>
+          <span id="sv-sheet-auc-name" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff;letter-spacing:.5px">Subasta</span>
           <div class="lbadge" style="font-size:7px;padding:2px 6px">EN VIVO</div>
         </div>
-        <div id="svap-auc-timer" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--rd);letter-spacing:2px">--:--</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="flex:1">
-          <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:2px">OFERTA MÁS ALTA</div>
-          <div id="svap-auc-bid" style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#fff;line-height:1">$0</div>
+        <div style="display:flex;align-items:center;gap:5px;background:rgba(255,59,59,.15);border:1px solid rgba(255,59,59,.4);border-radius:20px;padding:5px 12px">
+          <span style="font-size:11px">⏱</span>
+          <span id="sv-sheet-auc-timer" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--rd);letter-spacing:2px;min-width:44px;text-align:center">--:--</span>
         </div>
-        <div style="display:flex;align-items:center;background:rgba(0,0,0,.4);border:1.5px solid rgba(255,59,59,.5);border-radius:12px;padding:8px 12px;gap:4px">
-          <span style="font-size:18px;font-weight:900;color:var(--rd)">$</span>
-          <input type="number" id="svap-bid-input" placeholder="0" style="width:70px;background:none;border:none;outline:none;font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff">
-        </div>
-        <button id="svap-bid-btn" onclick="svapPlaceBid()" style="background:var(--rd);color:#fff;border:none;border-radius:12px;padding:12px 16px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;white-space:nowrap">🔨 Ofertar</button>
       </div>
-    </div>
 
-    <!-- VENTA A PRECIO FIJO -->
-    <div id="svap-fixed" style="display:none;padding:12px 16px 14px">
-      <div style="display:flex;align-items:center;justify-content:space-between">
+      <!-- Current bid big display -->
+      <div style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
         <div>
-          <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
-            <span style="font-size:15px">🏷️</span>
-            <span id="svap-fixed-name" style="font-size:14px;font-weight:900;color:#fff">Producto</span>
-          </div>
-          <div id="svap-fixed-price" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);line-height:1">$0</div>
-          <div style="font-size:10px;color:var(--mu);margin-top:2px">Pago con InstaCreditos</div>
+          <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:4px">OFERTA MÁS ALTA</div>
+          <div id="sv-sheet-auc-bid" style="font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--rd);line-height:1">$0</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:4px">Base: <span id="sv-sheet-auc-base">$0</span></div>
         </div>
-        <button onclick="buyFixedItem()" style="background:var(--y);color:var(--dk);border:none;border-radius:12px;padding:13px 18px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer">Comprar 🛒</button>
+        <div style="text-align:right">
+          <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.4px;margin-bottom:4px">TU SALDO</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);line-height:1" id="sv-sheet-wallet">0 IC</div>
+          <div onclick="openDeposit()" style="font-size:10px;font-weight:900;color:var(--y);cursor:pointer;margin-top:4px;opacity:.8">+ Recargar ›</div>
+        </div>
+      </div>
+
+      <!-- Quick presets -->
+      <div id="sv-sheet-presets" style="display:flex;gap:7px;margin-bottom:12px"></div>
+
+      <!-- Bid input + button -->
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="flex:1;display:flex;align-items:center;background:rgba(0,0,0,.5);border:2px solid rgba(255,59,59,.5);border-radius:14px;padding:10px 14px;gap:6px;transition:border-color .2s" id="sv-bid-input-wrap">
+          <span style="font-size:22px;font-weight:900;color:var(--rd);line-height:1">$</span>
+          <input type="number" id="sv-sheet-bid-input" placeholder="0" oninput="svUpdateBidBtn()" style="flex:1;background:none;border:none;outline:none;font-family:'Bebas Neue',sans-serif;font-size:30px;color:#fff;width:100%;min-width:0">
+          <span style="font-size:10px;font-weight:800;color:var(--mu)">IC</span>
+        </div>
+        <button id="sv-sheet-bid-btn" onclick="svSheetPlaceBid()" style="background:var(--rd);color:#fff;border:none;border-radius:14px;padding:14px 18px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 4px 20px rgba(255,59,59,.4);transition:all .2s">🔨 Ofertar</button>
+      </div>
+
+      <!-- Winner banner -->
+      <div id="sv-sheet-winner" style="display:none;margin-top:12px;background:rgba(255,208,0,.1);border:1px solid rgba(255,208,0,.3);border-radius:12px;padding:10px 14px;font-size:12px;font-weight:800;color:var(--y)"></div>
+    </div>
+
+    <!-- FIXED SALE MODE -->
+    <div id="sv-sheet-fixed" style="display:none;padding:14px 16px 16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+        <span style="font-size:18px">🏷️</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--y);letter-spacing:.5px">En Venta Ahora</span>
+        <div class="lbadge" style="font-size:7px;padding:2px 6px;background:rgba(255,208,0,.2);border:1px solid rgba(255,208,0,.4);color:var(--y)">NUEVO</div>
+      </div>
+      <div style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div id="sv-sheet-fixed-name" style="font-size:15px;font-weight:900;color:#fff;margin-bottom:8px">—</div>
+          <div id="sv-sheet-fixed-price" style="font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--y);line-height:1">$0</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:4px">InstaCreditos</div>
+        </div>
+        <button onclick="buyFixedItem()" style="background:var(--y);color:var(--dk);border:none;border-radius:14px;padding:16px 20px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(255,208,0,.35)">Comprar 🛒</button>
       </div>
     </div>
   </div>
 
-  <!-- Hidden legacy elements so JS getElementById doesn't crash -->
-  <div style="display:none" aria-hidden="true">
-    <div id="spbar"></div>
-    <div id="spthumb"></div>
-    <div id="spname"></div>
-    <div id="spprice"></div>
-    <span id="spold"></span>
-    <span id="sp-disc"></span>
-    <button id="spbuy"></button>
-  </div>
-
-  <!-- Chat input -->
-  <div class="chat-bar">
+  <!-- BOTTOM BAR (always on top) -->
+  <div class="chat-bar" style="position:absolute;bottom:0;left:0;right:0;z-index:25;padding:10px 14px calc(10px + var(--sab))">
     <input class="ci" type="text" placeholder="Comenta algo…" id="chat-in" onkeydown="if(event.key==='Enter')sendChat()">
     <button class="giftbtn" onclick="spawnGift()">🎁</button>
     <button class="sendbtn" onclick="sendChat()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--dk)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     </button>
+    <!-- Bid pill: appears when auction/sale is active -->
+    <button id="sv-bid-pill" onclick="svToggleBidSheet()" style="display:none;background:var(--rd);color:#fff;border:none;border-radius:20px;padding:9px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 12px rgba(255,59,59,.5);animation:pulse-live 1.5s infinite">🔨 Subastar</button>
+  </div>
+
+  <!-- Hidden legacy elements -->
+  <div style="display:none" aria-hidden="true">
+    <div id="spbar"></div><div id="spthumb"></div><div id="spname"></div>
+    <div id="spprice"></div><span id="spold"></span><span id="sp-disc"></span>
+    <button id="spbuy"></button><div id="sv-action-panel"></div>
+    <div id="svap-auc"></div><div id="svap-auc-name"></div><div id="svap-auc-timer"></div>
+    <div id="svap-auc-bid"></div><input id="svap-bid-input"><button id="svap-bid-btn"></button>
+    <div id="svap-fixed"></div><div id="svap-fixed-name"></div><div id="svap-fixed-price"></div>
+    <div id="sv-hot" style="display:inline">0</div>
   </div>
 </div>
+
 
 <!-- PRODUCT -->
 <div id="s-prod" class="scr">
@@ -6922,133 +6957,174 @@ async function loadHomeFeed(){
   }
 }
 
-// ═══ VIEWER AUCTION + FIXED SALE PANEL ═══
-let _svapAucIv=null, _svapFixedIv=null, _svapCurrentAucId=null, _svapCurrentAucEndsAt=0, _svapAucTimerIv=null;
+// ═══ VIEWER STREAM — BID SHEET ═══
+let _svBidSheetOpen=false;
+let _svAucPollIv=null, _svFixedPollIv=null;
+let _svCurrentAucId=null, _svCurrentAucEndsAt=0, _svAucTimerIv=null;
+let _svBidMode=null; // 'auc' | 'fixed' | null
 
-function _svapShow(mode){ // 'auc' | 'fixed' | 'none'
-  const panel=document.getElementById('sv-action-panel');
-  const aucDiv=document.getElementById('svap-auc');
-  const fixedDiv=document.getElementById('svap-fixed');
-  if(!panel)return;
-  if(mode==='none'){panel.style.display='none';if(aucDiv)aucDiv.style.display='none';if(fixedDiv)fixedDiv.style.display='none';return;}
-  panel.style.display='flex';
-  if(aucDiv)aucDiv.style.display=mode==='auc'?'block':'none';
-  if(fixedDiv)fixedDiv.style.display=mode==='fixed'?'block':'none';
+function svToggleBidSheet(){
+  _svBidSheetOpen=!_svBidSheetOpen;
+  const sheet=document.getElementById('sv-bid-sheet');
+  if(sheet) sheet.style.transform=_svBidSheetOpen?'translateY(0)':'translateY(100%)';
+  if(_svBidSheetOpen && _svBidMode==='auc') svRefreshWallet();
 }
 
-function _svapAucTimer(){
-  const left=Math.max(0,Math.round((_svapCurrentAucEndsAt-Date.now())/1000));
-  const el=document.getElementById('svap-auc-timer');
+function svShowBidSheet(mode){
+  _svBidMode=mode;
+  const aucDiv=document.getElementById('sv-sheet-auc');
+  const fixedDiv=document.getElementById('sv-sheet-fixed');
+  if(aucDiv) aucDiv.style.display=mode==='auc'?'block':'none';
+  if(fixedDiv) fixedDiv.style.display=mode==='fixed'?'block':'none';
+  const pill=document.getElementById('sv-bid-pill');
+  if(pill){
+    pill.style.display='flex';
+    pill.style.background=mode==='auc'?'var(--rd)':'var(--y)';
+    pill.style.color=mode==='auc'?'#fff':'var(--dk)';
+    pill.textContent=mode==='auc'?'🔨 Subastar':'🏷️ Comprar';
+  }
+  // Auto-open sheet if not already open
+  if(!_svBidSheetOpen){ _svBidSheetOpen=true; const sheet=document.getElementById('sv-bid-sheet');if(sheet)sheet.style.transform='translateY(0)'; }
+}
+
+function svHideBidSheet(){
+  _svBidMode=null;
+  _svBidSheetOpen=false;
+  const sheet=document.getElementById('sv-bid-sheet');if(sheet)sheet.style.transform='translateY(100%)';
+  const pill=document.getElementById('sv-bid-pill');if(pill)pill.style.display='none';
+}
+
+function svRefreshWallet(){
+  const el=document.getElementById('sv-sheet-wallet');
+  if(el) el.textContent=(walletBalance||0)+' IC';
+}
+
+function _svAucTimerTick(){
+  const left=Math.max(0,Math.round((_svCurrentAucEndsAt-Date.now())/1000));
+  const el=document.getElementById('sv-sheet-auc-timer');
   if(el){
-    const m=~~(left/60),s=String(left%60).padStart(2,'0');
+    const m=~~(left/60), s=String(left%60).padStart(2,'0');
     el.textContent=m+':'+s;
     el.style.color=left<=10?'#ff6b35':left<=30?'#ffaa00':'var(--rd)';
   }
-  if(left===0){clearInterval(_svapAucTimerIv);_svapAucTimerIv=null;}
+  if(left===0){ clearInterval(_svAucTimerIv);_svAucTimerIv=null; }
+}
+
+function _svUpdateAucPresets(currentBid){
+  const container=document.getElementById('sv-sheet-presets');
+  if(!container)return;
+  const base=currentBid||0;
+  const presets=[base+1, base+5, base+10, base+20];
+  container.innerHTML=presets.map(v=>`<button onclick="document.getElementById('sv-sheet-bid-input').value=${v};svUpdateBidBtn()" style="flex:1;padding:8px 4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:16px;cursor:pointer">+$${v}</button>`).join('');
+}
+
+function svUpdateBidBtn(){
+  const inp=document.getElementById('sv-sheet-bid-input');
+  const btn=document.getElementById('sv-sheet-bid-btn');
+  if(!inp||!btn)return;
+  const v=parseFloat(inp.value)||0;
+  btn.style.opacity=v>0?'1':'.5';
+}
+
+async function svSheetPlaceBid(){
+  if(requireAccount('🔨','Para ofertar necesitas cuenta','Crea tu cuenta gratis.'))return;
+  if(!_svCurrentAucId){toast('⚠️ No hay subasta activa');return;}
+  const inp=document.getElementById('sv-sheet-bid-input');
+  const v=parseFloat(inp?.value)||0;
+  if(v<=0){toast('⚠️ Ingresa una oferta válida');return;}
+  const auc=await fsGet('auctions',_svCurrentAucId);
+  if(!auc||auc.status!=='active'){toast('❌ La subasta ya terminó');svHideBidSheet();return;}
+  const minBid=(auc.currentBid||auc.startPrice||0)+1;
+  if(v<minBid){toast(`⚠️ Oferta mínima: $${minBid}`);return;}
+  if((walletBalance||0)<v){toast('❌ Saldo insuficiente');openDeposit();return;}
+  const me=window.fbUser?.username||window.fbUser?.displayName||window.fbUser?.uid||'comprador';
+  const btn=document.getElementById('sv-sheet-bid-btn');
+  if(btn){btn.textContent='Enviando…';btn.disabled=true;}
+  await fsSet('auctions',_svCurrentAucId,{currentBid:v,currentWinner:me,lastBidAt:Date.now()}).catch(()=>{});
+  const bidEl=document.getElementById('sv-sheet-auc-bid');
+  if(bidEl)bidEl.textContent='$'+v;
+  if(inp)inp.value='';
+  if(btn){btn.textContent='✅ ¡Ofertado!';setTimeout(()=>{btn.textContent='🔨 Ofertar';btn.disabled=false;},1800);}
+  // Show winner banner
+  const banner=document.getElementById('sv-sheet-winner');
+  if(banner){banner.textContent=`✅ Tú lideras con $${v}`;banner.style.display='flex';}
+  toast(`🔨 ¡Oferta de $${v} enviada!`);
+  svRefreshWallet();
+  _svUpdateAucPresets(v);
 }
 
 function _startViewerAucPoll(channelName){
-  if(_svapAucIv)clearInterval(_svapAucIv);
-  if(_svapFixedIv)clearInterval(_svapFixedIv);
-  if(_svapAucTimerIv)clearInterval(_svapAucTimerIv);
+  if(_svAucPollIv)clearInterval(_svAucPollIv);
+  if(_svFixedPollIv)clearInterval(_svFixedPollIv);
+  if(_svAucTimerIv)clearInterval(_svAucTimerIv);
+  _svCurrentAucId=null;_svBidMode=null;
 
-  // Poll auctions
-  _svapAucIv=setInterval(async()=>{
+  async function checkAuction(){
     try{
       const aucs=await fsQuery('auctions',[{field:'sellerChannel',value:channelName},{field:'status',value:'active'}]);
-      if(!aucs.length){
-        _svapShow('none');
-        _svapCurrentAucId=null;
-        return;
+      if(aucs.length){
+        const a=aucs[0];
+        const isNew=a._id!==_svCurrentAucId;
+        _svCurrentAucId=a._id;
+        _svCurrentAucEndsAt=a.endsAt||0;
+        const nameEl=document.getElementById('sv-sheet-auc-name');
+        const bidEl=document.getElementById('sv-sheet-auc-bid');
+        const baseEl=document.getElementById('sv-sheet-auc-base');
+        if(nameEl)nameEl.textContent=a.prodName||'Subasta';
+        if(bidEl)bidEl.textContent='$'+(a.currentBid||a.startPrice||0);
+        if(baseEl)baseEl.textContent='$'+(a.startPrice||0);
+        if(isNew){
+          clearInterval(_svAucTimerIv);
+          _svAucTimerIv=setInterval(_svAucTimerTick,1000);
+          _svAucTimerTick();
+          _svUpdateAucPresets(a.currentBid||a.startPrice||0);
+          const winBanner=document.getElementById('sv-sheet-winner');
+          if(winBanner)winBanner.style.display='none';
+          const inp=document.getElementById('sv-sheet-bid-input');
+          if(inp)inp.value='';
+        }else{
+          // Update presets if bid changed
+          _svUpdateAucPresets(a.currentBid||a.startPrice||0);
+        }
+        svShowBidSheet('auc');
+        svRefreshWallet();
+      }else{
+        if(_svCurrentAucId){ _svCurrentAucId=null; svHideBidSheet(); clearInterval(_svAucTimerIv);_svAucTimerIv=null; }
       }
-      const a=aucs[0];
-      const isNew=a._id!==_svapCurrentAucId;
-      _svapCurrentAucId=a._id;
-      _svapCurrentAucEndsAt=a.endsAt||0;
-
-      const nameEl=document.getElementById('svap-auc-name');
-      const bidEl=document.getElementById('svap-auc-bid');
-      if(nameEl)nameEl.textContent=a.prodName||'Subasta';
-      if(bidEl)bidEl.textContent='$'+(a.currentBid||a.startPrice||0);
-
-      // Preset min bid
-      const inp=document.getElementById('svap-bid-input');
-      if(inp&&isNew)inp.value='';
-
-      // Start local timer if new or not running
-      if(isNew||!_svapAucTimerIv){
-        clearInterval(_svapAucTimerIv);
-        _svapAucTimerIv=setInterval(_svapAucTimer,1000);
-        _svapAucTimer();
-      }
-
-      _svapShow('auc');
     }catch(e){}
-  },3000);
+  }
 
-  // Poll fixed sales
-  _svapFixedIv=setInterval(async()=>{
+  async function checkFixed(){
+    if(_svCurrentAucId)return;
     try{
-      // Only show fixed sale if no auction is active
-      if(_svapCurrentAucId)return;
       const sales=await fsQuery('fixedSales',[{field:'channel',value:channelName},{field:'status',value:'active'}]);
-      const active=sales.length&&sales[0].qtyLeft>0?sales[0]:null;
+      const active=sales.find(s=>s.qtyLeft>0);
       if(active){
-        _currentFixedSaleId=active._id;
-        _currentFixedSaleDoc=active;
-        const nameEl=document.getElementById('svap-fixed-name');
-        const priceEl=document.getElementById('svap-fixed-price');
+        _currentFixedSaleId=active._id;_currentFixedSaleDoc=active;
+        const nameEl=document.getElementById('sv-sheet-fixed-name');
+        const priceEl=document.getElementById('sv-sheet-fixed-price');
         if(nameEl)nameEl.textContent=active.name;
         if(priceEl)priceEl.textContent='$'+active.price;
-        _svapShow('fixed');
+        svShowBidSheet('fixed');
       }else{
         _currentFixedSaleId=null;_currentFixedSaleDoc=null;
-        if(!_svapCurrentAucId)_svapShow('none');
+        if(_svBidMode==='fixed')svHideBidSheet();
       }
     }catch(e){}
-  },4000);
+  }
 
-  // Kick off immediately
-  setTimeout(()=>{
-    const ch=channelName;
-    fsQuery('auctions',[{field:'sellerChannel',value:ch},{field:'status',value:'active'}]).then(aucs=>{
-      if(aucs.length){const a=aucs[0];_svapCurrentAucId=a._id;_svapCurrentAucEndsAt=a.endsAt||0;const nameEl=document.getElementById('svap-auc-name');const bidEl=document.getElementById('svap-auc-bid');if(nameEl)nameEl.textContent=a.prodName||'Subasta';if(bidEl)bidEl.textContent='$'+(a.currentBid||a.startPrice||0);_svapAucTimerIv=setInterval(_svapAucTimer,1000);_svapAucTimer();_svapShow('auc');}
-    }).catch(()=>{});
-  },500);
+  checkAuction();
+  setTimeout(checkFixed,1500);
+  _svAucPollIv=setInterval(checkAuction,3000);
+  _svFixedPollIv=setInterval(checkFixed,4000);
 }
 
 function _stopViewerAucPoll(){
-  clearInterval(_svapAucIv);clearInterval(_svapFixedIv);clearInterval(_svapAucTimerIv);
-  _svapAucIv=null;_svapFixedIv=null;_svapAucTimerIv=null;_svapCurrentAucId=null;
-  _svapShow('none');
+  clearInterval(_svAucPollIv);clearInterval(_svFixedPollIv);clearInterval(_svAucTimerIv);
+  _svAucPollIv=null;_svFixedPollIv=null;_svAucTimerIv=null;_svCurrentAucId=null;
+  svHideBidSheet();
 }
 
-async function svapPlaceBid(){
-  if(requireAccount('🔨','Para ofertar necesitas cuenta','Crea tu cuenta y únete a la subasta.'))return;
-  if(!_svapCurrentAucId){toast('⚠️ No hay subasta activa');return;}
-  const inp=document.getElementById('svap-bid-input');
-  const v=parseFloat(inp?.value)||0;
-  if(v<=0){toast('⚠️ Ingresa una oferta válida');return;}
-
-  const auc=await fsGet('auctions',_svapCurrentAucId);
-  if(!auc||auc.status!=='active'){toast('❌ La subasta ya terminó');_svapShow('none');return;}
-  const minBid=(auc.currentBid||auc.startPrice||0)+1;
-  if(v<minBid){toast(`⚠️ Oferta mínima: $${minBid}`);return;}
-  if(walletBalance<v){toast('❌ Saldo insuficiente');openDeposit();return;}
-
-  const me=window.fbUser?.username||window.fbUser?.displayName||window.fbUser?.uid||'comprador';
-  const btn=document.getElementById('svap-bid-btn');
-  if(btn){btn.textContent='Enviando…';btn.disabled=true;}
-
-  await fsSet('auctions',_svapCurrentAucId,{currentBid:v,currentWinner:me,lastBidAt:Date.now()}).catch(()=>{});
-
-  const bidEl=document.getElementById('svap-auc-bid');
-  if(bidEl)bidEl.textContent='$'+v;
-  if(inp)inp.value='';
-  if(btn){btn.textContent='✅ ¡Ofertado!';setTimeout(()=>{btn.textContent='🔨 Ofertar';btn.disabled=false;},1500);}
-  toast(`🔨 ¡Oferta de $${v} enviada!`);
-  spawnParticle(document.getElementById('svap-bid-btn'),'🔨');
-}
 
 // Opens a real stream from Firestore by channelName/docId
 async function openStreamFS(channelName){
