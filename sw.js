@@ -1,10 +1,10 @@
 // Liveroo Service Worker v3
 const CACHE_NAME = 'liveroo-v3';
 const STATIC_ASSETS = [
-  '/liveroo/',
-  '/liveroo/index.html',
-  '/liveroo/manifest.json',
-  '/liveroo/icon.svg',
+  '/Liveroo/',
+  '/Liveroo/index.html',
+  '/Liveroo/manifest.json',
+  '/Liveroo/icon.svg',
 ];
 
 self.addEventListener('install', e => {
@@ -25,7 +25,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if(e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  if(!url.pathname.startsWith('/liveroo')) return;
+  if(!url.pathname.startsWith('/Liveroo')) return;
   e.respondWith(
     fetch(e.request).then(res => {
       if(res.ok){const clone=res.clone();caches.open(CACHE_NAME).then(c=>c.put(e.request,clone));}
@@ -38,10 +38,10 @@ self.addEventListener('push', e => {
   let data = {
     title: 'Liveroo 🔴',
     body: '¡Hay algo nuevo para ti!',
-    icon: '/liveroo/icon-192.png',
-    badge: '/liveroo/icon-192.png',
+    icon: '/Liveroo/icon-192.png',
+    badge: '/Liveroo/icon-192.png',
     tag: 'liveroo',
-    url: '/liveroo/'
+    url: '/Liveroo/'
   };
   try {
     const payload = e.data?.json();
@@ -64,10 +64,10 @@ self.addEventListener('push', e => {
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  const url = e.notification.data?.url || '/liveroo/';
+  const url = e.notification.data?.url || '/Liveroo/';
   e.waitUntil(
     self.clients.matchAll({type:'window',includeUncontrolled:true}).then(clients => {
-      const existing = clients.find(c => c.url.includes('/liveroo'));
+      const existing = clients.find(c => c.url.includes('/Liveroo'));
       if(existing) return existing.focus();
       return self.clients.openWindow(url);
     })

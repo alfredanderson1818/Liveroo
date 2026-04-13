@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Liveroo</title>
 <!-- PWA -->
-<link rel="manifest" href="/liveroo/manifest.json">
+<link rel="manifest" href="/Liveroo/manifest.json">
 <meta name="theme-color" content="#FFD000">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Liveroo">
-<link rel="apple-touch-icon" href="/liveroo/icon.svg">
-<link rel="icon" type="image/svg+xml" href="/liveroo/icon.svg">
+<link rel="apple-touch-icon" href="/Liveroo/icon.svg">
+<link rel="icon" type="image/svg+xml" href="/Liveroo/icon.svg">
 <meta name="description" content="Marketplace de live shopping venezolano — compra y subasta en tiempo real">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -208,7 +208,7 @@ async function fbGoogleSignIn(){
             method:'POST',headers:{'Content-Type':'application/json'},
             body:JSON.stringify({
               postBody:`access_token=${resp.access_token}&providerId=google.com`,
-              requestUri:'https://alfredanderson1818.github.io/liveroo',
+              requestUri:'https://alfredanderson1818.github.io/Liveroo',
               returnSecureToken:true,returnIdpCredential:true
             })
           });
@@ -7389,7 +7389,7 @@ if('serviceWorker' in navigator){
   const _isGH=_host.endsWith('github.io')||_host.endsWith('github.com');
   if(_isGH){
     window.addEventListener('load', ()=>{
-      navigator.serviceWorker.register('/liveroo/sw.js')
+      navigator.serviceWorker.register('/Liveroo/sw.js')
         .then(reg=>{
           reg.addEventListener('updatefound',()=>{
             const newSW=reg.installing;

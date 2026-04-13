@@ -2,8 +2,8 @@
   "name": "Liveroo",
   "short_name": "Liveroo",
   "description": "Marketplace de live shopping venezolano — compra y subasta en tiempo real",
-  "start_url": "/liveroo/",
-  "scope": "/liveroo/",
+  "start_url": "/Liveroo/",
+  "scope": "/Liveroo/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#111111",
@@ -11,19 +11,19 @@
   "lang": "es",
   "icons": [
     {
-      "src": "/liveroo/icon-192.png",
+      "src": "/Liveroo/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/liveroo/icon-512.png",
+      "src": "/Liveroo/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/liveroo/icon.svg",
+      "src": "/Liveroo/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
@@ -34,7 +34,7 @@
   "shortcuts": [
     {
       "name": "Ver Lives",
-      "url": "/liveroo/",
+      "url": "/Liveroo/",
       "description": "Ver streams en vivo"
     }
   ]
