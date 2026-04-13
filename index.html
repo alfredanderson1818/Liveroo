@@ -465,8 +465,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 #sv-ring-label{font-size:7px;font-weight:900;color:rgba(255,255,255,.7);letter-spacing:.3px;margin-top:1px}
 #sv-auc-ring.urgent #sv-ring-inner{border-color:#ff6b35;box-shadow:0 0 20px rgba(255,107,53,.7)}
 #sv-auc-ring.urgent #sv-ring-time{color:#ff6b35;animation:pulse-live .6s infinite}
-/* chat overlay */
-.chat-overlay{position:absolute;bottom:60px;left:0;right:72px;padding:0 14px 8px;pointer-events:none;z-index:6;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;max-height:40%;overflow:hidden}
+/* chat overlay — inside .sv now, so position is relative to video box */
+.chat-overlay{position:absolute;bottom:0;left:0;right:72px;padding:0 14px 60px;pointer-events:none;z-index:6;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;max-height:65%;overflow:hidden}
 .cmsg{display:flex;gap:7px;align-items:flex-end;animation:fi .25s cubic-bezier(.34,1.2,.64,1);pointer-events:auto}
 @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .cmsg-bubble{background:rgba(0,0,0,.52);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:18px;padding:6px 11px;max-width:100%;border:1px solid rgba(255,255,255,.08)}
@@ -498,16 +498,14 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 .sv-slide-price{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--y);line-height:1}
 /* CTA area */
 #sv-cta-area{padding:6px 16px 12px}
-/* — Idle state — */
-#sv-cta-idle{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 0}
-.sv-cta-idle-dot{width:8px;height:8px;border-radius:50%;background:var(--rd);animation:pulse-live 1.2s infinite;flex-shrink:0}
-.sv-cta-idle-txt{font-size:12px;font-weight:700;color:rgba(255,255,255,.45)}
-/* — Auction state — */
-#sv-cta-auc{display:none}
+/* — Idle dot (kept for compat, hidden) — */
+#sv-cta-idle{display:none}
+.sv-cta-idle-dot,.sv-cta-idle-txt{}
+/* — Main bid panel (auction + idle share this) — */
+#sv-cta-main{}
 .sv-cta-auc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.sv-cta-auc-left{}
-.sv-cta-auc-lbl{font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:2px}
-#sv-cta-bid{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--rd);line-height:1}
+.sv-cta-auc-left{}.sv-cta-auc-lbl{font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:2px}
+#sv-cta-bid{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--rd);line-height:1}
 .sv-cta-timer-wrap{display:flex;flex-direction:column;align-items:center;background:rgba(255,59,59,.1);border:1.5px solid rgba(255,59,59,.3);border-radius:14px;padding:6px 14px;min-width:80px}
 .sv-cta-timer-lbl{font-size:8px;font-weight:900;color:rgba(255,59,59,.7);letter-spacing:.4px}
 #sv-cta-timer{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--rd);letter-spacing:3px;line-height:1;font-variant-numeric:tabular-nums}
@@ -1718,7 +1716,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 <!-- STREAM -->
 <div id="s-stream" class="scr">
 
-  <!-- ═══ VIDEO HERO ═══ -->
+  <!-- ═══ VIDEO HERO (chat overlay lives HERE, inside the video box) ═══ -->
   <div class="sv" id="sv">
     <img id="sv-img" src="" onerror="this.style.display='none'">
     <div id="sv-agora-video" style="position:absolute;inset:0;z-index:2;display:none;background:#000"></div>
@@ -1758,7 +1756,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       </button>
     </div>
 
-    <!-- AUCTION TIMER RING — overlaid on video, shows when auction active -->
+    <!-- AUCTION TIMER RING -->
     <div id="sv-auc-ring">
       <div id="sv-ring-inner">
         <div id="sv-ring-time">2:00</div>
@@ -1766,7 +1764,10 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       </div>
     </div>
 
-    <!-- BOTTOM OVERLAY -->
+    <!-- CHAT MESSAGES — inside video so they never overlap the panel below -->
+    <div class="chat-overlay" id="chat-msgs"></div>
+
+    <!-- BOTTOM OVERLAY: stats + seller -->
     <div class="sv-bottom-overlay">
       <div class="sv-stats-row">
         <div class="sv-stat">👁 <span id="sv-viewers">389</span> viendo</div>
@@ -1784,90 +1785,75 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     </div>
   </div>
 
-  <!-- CHAT OVERLAY -->
-  <div class="chat-overlay" id="chat-msgs"></div>
-
-  <!-- Hidden compat elements -->
-  <div id="spbar" style="display:none">
-    <div id="spthumb"></div>
-    <div><div id="spname"></div><div><div id="spprice"></div><span id="spold"></span><span id="sp-disc"></span></div></div>
-    <button id="spbuy"></button>
+  <!-- Hidden compat elements (never displayed) -->
+  <div style="display:none">
+    <div id="spbar"><div id="spthumb"></div><div id="spname"></div><div id="spprice"></div><span id="spold"></span><span id="sp-disc"></span><button id="spbuy"></button></div>
+    <span id="sv-sheet-auc-name"></span><span id="sv-sheet-auc-bid"></span>
+    <span id="sv-sheet-auc-timer"></span><span id="sv-sheet-wallet"></span>
+    <div id="sv-sheet-presets"></div><input id="sv-sheet-bid-input">
+    <span id="sv-sheet-fixed-name"></span><span id="sv-sheet-fixed-price"></span>
+    <div id="sv-bid-sheet"></div><button id="sv-bid-pill"></button>
   </div>
-  <!-- compat aliases for old sheet code -->
-  <span id="sv-sheet-auc-name" style="display:none"></span>
-  <span id="sv-sheet-auc-bid" style="display:none"></span>
-  <span id="sv-sheet-auc-timer" style="display:none"></span>
-  <span id="sv-sheet-wallet" style="display:none"></span>
-  <div id="sv-sheet-presets" style="display:none"></div>
-  <input id="sv-sheet-bid-input" style="display:none">
-  <span id="sv-sheet-fixed-name" style="display:none"></span>
-  <span id="sv-sheet-fixed-price" style="display:none"></span>
-  <div id="sv-bid-sheet" style="display:none"></div>
-  <button id="sv-bid-pill" style="display:none"></button>
 
-  <!-- ═══ ACTION PANEL — always visible, replaces bid-sheet ═══ -->
+  <!-- ═══ ACTION PANEL — always visible below video ═══ -->
   <div id="sv-action-panel">
 
     <!-- PRODUCT SLIDES -->
     <div id="sv-slide-wrap">
-      <div id="sv-slide-track">
-        <!-- populated by JS -->
-      </div>
+      <div id="sv-slide-track"></div>
     </div>
 
-    <!-- CTA AREA -->
+    <!-- BID / BUY AREA — always rendered, states toggle visibility of inner sections -->
     <div id="sv-cta-area">
 
-      <!-- IDLE STATE -->
-      <div id="sv-cta-idle">
-        <div class="sv-cta-idle-dot"></div>
-        <div class="sv-cta-idle-txt">Esperando próxima subasta…</div>
+      <!-- ── FIXED SALE (top priority, replaces everything when active) ── -->
+      <div id="sv-cta-fixed" style="display:none">
+        <div class="sv-cta-fixed-inner">
+          <div style="min-width:0;flex:1">
+            <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.4px;margin-bottom:3px">🏷️ EN VENTA AHORA</div>
+            <div id="sv-cta-fname" style="font-size:13px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">—</div>
+            <div id="sv-cta-fprice" style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--y);line-height:1">$0</div>
+          </div>
+          <button id="sv-cta-buy-btn" onclick="buyFixedItem()">🛒 Comprar</button>
+        </div>
       </div>
 
-      <!-- AUCTION STATE -->
-      <div id="sv-cta-auc">
-        <div class="sv-cta-auc-header">
-          <div class="sv-cta-auc-left">
-            <div class="sv-cta-auc-lbl">OFERTA MÁS ALTA</div>
-            <div id="sv-cta-bid">$0</div>
+      <!-- ── AUCTION + IDLE (shared layout, button disabled when idle) ── -->
+      <div id="sv-cta-main">
+        <!-- Top row: bid amount + timer -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div>
+            <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:2px" id="sv-cta-lbl">EN ESPERA</div>
+            <div id="sv-cta-bid" style="font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--rd);line-height:1">$—</div>
           </div>
-          <div class="sv-cta-timer-wrap">
+          <div class="sv-cta-timer-wrap" id="sv-cta-timer-wrap">
             <div class="sv-cta-timer-lbl">⏱ TIEMPO</div>
             <div id="sv-cta-timer">--:--</div>
           </div>
         </div>
+        <!-- Quick-bid presets -->
         <div class="sv-cta-presets" id="sv-cta-presets"></div>
+        <!-- Input + bid button -->
         <div class="sv-cta-input-row">
-          <div class="sv-cta-input-wrap">
+          <div class="sv-cta-input-wrap" id="sv-cta-input-wrap">
             <span style="font-size:20px;font-weight:900;color:var(--rd);line-height:1">$</span>
             <input type="number" id="sv-cta-input" placeholder="0" oninput="svCtaUpdateBtn()">
             <span class="sv-cta-cur">IC</span>
           </div>
           <button id="sv-cta-bid-btn" onclick="svCtaPlaceBid()">🔨 Ofertar</button>
         </div>
+        <!-- Wallet + status -->
         <div class="sv-cta-wallet-row">
-          Saldo: <span class="sv-cta-wallet-val" id="sv-cta-wallet">0 IC</span>
-          <span class="sv-cta-recharge" onclick="openDeposit()">+ Recargar ›</span>
-        </div>
-      </div>
-
-      <!-- FIXED SALE STATE -->
-      <div id="sv-cta-fixed">
-        <div class="sv-cta-fixed-inner">
-          <div style="min-width:0">
-            <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.4px;margin-bottom:3px">🏷️ EN VENTA AHORA</div>
-            <div id="sv-cta-fname" style="font-size:14px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">—</div>
-            <div id="sv-cta-fprice" style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--y);line-height:1">$0</div>
-            <div style="font-size:9px;color:var(--mu);margin-top:2px">Pago con InstaCreditos</div>
-          </div>
-          <button id="sv-cta-buy-btn" onclick="buyFixedItem()">🛒 Comprar</button>
+          <span id="sv-cta-status-txt" style="color:rgba(255,255,255,.4);font-size:10px">Esperando subasta…</span>
+          <span style="margin-left:auto">Saldo: <span class="sv-cta-wallet-val" id="sv-cta-wallet">0 IC</span>
+          <span class="sv-cta-recharge" onclick="openDeposit()"> + Recargar ›</span></span>
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- CHAT INPUT -->
+  <!-- ═══ CHAT INPUT BAR ═══ -->
   <div class="chat-bar">
     <input class="ci" type="text" placeholder="Comenta algo…" id="chat-in" onkeydown="if(event.key==='Enter')sendChat()">
     <button class="giftbtn" onclick="spawnGift()">🎁</button>
@@ -3733,7 +3719,7 @@ function goBack(){if(typeof stopAuction==="function")stopAuction();
     const leaving=hist[hist.length-1];
     hist.pop();stopChat();
     // Leave Agora if we were watching a stream
-    if(leaving==='stream'){leaveAgoraChannel();_stopViewerAucPoll();}
+    if(leaving==='stream'){leaveAgoraChannel();_stopViewerAucPoll();clearInterval(_mockAucIv);_mockAucIv=null;}
     const prev=hist[hist.length-1];
     go(prev,false);
     // Si volvemos a prod y el producto es live, reanudar simulador
@@ -3795,6 +3781,8 @@ function openStream(idx){
   const sellerProds=PRODS.filter(p=>p.s===idx);
   const slideProds=sellerProds.length?sellerProds:PRODS.slice(0,6);
   _svPopulateSlides(slideProds, null);
+  // Start mock auction for demo/static sellers
+  _svStartMockAuction(slideProds[0]);
   svTab('chat');
   go('stream');
   // Join Agora channel as viewer
@@ -7008,14 +6996,48 @@ let _svSlideIdx=0,_svSlideProds=[];
 // ── State switcher ──────────────────────────────────────────────────────────
 function _svCtaSetState(mode){
   _svBidMode=mode;
-  const idle=document.getElementById('sv-cta-idle');
-  const auc=document.getElementById('sv-cta-auc');
   const fixed=document.getElementById('sv-cta-fixed');
+  const main=document.getElementById('sv-cta-main');
   const ring=document.getElementById('sv-auc-ring');
-  if(idle)idle.style.display=mode==='idle'?'flex':'none';
-  if(auc)auc.style.display=mode==='auc'?'block':'none';
-  if(fixed)fixed.style.display=mode==='fixed'?'block':'none';
-  if(ring)ring.style.display=mode==='auc'?'flex':'none';
+  const btn=document.getElementById('sv-cta-bid-btn');
+  const inputWrap=document.getElementById('sv-cta-input-wrap');
+  const lbl=document.getElementById('sv-cta-lbl');
+  const statusTxt=document.getElementById('sv-cta-status-txt');
+  const timerWrap=document.getElementById('sv-cta-timer-wrap');
+  const presetsEl=document.getElementById('sv-cta-presets');
+  const bidEl=document.getElementById('sv-cta-bid');
+
+  if(mode==='fixed'){
+    if(fixed)fixed.style.display='block';
+    if(main)main.style.display='none';
+    if(ring)ring.style.display='none';
+    return;
+  }
+  // auc or idle — both show main panel
+  if(fixed)fixed.style.display='none';
+  if(main)main.style.display='block';
+
+  if(mode==='auc'){
+    if(ring)ring.style.display='flex';
+    if(btn){btn.disabled=false;btn.style.opacity='1';btn.textContent='🔨 Ofertar';}
+    if(inputWrap)inputWrap.style.borderColor='rgba(255,59,59,.45)';
+    if(lbl)lbl.textContent='OFERTA MÁS ALTA';
+    if(statusTxt)statusTxt.textContent='';
+    if(timerWrap)timerWrap.style.opacity='1';
+    if(presetsEl)presetsEl.style.display='flex';
+  } else {
+    // idle
+    if(ring)ring.style.display='none';
+    if(btn){btn.disabled=true;btn.style.opacity='.35';btn.textContent='🔨 Ofertar';}
+    if(inputWrap)inputWrap.style.borderColor='rgba(255,255,255,.12)';
+    if(lbl)lbl.textContent='EN ESPERA';
+    if(bidEl)bidEl.textContent='$—';
+    if(statusTxt)statusTxt.textContent='Esperando próxima subasta…';
+    if(timerWrap)timerWrap.style.opacity='.3';
+    const timer=document.getElementById('sv-cta-timer');if(timer)timer.textContent='--:--';
+    const rtime=document.getElementById('sv-ring-time');if(rtime)rtime.textContent='--:--';
+    if(presetsEl){presetsEl.innerHTML='';presetsEl.style.display='none';}
+  }
 }
 
 // ── Timer tick — updates both panel and video ring ──────────────────────────
@@ -7254,6 +7276,35 @@ function _stopViewerAucPoll(){
   clearInterval(_svAucPollIv);clearInterval(_svFixedPollIv);clearInterval(_svAucTimerIv);
   _svAucPollIv=null;_svFixedPollIv=null;_svAucTimerIv=null;_svCurrentAucId=null;
   _svCtaSetState('idle');
+}
+
+// Mock auction for static/demo sellers — gives life to the bid UI immediately
+let _mockAucIv=null;
+function _svStartMockAuction(prod){
+  clearInterval(_mockAucIv);clearInterval(_svAucTimerIv);
+  _svCurrentAucId='demo';
+  const startPrice=prod?Math.max(1,Math.round((prod.p||10)*.4)):5;
+  let currentBid=startPrice;
+  _svCurrentAucEndsAt=Date.now()+120000; // 2 min countdown
+  // Set initial state
+  const bidEl=document.getElementById('sv-cta-bid');if(bidEl)bidEl.textContent='$'+currentBid;
+  _svCtaBuildPresets(currentBid);
+  _svCtaSetState('auc');
+  _svAucTimerIv=setInterval(_svAucTimerTick,1000);_svAucTimerTick();
+  // Bot bids every 10-25s
+  const bots=['marisolita22','pedro_mcs','yoli_shop','cristi_vzla','el_pana99'];
+  _mockAucIv=setInterval(()=>{
+    if(_svBidMode!=='auc')return;
+    const left=Math.max(0,Math.round((_svCurrentAucEndsAt-Date.now())/1000));
+    if(left<5){clearInterval(_mockAucIv);return;}
+    const bot=bots[~~(Math.random()*bots.length)];
+    currentBid+=~~(Math.random()*8+1);
+    const bidEl=document.getElementById('sv-cta-bid');if(bidEl)bidEl.textContent='$'+currentBid;
+    _svCtaBuildPresets(currentBid);
+    const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' IC';
+    addMsg(bot,`🔨 $${currentBid}`,false);
+    toast(`⚡ ${bot} ofertó $${currentBid}`);
+  },10000+~~(Math.random()*15000));
 }
 
 // Opens a real stream from Firestore by channelName/docId
