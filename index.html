@@ -1768,8 +1768,16 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     </div>
   </div>
 
-  <!-- Tienda pill (always visible) -->
-  <div id="spbar" style="display:none"></div>
+  <!-- Hidden legacy elements so JS getElementById doesn't crash -->
+  <div style="display:none" aria-hidden="true">
+    <div id="spbar"></div>
+    <div id="spthumb"></div>
+    <div id="spname"></div>
+    <div id="spprice"></div>
+    <span id="spold"></span>
+    <span id="sp-disc"></span>
+    <button id="spbuy"></button>
+  </div>
 
   <!-- Chat input -->
   <div class="chat-bar">
