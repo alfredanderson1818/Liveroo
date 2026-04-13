@@ -3628,9 +3628,9 @@ function goHome(){
 // ═══ STREAM ═══
 function svTab(tab){
   // sv-chat-panel removed — chat is overlay
-  document.getElementById('sv-prods-panel').style.display=tab==='prods'?'block':'none';
-  document.getElementById('sv-tab-chat').classList.toggle('on',tab==='chat');
-  document.getElementById('sv-tab-prods').classList.toggle('on',tab==='prods');
+  const _pp=document.getElementById('sv-prods-panel');if(_pp)_pp.style.display=tab==='prods'?'block':'none';
+  const _tc=document.getElementById('sv-tab-chat');if(_tc)_tc.classList.toggle('on',tab==='chat');
+  const _tp=document.getElementById('sv-tab-prods');if(_tp)_tp.classList.toggle('on',tab==='prods');
 }
 
 let curStreamProd=0;
@@ -3672,7 +3672,7 @@ function openStream(idx){
   // populate products panel
   const sellerProds=PRODS.filter(p=>p.s===idx);
   const gridProds=sellerProds.length?sellerProds:PRODS.slice(0,6);
-  document.getElementById('sv-prods-grid').innerHTML=gridProds.map((p,i)=>`
+  const _spg=document.getElementById('sv-prods-grid');if(_spg)_spg.innerHTML=gridProds.map((p,i)=>`
     <div class="sv-prod-card" onclick="openProd(${PRODS.indexOf(p)})">
       <div class="sv-prod-img ${BG[i%4]}">${p.img?`<img src="${p.img}" onerror="this.style.display='none'">`:`<span>${p.e}</span>`}</div>
       <div class="sv-prod-body">
@@ -4065,10 +4065,15 @@ function startChat(idx){
   window._chatChannel=null; // consume it
   _chatLastTs=Date.now()-5000; // load last 5s of history
   // Seed visual con msgs simulados para dar vida inmediata
-  const s=SELLERS[idx];
-  setTimeout(()=>addMsg(`fan_${s.n.slice(0,4).toLowerCase()}`,'¡Entrando al stream! 🔥'),400);
-  setTimeout(()=>addMsg(NAMES[1],'¿Cuánto cuesta el envío?'),1100);
-  setTimeout(()=>addMsg(NAMES[2],`¡Me encanta ${s.n}! 💛`),1900);
+  const s=idx>=0?SELLERS[idx]:null;
+  if(s){
+    setTimeout(()=>addMsg(`fan_${s.n.slice(0,4).toLowerCase()}`,'¡Entrando al stream! 🔥'),400);
+    setTimeout(()=>addMsg(NAMES[1],'¿Cuánto cuesta el envío?'),1100);
+    setTimeout(()=>addMsg(NAMES[2],`¡Me encanta ${s.n}! 💛`),1900);
+  }else{
+    setTimeout(()=>addMsg('viewer1','¡Entrando al stream! 🔥'),400);
+    setTimeout(()=>addMsg(NAMES[1],'¿Cuánto cuesta el envío?'),1100);
+  }
   // Simulación de fondo cada 7-13s
   chatIv=setInterval(()=>{
     if(Math.random()<.4) addMsg(NAMES[~~(Math.random()*NAMES.length)],MSGS[~~(Math.random()*MSGS.length)]);
@@ -6925,12 +6930,13 @@ async function openStreamFS(channelName){
     document.getElementById('spold').textContent='';
     document.getElementById('sp-disc').textContent='';
     document.getElementById('chat-msgs').innerHTML='';
-    startChat(-1); // use channelName for real chat
-    window._chatChannel=channelName;
-    startTimer();
-    _startFixedSalePoll(channelName);
     svTab('chat');
     go('stream');
+    // Set chat channel BEFORE startChat so it picks it up
+    window._chatChannel=channelName;
+    startChat(-1); // use channelName for real chat
+    startTimer();
+    _startFixedSalePoll(channelName);
     // Join Agora as audience
     joinAsAudience(channelName);
     // Poll viewer count
