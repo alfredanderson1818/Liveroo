@@ -6882,8 +6882,14 @@ async function loadHomeFeed(){
 async function openStreamFS(channelName){
   if(!channelName){openStream(0);return;}
   try{
-    const s=await fsGet('streams',channelName);
-    if(!s||!s.isLive){toast('⚠️ Este live ya terminó');return;}
+    // Use cached data from strip if available, else fetch
+    let s=window._fsLiveCache&&window._fsLiveCache[channelName]?window._fsLiveCache[channelName]:null;
+    if(!s){
+      s=await fsGet('streams',channelName);
+      // fsGet may fail if token expired — retry with refresh
+      if(!s){await _refreshToken();s=await fsGet('streams',channelName);}
+    }
+    if(!s||!s.isLive){toast('⚠️ Este live ya terminó');_refreshLiveStrip();return;}
     // Build a fake seller object from Firestore data to populate stream UI
     const sellerObj={
       n:s.sellerName||s.shopName||'Vendedor',
@@ -6946,6 +6952,7 @@ async function openStreamFS(channelName){
 function openProdFS(id){openProd(0);}
 
 // Fetch live streams from Firestore and update the strip
+window._fsLiveCache={};
 async function _refreshLiveStrip(){
   try{
     const streams=await fsQuery('streams',[{field:'isLive',value:true}]);
@@ -6958,6 +6965,9 @@ async function _refreshLiveStrip(){
     }
     // Sort by viewers desc
     streams.sort((a,b)=>(b.viewerCount||0)-(a.viewerCount||0));
+    // Cache stream data so openStreamFS can use it without re-fetching
+    window._fsLiveCache={};
+    streams.forEach(s=>{const ch=s.channelName||s._id;if(ch)window._fsLiveCache[ch]=s;});
     el.innerHTML=streams.map((s,i)=>{
       const name=s.sellerName||s.shopName||'Vendedor';
       const viewers=s.viewerCount||1;
