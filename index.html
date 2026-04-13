@@ -471,7 +471,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 .spbuy{background:var(--y);color:var(--dk);border:none;border-radius:9px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;flex-shrink:0;transition:all .18s cubic-bezier(.34,1.3,.64,1);white-space:nowrap}
 .spbuy:active{transform:scale(.93)}
 /* chat overlay — TikTok style */
-.chat-overlay{position:absolute;bottom:72px;left:0;right:80px;padding:0 14px 10px;pointer-events:none;z-index:6;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;max-height:45%;overflow:hidden}
+.chat-overlay{position:absolute;bottom:72px;left:0;right:80px;padding:0 14px 10px;pointer-events:none;z-index:6;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;max-height:38%;overflow:hidden}
 .cmsg{display:flex;gap:7px;align-items:flex-end;animation:fi .25s cubic-bezier(.34,1.2,.64,1);pointer-events:auto}
 @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .cmsg-bubble{background:rgba(0,0,0,.52);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:18px;padding:6px 11px;max-width:100%;border:1px solid rgba(255,255,255,.08)}
@@ -1726,20 +1726,50 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
   <!-- Chat overlay sobre el video -->
   <div class="chat-overlay" id="chat-msgs"></div>
 
-  <!-- Product bar -->
-  <div class="spbar" id="spbar">
-    <div class="spthumb" id="spthumb"><span>👟</span></div>
-    <div class="spinfo">
-      <div class="spname" id="spname">Nike Air Jordan</div>
-      <div class="sp-price-row">
-        <div class="spprice" id="spprice">$120</div>
-        <span class="spold" id="spold">$150</span>
-        <span class="sp-discount" id="sp-disc">-20%</span>
+  <!-- Viewer Action Panel: auction / fixed sale / idle -->
+  <div id="sv-action-panel" style="display:none;flex-direction:column;background:var(--dk2);border-top:1px solid rgba(255,255,255,.07);flex-shrink:0">
+
+    <!-- SUBASTA ACTIVA -->
+    <div id="svap-auc" style="display:none;padding:12px 16px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span style="font-size:15px">🔨</span>
+          <span id="svap-auc-name" style="font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--rd);letter-spacing:.5px">Subasta</span>
+          <div class="lbadge" style="font-size:7px;padding:2px 6px">EN VIVO</div>
+        </div>
+        <div id="svap-auc-timer" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--rd);letter-spacing:2px">--:--</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex:1">
+          <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:2px">OFERTA MÁS ALTA</div>
+          <div id="svap-auc-bid" style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#fff;line-height:1">$0</div>
+        </div>
+        <div style="display:flex;align-items:center;background:rgba(0,0,0,.4);border:1.5px solid rgba(255,59,59,.5);border-radius:12px;padding:8px 12px;gap:4px">
+          <span style="font-size:18px;font-weight:900;color:var(--rd)">$</span>
+          <input type="number" id="svap-bid-input" placeholder="0" style="width:70px;background:none;border:none;outline:none;font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff">
+        </div>
+        <button id="svap-bid-btn" onclick="svapPlaceBid()" style="background:var(--rd);color:#fff;border:none;border-radius:12px;padding:12px 16px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;white-space:nowrap">🔨 Ofertar</button>
       </div>
     </div>
-    <button class="spbuy" id="spbuy">🛒 Comprar</button>
-    <button class="spbuy" id="sp-shop-btn" onclick="openSellerShop()" style="background:transparent;border:1.5px solid var(--y);color:var(--y);padding:9px 12px;font-size:11px">🏪 Tienda</button>
+
+    <!-- VENTA A PRECIO FIJO -->
+    <div id="svap-fixed" style="display:none;padding:12px 16px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+            <span style="font-size:15px">🏷️</span>
+            <span id="svap-fixed-name" style="font-size:14px;font-weight:900;color:#fff">Producto</span>
+          </div>
+          <div id="svap-fixed-price" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);line-height:1">$0</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px">Pago con InstaCreditos</div>
+        </div>
+        <button onclick="buyFixedItem()" style="background:var(--y);color:var(--dk);border:none;border-radius:12px;padding:13px 18px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer">Comprar 🛒</button>
+      </div>
+    </div>
   </div>
+
+  <!-- Tienda pill (always visible) -->
+  <div id="spbar" style="display:none"></div>
 
   <!-- Chat input -->
   <div class="chat-bar">
@@ -3606,7 +3636,7 @@ function goBack(){if(typeof stopAuction==="function")stopAuction();
     const leaving=hist[hist.length-1];
     hist.pop();stopChat();
     // Leave Agora if we were watching a stream
-    if(leaving==='stream'){leaveAgoraChannel();}
+    if(leaving==='stream'){leaveAgoraChannel();_stopViewerAucPoll();}
     const prev=hist[hist.length-1];
     go(prev,false);
     // Si volvemos a prod y el producto es live, reanudar simulador
@@ -6883,6 +6913,135 @@ async function loadHomeFeed(){
     if(prods.length>8)requestAnimationFrame(()=>grid.innerHTML+=render(prods.slice(8),8));
   }
 }
+
+// ═══ VIEWER AUCTION + FIXED SALE PANEL ═══
+let _svapAucIv=null, _svapFixedIv=null, _svapCurrentAucId=null, _svapCurrentAucEndsAt=0, _svapAucTimerIv=null;
+
+function _svapShow(mode){ // 'auc' | 'fixed' | 'none'
+  const panel=document.getElementById('sv-action-panel');
+  const aucDiv=document.getElementById('svap-auc');
+  const fixedDiv=document.getElementById('svap-fixed');
+  if(!panel)return;
+  if(mode==='none'){panel.style.display='none';if(aucDiv)aucDiv.style.display='none';if(fixedDiv)fixedDiv.style.display='none';return;}
+  panel.style.display='flex';
+  if(aucDiv)aucDiv.style.display=mode==='auc'?'block':'none';
+  if(fixedDiv)fixedDiv.style.display=mode==='fixed'?'block':'none';
+}
+
+function _svapAucTimer(){
+  const left=Math.max(0,Math.round((_svapCurrentAucEndsAt-Date.now())/1000));
+  const el=document.getElementById('svap-auc-timer');
+  if(el){
+    const m=~~(left/60),s=String(left%60).padStart(2,'0');
+    el.textContent=m+':'+s;
+    el.style.color=left<=10?'#ff6b35':left<=30?'#ffaa00':'var(--rd)';
+  }
+  if(left===0){clearInterval(_svapAucTimerIv);_svapAucTimerIv=null;}
+}
+
+function _startViewerAucPoll(channelName){
+  if(_svapAucIv)clearInterval(_svapAucIv);
+  if(_svapFixedIv)clearInterval(_svapFixedIv);
+  if(_svapAucTimerIv)clearInterval(_svapAucTimerIv);
+
+  // Poll auctions
+  _svapAucIv=setInterval(async()=>{
+    try{
+      const aucs=await fsQuery('auctions',[{field:'sellerChannel',value:channelName},{field:'status',value:'active'}]);
+      if(!aucs.length){
+        _svapShow('none');
+        _svapCurrentAucId=null;
+        return;
+      }
+      const a=aucs[0];
+      const isNew=a._id!==_svapCurrentAucId;
+      _svapCurrentAucId=a._id;
+      _svapCurrentAucEndsAt=a.endsAt||0;
+
+      const nameEl=document.getElementById('svap-auc-name');
+      const bidEl=document.getElementById('svap-auc-bid');
+      if(nameEl)nameEl.textContent=a.prodName||'Subasta';
+      if(bidEl)bidEl.textContent='$'+(a.currentBid||a.startPrice||0);
+
+      // Preset min bid
+      const inp=document.getElementById('svap-bid-input');
+      if(inp&&isNew)inp.value='';
+
+      // Start local timer if new or not running
+      if(isNew||!_svapAucTimerIv){
+        clearInterval(_svapAucTimerIv);
+        _svapAucTimerIv=setInterval(_svapAucTimer,1000);
+        _svapAucTimer();
+      }
+
+      _svapShow('auc');
+    }catch(e){}
+  },3000);
+
+  // Poll fixed sales
+  _svapFixedIv=setInterval(async()=>{
+    try{
+      // Only show fixed sale if no auction is active
+      if(_svapCurrentAucId)return;
+      const sales=await fsQuery('fixedSales',[{field:'channel',value:channelName},{field:'status',value:'active'}]);
+      const active=sales.length&&sales[0].qtyLeft>0?sales[0]:null;
+      if(active){
+        _currentFixedSaleId=active._id;
+        _currentFixedSaleDoc=active;
+        const nameEl=document.getElementById('svap-fixed-name');
+        const priceEl=document.getElementById('svap-fixed-price');
+        if(nameEl)nameEl.textContent=active.name;
+        if(priceEl)priceEl.textContent='$'+active.price;
+        _svapShow('fixed');
+      }else{
+        _currentFixedSaleId=null;_currentFixedSaleDoc=null;
+        if(!_svapCurrentAucId)_svapShow('none');
+      }
+    }catch(e){}
+  },4000);
+
+  // Kick off immediately
+  setTimeout(()=>{
+    const ch=channelName;
+    fsQuery('auctions',[{field:'sellerChannel',value:ch},{field:'status',value:'active'}]).then(aucs=>{
+      if(aucs.length){const a=aucs[0];_svapCurrentAucId=a._id;_svapCurrentAucEndsAt=a.endsAt||0;const nameEl=document.getElementById('svap-auc-name');const bidEl=document.getElementById('svap-auc-bid');if(nameEl)nameEl.textContent=a.prodName||'Subasta';if(bidEl)bidEl.textContent='$'+(a.currentBid||a.startPrice||0);_svapAucTimerIv=setInterval(_svapAucTimer,1000);_svapAucTimer();_svapShow('auc');}
+    }).catch(()=>{});
+  },500);
+}
+
+function _stopViewerAucPoll(){
+  clearInterval(_svapAucIv);clearInterval(_svapFixedIv);clearInterval(_svapAucTimerIv);
+  _svapAucIv=null;_svapFixedIv=null;_svapAucTimerIv=null;_svapCurrentAucId=null;
+  _svapShow('none');
+}
+
+async function svapPlaceBid(){
+  if(requireAccount('🔨','Para ofertar necesitas cuenta','Crea tu cuenta y únete a la subasta.'))return;
+  if(!_svapCurrentAucId){toast('⚠️ No hay subasta activa');return;}
+  const inp=document.getElementById('svap-bid-input');
+  const v=parseFloat(inp?.value)||0;
+  if(v<=0){toast('⚠️ Ingresa una oferta válida');return;}
+
+  const auc=await fsGet('auctions',_svapCurrentAucId);
+  if(!auc||auc.status!=='active'){toast('❌ La subasta ya terminó');_svapShow('none');return;}
+  const minBid=(auc.currentBid||auc.startPrice||0)+1;
+  if(v<minBid){toast(`⚠️ Oferta mínima: $${minBid}`);return;}
+  if(walletBalance<v){toast('❌ Saldo insuficiente');openDeposit();return;}
+
+  const me=window.fbUser?.username||window.fbUser?.displayName||window.fbUser?.uid||'comprador';
+  const btn=document.getElementById('svap-bid-btn');
+  if(btn){btn.textContent='Enviando…';btn.disabled=true;}
+
+  await fsSet('auctions',_svapCurrentAucId,{currentBid:v,currentWinner:me,lastBidAt:Date.now()}).catch(()=>{});
+
+  const bidEl=document.getElementById('svap-auc-bid');
+  if(bidEl)bidEl.textContent='$'+v;
+  if(inp)inp.value='';
+  if(btn){btn.textContent='✅ ¡Ofertado!';setTimeout(()=>{btn.textContent='🔨 Ofertar';btn.disabled=false;},1500);}
+  toast(`🔨 ¡Oferta de $${v} enviada!`);
+  spawnParticle(document.getElementById('svap-bid-btn'),'🔨');
+}
+
 // Opens a real stream from Firestore by channelName/docId
 async function openStreamFS(channelName){
   if(!channelName){openStream(0);return;}
@@ -6937,6 +7096,7 @@ async function openStreamFS(channelName){
     startChat(-1); // use channelName for real chat
     startTimer();
     _startFixedSalePoll(channelName);
+    _startViewerAucPoll(channelName);
     // Join Agora as audience
     joinAsAudience(channelName);
     // Poll viewer count
