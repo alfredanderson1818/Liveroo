@@ -1669,7 +1669,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 </div>
 
 <!-- STREAM -->
-<div id="s-stream" class="scr" style="position:relative;overflow:hidden;background:#000;display:flex;flex-direction:column">
+<div id="s-stream" class="scr" style="background:#000">
 
   <!-- Full-screen video (absolute) -->
   <div id="sv" style="position:absolute;inset:0;z-index:1;background:#000">
@@ -1819,7 +1819,6 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     <div id="svap-auc"></div><div id="svap-auc-name"></div><div id="svap-auc-timer"></div>
     <div id="svap-auc-bid"></div><input id="svap-bid-input"><button id="svap-bid-btn"></button>
     <div id="svap-fixed"></div><div id="svap-fixed-name"></div><div id="svap-fixed-price"></div>
-    <div id="sv-hot" style="display:inline">0</div>
   </div>
 </div>
 
@@ -5915,9 +5914,8 @@ function _startFixedSalePoll(channel){
   _stopFixedSalePoll();
   _fixedSalePollIv = setInterval(async()=>{
     try{
-      const sales = await fsQuery('fixedSales',[
-        {field:'channel',value:channel},{field:'status',value:'active'}
-      ]);
+      const allFP = await fsQuery('fixedSales',[{field:'channel',value:channel}]);
+      const sales = allFP.filter(s=>s.status==='active');
       const active = sales.length ? sales[0] : null;
       const card = document.getElementById('fixed-sale-card');
       if(!card) return;
@@ -7061,7 +7059,9 @@ function _startViewerAucPoll(channelName){
 
   async function checkAuction(){
     try{
-      const aucs=await fsQuery('auctions',[{field:'sellerChannel',value:channelName},{field:'status',value:'active'}]);
+      // Single field only — composite index not guaranteed in Firestore
+      const allAucs=await fsQuery('auctions',[{field:'sellerChannel',value:channelName}]);
+      const aucs=allAucs.filter(a=>a.status==='active'&&(!a.endsAt||a.endsAt>Date.now()));
       if(aucs.length){
         const a=aucs[0];
         const isNew=a._id!==_svCurrentAucId;
@@ -7097,7 +7097,8 @@ function _startViewerAucPoll(channelName){
   async function checkFixed(){
     if(_svCurrentAucId)return;
     try{
-      const sales=await fsQuery('fixedSales',[{field:'channel',value:channelName},{field:'status',value:'active'}]);
+      const allSales=await fsQuery('fixedSales',[{field:'channel',value:channelName}]);
+      const sales=allSales.filter(s=>s.status==='active');
       const active=sales.find(s=>s.qtyLeft>0);
       if(active){
         _currentFixedSaleId=active._id;_currentFixedSaleDoc=active;
