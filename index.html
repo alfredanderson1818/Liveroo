@@ -1715,7 +1715,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
   </div>
 
   <!-- DEBUG STATUS — se puede eliminar una vez funcionando -->
-  <div id="sv-debug" style="position:absolute;top:0;left:0;right:0;z-index:99;background:rgba(0,0,0,.85);padding:8px 12px;font-family:monospace;font-size:11px;color:#0f0;display:none;flex-direction:column;gap:3px;pointer-events:none"></div>
+  <div id="sv-debug" style="position:absolute;top:0;left:0;right:0;z-index:99;background:rgba(0,0,0,.85);padding:8px 12px;font-family:monospace;font-size:11px;color:#0f0;display:flex;flex-direction:column;gap:3px;pointer-events:none"></div>
 
   <!-- ── TOP BAR ── -->
   <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:9px;padding:max(var(--sat),14px) 12px 10px">
@@ -5590,12 +5590,12 @@ async function joinAsAudience(channelName){
     _svDebug('role: audience');
     await agoraClient.join(AGORA_APP_ID, channelName, AGORA_TOKEN, null);
     agoraJoined=true;
-    const remotes=agoraClient.remoteUsers;
-    _svDebug('joined OK. hosts en canal: '+remotes.length);
+    _svDebug('joined OK');
 
-    for(const user of remotes){
-      _svDebug('host encontrado uid='+user.uid+' video='+user.hasVideo);
+    // Helper: subscribe a un usuario ya presente en el canal
+    async function _trySubscribeUser(user){
       try{
+        _svDebug('suscribiendo uid='+user.uid+' video='+user.hasVideo+' audio='+user.hasAudio);
         if(user.hasVideo){
           await agoraClient.subscribe(user,'video');
           _svPlayVideo(user);
@@ -5606,6 +5606,31 @@ async function joinAsAudience(channelName){
         }
       }catch(e2){_svDebug('sub err: '+e2.message);}
     }
+
+    // Intento inmediato
+    const remotes=agoraClient.remoteUsers;
+    _svDebug('hosts en canal: '+remotes.length);
+    for(const user of remotes) await _trySubscribeUser(user);
+
+    // Retry a 1.5s — Agora 4.x a veces sincroniza remoteUsers tarde
+    setTimeout(async()=>{
+      if(!agoraJoined)return;
+      const container=document.getElementById('sv-agora-container');
+      if(container&&container.style.display==='block')return; // ya hay video
+      const r2=agoraClient?.remoteUsers||[];
+      _svDebug('retry (1.5s) hosts: '+r2.length);
+      for(const user of r2) await _trySubscribeUser(user);
+    },1500);
+
+    // Retry a 4s — por si el host publica con un poco de delay
+    setTimeout(async()=>{
+      if(!agoraJoined)return;
+      const container=document.getElementById('sv-agora-container');
+      if(container&&container.style.display==='block')return;
+      const r3=agoraClient?.remoteUsers||[];
+      _svDebug('retry (4s) hosts: '+r3.length);
+      for(const user of r3) await _trySubscribeUser(user);
+    },4000);
 
     toast('📡 Conectado al live');
     fsGet('streams',channelName).then(doc=>{
