@@ -5448,7 +5448,7 @@ function regSubmit(){
 
 // ═══ GO LIVE ═══
 let cameraStream=null, facingMode='user', bcTimerIv=null, bcSecs=0;
-let bcProdIdx=0, bcSelectedProds=[], bcViewerIv=null, bcChatIv=null;
+let bcProdIdx=0, bcSelectedProds=[], bcViewerIv=null, bcChatIv=null, bcHeartbeatIv=null;
 let isMuted=false;
 
 // ═══ AGORA RTC ═══
@@ -6074,6 +6074,14 @@ function startBroadcast(){
   window._bcChannelName=channelName;
   window._currentStreamChannel=channelName;
   joinAsHost(channelName);
+  // Heartbeat: mantiene isLive:true cada 20s por si algo resetea el flag
+  clearInterval(bcHeartbeatIv);
+  bcHeartbeatIv=setInterval(()=>{
+    const ch=window._bcChannelName;if(!ch)return;
+    fsSet('streams',ch,{isLive:true,lastSeen:Date.now()}).catch(()=>{});
+  },20000);
+  // visibilitychange: si el broadcaster vuelve al foco, reaserta isLive:true
+  document.addEventListener('visibilitychange',_bcVisibilityHandler);
   // Save stream to Firestore
   const uid=window.fbUser?.uid;
   if(uid){
@@ -6148,8 +6156,14 @@ function bcSend(){
   inp.value='';
 }
 
+function _bcVisibilityHandler(){
+  if(document.visibilityState==='visible'&&window._bcChannelName){
+    fsSet('streams',window._bcChannelName,{isLive:true,lastSeen:Date.now()}).catch(()=>{});
+  }
+}
 function endBroadcast(){
-  clearInterval(bcTimerIv);clearInterval(bcViewerIv);clearInterval(bcChatIv);
+  clearInterval(bcTimerIv);clearInterval(bcViewerIv);clearInterval(bcChatIv);clearInterval(bcHeartbeatIv);bcHeartbeatIv=null;
+  document.removeEventListener('visibilitychange',_bcVisibilityHandler);
   if(window._bcSetAucId)window._bcSetAucId('');
   window._bcChannelName='';
   stopCamera();
