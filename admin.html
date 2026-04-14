@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>InstaCompras · Admin</title>
+<title>Liveroo · Admin</title>
 <link rel="icon" href="https://em-content.zobj.net/source/apple/391/shopping-bags_1f6cd-fe0f.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -164,10 +164,10 @@ tr:hover td{background:rgba(255,255,255,.01)}
 </style>
 </head>
 <body>
-<div id="login"><div class="lc"><div class="lc-brand"><div class="lc-bar"></div><div><div class="lc-name">InstaCompras</div><div class="lc-live"><div class="lc-dot"></div><div class="lc-tag">EN VIVO</div></div></div></div><div class="lc-sub">Panel Admin</div><input class="li" id="l-e" placeholder="Email de admin" type="email" autofocus><input class="li" id="l-p" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()"><button class="lb" id="l-b" onclick="doLogin()">Iniciar Sesión</button><div class="le" id="l-err"></div></div></div>
+<div id="login"><div class="lc"><div class="lc-brand"><div class="lc-bar"></div><div><div class="lc-name">Liveroo</div><div class="lc-live"><div class="lc-dot"></div><div class="lc-tag">EN VIVO</div></div></div></div><div class="lc-sub">Panel Admin</div><input class="li" id="l-e" placeholder="Email de admin" type="email" autofocus><input class="li" id="l-p" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()"><button class="lb" id="l-b" onclick="doLogin()">Iniciar Sesión</button><div class="le" id="l-err"></div></div></div>
 <div id="app">
 <div class="sb" id="sidebar">
-<div class="sb-hd"><div class="sb-br"><div class="sb-br-bar"></div><div><div class="sb-br-name">InstaCompras</div><div class="sb-br-row"><div class="sb-br-dot"></div><div class="sb-br-live">EN VIVO</div><div class="sb-br-badge">ADMIN</div></div></div></div></div>
+<div class="sb-hd"><div class="sb-br"><div class="sb-br-bar"></div><div><div class="sb-br-name">Liveroo</div><div class="sb-br-row"><div class="sb-br-dot"></div><div class="sb-br-live">EN VIVO</div><div class="sb-br-badge">ADMIN</div></div></div></div></div>
 <div class="sb-nav">
 <div class="sb-sep">Dashboard</div>
 <div class="sb-i on" data-s="overview"><span class="ico">🏠</span>Home</div>
@@ -207,7 +207,7 @@ tr:hover td{background:rgba(255,255,255,.01)}
 <!-- STREAMS -->
 <div class="sec" id="sec-streams"><div class="sg" id="st-sg"></div><div class="tl"><div class="tl-sc" id="t-st"></div></div></div>
 <!-- PUSH -->
-<div class="sec" id="sec-push"><div class="g2"><div class="cd"><div class="cd-h">✏️ Componer</div><div class="cd-b"><div class="fg"><div class="fl">Título</div><input class="fi" id="p-t" placeholder="¡Oferta Flash! 🔥" oninput="uPP()"></div><div class="fg"><div class="fl">Mensaje</div><input class="fi" id="p-b" placeholder="50% off" oninput="uPP()"></div><div class="fg"><div class="fl">Audiencia</div><select class="fsel" id="p-tg"><option value="all">Todos</option><option value="buyers">Buyers</option><option value="sellers">Sellers</option></select></div><button class="a a-main" style="width:100%;justify-content:center;margin-top:6px" onclick="sP()">🔔 Enviar</button><div style="margin-top:12px"><div class="fl" style="margin-bottom:6px">Vista previa</div><div class="pu-m"><div class="pu-ic">🛍️</div><div><div style="font-size:12px;font-weight:800" id="pp-t">InstaCompras</div><div style="font-size:11px;color:var(--tx2)" id="pp-b">Tu mensaje...</div></div></div></div></div></div><div class="cd"><div class="cd-h">📜 Historial</div><div style="padding:0"><div class="tl-sc" id="t-pu"></div></div></div></div></div>
+<div class="sec" id="sec-push"><div class="g2"><div class="cd"><div class="cd-h">✏️ Componer</div><div class="cd-b"><div class="fg"><div class="fl">Título</div><input class="fi" id="p-t" placeholder="¡Oferta Flash! 🔥" oninput="uPP()"></div><div class="fg"><div class="fl">Mensaje</div><input class="fi" id="p-b" placeholder="50% off" oninput="uPP()"></div><div class="fg"><div class="fl">Audiencia</div><select class="fsel" id="p-tg"><option value="all">Todos</option><option value="buyers">Buyers</option><option value="sellers">Sellers</option></select></div><button class="a a-main" style="width:100%;justify-content:center;margin-top:6px" onclick="sP()">🔔 Enviar</button><div style="margin-top:12px"><div class="fl" style="margin-bottom:6px">Vista previa</div><div class="pu-m"><div class="pu-ic">🛍️</div><div><div style="font-size:12px;font-weight:800" id="pp-t">Liveroo</div><div style="font-size:11px;color:var(--tx2)" id="pp-b">Tu mensaje...</div></div></div></div></div></div><div class="cd"><div class="cd-h">📜 Historial</div><div style="padding:0"><div class="tl-sc" id="t-pu"></div></div></div></div></div>
 </div></div></div>
 <!-- MODALS -->
 <div class="mo" id="m-p" onclick="if(event.target===this)this.classList.remove('on')"><div class="mx"><div class="mx-t"><span id="m-pt">Nuevo Producto</span><div class="mx-x" onclick="document.getElementById('m-p').classList.remove('on')">✕</div></div><div class="fg"><div class="fl">Nombre</div><input class="fi" id="mp-n"></div><div class="frow"><div class="fg"><div class="fl">Precio</div><input class="fi" id="mp-p" type="number"></div><div class="fg"><div class="fl">Original</div><input class="fi" id="mp-o" type="number"></div></div><div class="fg"><div class="fl">Imagen URL</div><input class="fi" id="mp-i"></div><div class="frow"><div class="fg"><div class="fl">Categoría</div><input class="fi" id="mp-c"></div><div class="fg"><div class="fl">Seller</div><input class="fi" id="mp-s"></div></div><div class="fg"><div class="fl">Descripción</div><input class="fi" id="mp-d"></div><div class="fg"><div class="fl">Emoji</div><input class="fi" id="mp-e" placeholder="📦" style="width:60px"></div><input type="hidden" id="mp-id"><div class="mft"><button class="a a-ed" onclick="document.getElementById('m-p').classList.remove('on')">Cancelar</button><button class="a a-main" onclick="saProd()">Guardar</button></div></div></div>
@@ -438,7 +438,7 @@ function rSt(){document.getElementById('t-st').innerHTML=`<table><thead><tr><th>
 async function eSt(id){if(!confirm('¿Terminar?'))return;await fS('streams',id,{isLive:false,endedAt:Date.now()});toast('⏹');refreshAll();}
 
 // ═══ PUSH ═══
-function uPP(){document.getElementById('pp-t').textContent=document.getElementById('p-t').value||'InstaCompras';document.getElementById('pp-b').textContent=document.getElementById('p-b').value||'Tu mensaje...';}
+function uPP(){document.getElementById('pp-t').textContent=document.getElementById('p-t').value||'Liveroo';document.getElementById('pp-b').textContent=document.getElementById('p-b').value||'Tu mensaje...';}
 async function sP(){const t=document.getElementById('p-t').value.trim(),b=document.getElementById('p-b').value.trim(),tg=document.getElementById('p-tg').value;if(!t||!b){toast('❌ Completa todo');return;}await fA('push_jobs',{title:t,body:b,target:tg,status:'queued',createdAt:Date.now()});await fA('push_history',{title:t,body:b,target:tg,createdAt:Date.now()});document.getElementById('p-t').value='';document.getElementById('p-b').value='';uPP();toast('✅ Enviada');rPH();}
 async function rPH(){const h=await fQ('push_history');h.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));document.getElementById('t-pu').innerHTML=`<table><thead><tr><th>Mensaje</th><th>Target</th><th>Fecha</th></tr></thead><tbody>${h.length?h.slice(0,10).map(x=>`<tr><td><div style="font-weight:700">${x.title||'—'}</div><div style="font-size:10px;color:var(--mu)">${x.body||''}</div></td><td><span class="b b-${x.target==='sellers'?'seller':'buyer'}">${x.target||'all'}</span></td><td style="color:var(--mu)">${x.createdAt?new Date(x.createdAt).toLocaleDateString('es'):'—'}</td></tr>`).join(''):'<tr><td colspan="3" class="empty">Sin historial</td></tr>'}</tbody></table>`;}
 
