@@ -3407,25 +3407,37 @@ function buildGrid(list){
   const grid=document.getElementById('pgrid');
   if(!grid)return;
 
-  // ── Live sellers section (replaces strip) ──────────────────────────────
-  const liveHtml=SELLER_ORDER.map(i=>{
-    const s=SELLERS[i];
-    const prod=PRODS.find(p=>p.s===i&&p.img&&!p.img.startsWith('data:'));
-    const avHtml=s.logo?`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span style="font-size:18px">${s.e}</span>`;
-    return `<div onclick="openStream(${i})" style="flex-shrink:0;width:140px;cursor:pointer;border-radius:16px;overflow:hidden;position:relative;background:var(--dk3);height:190px;border:1.5px solid rgba(255,59,59,.25);transition:transform .18s cubic-bezier(.34,1.2,.64,1)" ontouchstart="this.style.transform='scale(.95)'" ontouchend="this.style.transform=''">
-      ${prod?`<img src="${prod.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'" loading="lazy">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;position:absolute;inset:0;background:var(--dk4)">${s.e}</div>`}
-      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,transparent 55%);pointer-events:none"></div>
-      <div style="position:absolute;top:8px;left:8px;display:flex;align-items:center;gap:4px;background:var(--rd);border-radius:20px;padding:3px 9px">
-        <div style="width:5px;height:5px;border-radius:50%;background:#fff;animation:pulse-live 1s infinite"></div>
-        <span style="font-size:9px;font-weight:900;color:#fff">EN VIVO</span>
-      </div>
-      <div style="position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;color:#fff;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);border-radius:8px;padding:2px 7px">👁 ${s.v}</div>
-      <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 10px 12px">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
-          <div style="width:26px;height:26px;border-radius:50%;background:var(--dk3);overflow:hidden;border:1.5px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">${avHtml}</div>
-          <div style="font-size:11px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.n}</div>
+  // ── FS Live stream cards (pcard format, sorted first) ───────────────────
+  const _fsStreams=window._fsLiveStreams||[];
+  const fsLiveCards=_fsStreams.map((s,i)=>{
+    const ch=s.channelName||s._id;
+    const name=s.sellerName||s.shopName||'Vendedor';
+    const thumb=s.thumb||'';
+    const emoji=s.sellerEmoji||'📡';
+    const avHtml=s.sellerAvatar
+      ?`<img src="${s.sellerAvatar}" style="width:100%;height:100%;object-fit:cover">`
+      :`<span>${emoji}</span>`;
+    const viewers=s.viewerCount||1;
+    return `<div class="pcard" onclick="openStreamFS('${ch}')" style="border-color:rgba(255,59,59,.35);box-shadow:0 2px 16px rgba(255,59,59,.15)">
+      <div class="pcard-img ${BG[i%4]}">
+        ${thumb?`<img src="${thumb}" onerror="this.style.display='none'" loading="lazy">`:''}
+        <div style="position:absolute;top:8px;left:8px;z-index:3;display:flex;align-items:center;gap:4px;background:var(--rd);border-radius:20px;padding:3px 9px">
+          <div style="width:5px;height:5px;border-radius:50%;background:#fff;animation:pulse-live 1s infinite"></div>
+          <span style="font-size:9px;font-weight:900;color:#fff">EN VIVO</span>
         </div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--y)">desde $${s.p}</div>
+        <div style="position:absolute;top:8px;right:8px;z-index:3;font-size:9px;font-weight:800;color:#fff;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);border-radius:8px;padding:2px 7px">👁 ${viewers}</div>
+        ${s.sellerAvatar?`<div style="position:absolute;bottom:8px;left:8px;z-index:3;width:32px;height:32px;border-radius:8px;overflow:hidden;border:1.5px solid rgba(255,255,255,.25);box-shadow:0 2px 8px rgba(0,0,0,.5)"><img src="${s.sellerAvatar}" style="width:100%;height:100%;object-fit:cover"></div>`:''}
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-name">${s.title||name}</div>
+        <div class="pcard-seller-row">
+          <div class="pcard-seller-dot" style="${s.sellerAvatar?'overflow:hidden;background:#000;':''}">${avHtml}</div>
+          <div class="pcard-seller-name">${name}</div>
+        </div>
+        <div class="pcard-price-row">
+          <div class="pcard-price">${s.minPrice?'$'+s.minPrice:'En vivo'}</div>
+          <div class="pcard-old" style="color:var(--rd);font-size:9px;font-weight:900;text-decoration:none">🔴 LIVE</div>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -3447,19 +3459,9 @@ function buildGrid(list){
     list=[...withPhoto,...noPhoto];
   }
 
-  const liveSection=`<div style="grid-column:1/-1;margin-bottom:4px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:900;color:#fff">
-        <div style="width:7px;height:7px;border-radius:50%;background:var(--rd);animation:pulse-live 1.2s infinite;flex-shrink:0"></div>En Vivo
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px">${liveHtml}</div>
-  </div>
-  <div style="grid-column:1/-1;font-size:13px;font-weight:900;color:#fff;margin-bottom:2px">Populares</div>`;
-
   const first=list.slice(0,8);
   const rest=list.slice(8);
-  grid.innerHTML=liveSection+first.map((p,i)=>prodCard(p,i,list)).join('');
+  grid.innerHTML=fsLiveCards+first.map((p,i)=>prodCard(p,i,list)).join('');
   if(rest.length){
     requestAnimationFrame(()=>{
       grid.innerHTML+=rest.map((p,i)=>prodCard(p,i+8,list)).join('');
@@ -7323,41 +7325,17 @@ async function openStreamFS(channelName){
 }
 function openProdFS(id){openProd(0);}
 
-// Fetch live streams from Firestore and update the strip
+// Cache live FS streams — shown first in home grid
 window._fsLiveCache={};
+window._fsLiveStreams=[];
 async function _refreshLiveStrip(){
   try{
     const streams=await fsQuery('streams',[{field:'isLive',value:true}]);
-    const el=document.getElementById('live-strip');
-    if(!el)return;
-    if(!streams.length){
-      buildGrid();
-      return;
-    }
-    streams.sort((a,b)=>(b.viewerCount||0)-(a.viewerCount||0));
     window._fsLiveCache={};
+    window._fsLiveStreams=streams;
     streams.forEach(s=>{const ch=s.channelName||s._id;if(ch)window._fsLiveCache[ch]=s;});
-    el.innerHTML=streams.map((s,i)=>{
-      const name=s.sellerName||s.shopName||'Vendedor';
-      const viewers=s.viewerCount||1;
-      const thumb=s.thumb||'';
-      const emoji=s.sellerEmoji||'📡';
-      const ch=s.channelName||s._id;
-      return `
-      <div class="lcard" onclick="openStreamFS('${ch}')">
-        <div class="lcard-img">
-          ${thumb?`<img src="${thumb}" onerror="this.style.display='none'" loading="lazy">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;background:var(--dk4)">${emoji}</div>`}
-          <div class="lcard-live"><div class="lbadge" style="font-size:8px;padding:2px 7px">LIVE</div></div>
-          <div class="lcard-viewers">👁 ${viewers}</div>
-          <div class="lcard-av">${s.sellerAvatar?`<img src="${s.sellerAvatar}" style="width:100%;height:100%;object-fit:cover">`:`<span>${emoji}</span>`}</div>
-          <div class="lcard-name">${name}</div>
-          <div class="lcard-price">${s.minPrice?'$'+s.minPrice:s.title||''}</div>
-        </div>
-      </div>`;
-    }).join('');
-  }catch(e){
-    buildLiveStrip(); // fallback to static
-  }
+    buildGrid(); // re-render grid with live streams at top
+  }catch(e){}
 }
 loadHomeFeed();
 // Show initial unread count
