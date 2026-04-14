@@ -16,7 +16,7 @@
 <meta name="description" content="Marketplace de live shopping venezolano — compra y subasta en tiempo real">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js" defer></script>
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
 <script>
 // ═══ FIREBASE REST API — sin SDK externo ═══
 const FB={
@@ -1719,8 +1719,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     <div style="position:absolute;inset:0;z-index:3;background:linear-gradient(to bottom,rgba(0,0,0,.72) 0%,transparent 22%,transparent 52%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.94) 100%);pointer-events:none"></div>
   </div>
 
-  <!-- DEBUG STATUS — oculto en producción -->
-  <div id="sv-debug" style="display:none;position:absolute;top:0;left:0;right:0;z-index:99;background:rgba(0,0,0,.85);padding:8px 12px;font-family:monospace;font-size:11px;color:#0f0;flex-direction:column;gap:3px;pointer-events:none"></div>
+  <!-- DEBUG AGORA — activado para diagnóstico -->
+  <div id="sv-debug" style="display:flex;position:absolute;top:0;left:0;right:0;z-index:99;background:rgba(0,0,0,.92);padding:8px 12px;font-family:monospace;font-size:10px;color:#0f0;flex-direction:column;gap:2px;pointer-events:none;max-height:160px;overflow:hidden"></div>
 
   <!-- ── TOP BAR ── -->
   <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:9px;padding:max(var(--sat),14px) 12px 10px">
@@ -5624,6 +5624,7 @@ async function joinAsAudience(channelName){
     _svDebug('Iniciando... canal: '+channelName);
     agoraClient=AgoraRTC.createClient({mode:'live',codec:'vp8'});
     _svDebug('AppID: '+AGORA_APP_ID.slice(0,8)+'...');
+    _svDebug('Token: '+(AGORA_TOKEN?'CON TOKEN':'SIN TOKEN — App Cert desactivado'));
 
     function _svPlayVideo(user){
       const container=document.getElementById('sv-agora-container');
@@ -5693,48 +5694,38 @@ async function joinAsAudience(channelName){
 
     // Intento inmediato
     const remotes=agoraClient.remoteUsers;
-    _svDebug('hosts en canal: '+remotes.length);
+    _svDebug('hosts en canal: '+remotes.length+(remotes.length?(' uids:'+remotes.map(u=>u.uid).join(',')):''));
     for(const user of remotes) await _trySubscribeUser(user);
 
-    // Retry a 1.5s — Agora 4.x a veces sincroniza remoteUsers tarde
-    setTimeout(async()=>{
+    // Si no hay hosts visibles, buscar el hostUid en Firestore y esperar ese usuario específico
+    if(!remotes.length){
+      fsGet('streams',channelName).then(doc=>{
+        if(doc?.hostUid){
+          _svDebug('hostUid de Firestore: '+doc.hostUid+' — esperando...');
+        }
+      }).catch(()=>{});
+    }
+
+    const _retrySubscribe=async(label)=>{
       if(!agoraJoined)return;
       const container=document.getElementById('sv-agora-container');
-      if(container&&container.style.display==='block')return; // ya hay video
-      const r2=agoraClient?.remoteUsers||[];
-      _svDebug('retry (1.5s) hosts: '+r2.length);
-      for(const user of r2) await _trySubscribeUser(user);
-    },1500);
+      if(container&&container.style.display==='block')return;
+      const rs=agoraClient?.remoteUsers||[];
+      _svDebug('retry ('+label+') hosts: '+rs.length+(rs.length?(' uids:'+rs.map(u=>u.uid).join(',')):''));
+      for(const user of rs) await _trySubscribeUser(user);
+    };
 
-    // Retry a 4s — por si el host publica con un poco de delay
+    setTimeout(()=>_retrySubscribe('1.5s'),1500);
+    setTimeout(()=>_retrySubscribe('4s'),4000);
+    setTimeout(()=>_retrySubscribe('8s'),8000);
     setTimeout(async()=>{
       if(!agoraJoined)return;
       const container=document.getElementById('sv-agora-container');
       if(container&&container.style.display==='block')return;
-      const r3=agoraClient?.remoteUsers||[];
-      _svDebug('retry (4s) hosts: '+r3.length);
-      for(const user of r3) await _trySubscribeUser(user);
-    },4000);
-
-    // Retry a 8s — redes lentas como Venezuela (alta latencia)
-    setTimeout(async()=>{
-      if(!agoraJoined)return;
-      const container=document.getElementById('sv-agora-container');
-      if(container&&container.style.display==='block')return;
-      const r4=agoraClient?.remoteUsers||[];
-      _svDebug('retry (8s) hosts: '+r4.length);
-      for(const user of r4) await _trySubscribeUser(user);
-    },8000);
-
-    // Retry a 12s — último intento
-    setTimeout(async()=>{
-      if(!agoraJoined)return;
-      const container=document.getElementById('sv-agora-container');
-      if(container&&container.style.display==='block')return;
-      const r5=agoraClient?.remoteUsers||[];
-      _svDebug('retry (12s) hosts: '+r5.length);
-      for(const user of r5) await _trySubscribeUser(user);
-      if(!r5.length)toast('📡 Conectado — esperando al vendedor...');
+      const rs=agoraClient?.remoteUsers||[];
+      _svDebug('retry (12s) hosts: '+rs.length);
+      for(const user of rs) await _trySubscribeUser(user);
+      if(!rs.length){_svDebug('⚠️ Sin host en el canal — verifica App Certificate en console.agora.io');}
     },12000);
 
     toast('📡 Conectado al live');
@@ -5744,12 +5735,21 @@ async function joinAsAudience(channelName){
     }).catch(()=>{});
   }catch(e){
     console.error('Agora audience:',e);
+    // Mostrar error completo en debug para diagnóstico
+    const d=document.getElementById('sv-debug');
+    if(d){
+      d.style.display='flex';
+      const line=document.createElement('div');
+      line.style.color='#ff4444';
+      line.textContent='❌ ERROR: '+(e.message||e.code||JSON.stringify(e)).toString().slice(0,120);
+      d.appendChild(line);
+    }
     toast('⚠️ Stream error: '+(e.message||e.code||'desconocido').toString().slice(0,60));
   }
 }
 
 async function joinAsHost(channelName){
-  // Esperar hasta que AgoraRTC cargue (puede tardar si hay defer)
+  // Esperar hasta que AgoraRTC cargue
   if(typeof AgoraRTC==='undefined'){
     let tries=0;
     while(typeof AgoraRTC==='undefined'&&tries<20){await new Promise(r=>setTimeout(r,300));tries++;}
@@ -5760,7 +5760,12 @@ async function joinAsHost(channelName){
     await leaveAgoraChannel();
     agoraClient=AgoraRTC.createClient({mode:'live',codec:'vp8'});
     await agoraClient.setClientRole('host');
-    await agoraClient.join(AGORA_APP_ID, channelName, AGORA_TOKEN, null);
+    // UID numérico consistente derivado del UID de Firebase (necesario en modo live)
+    const hostUid=window.fbUser?.uid
+      ? parseInt(window.fbUser.uid.replace(/[^0-9]/g,'').slice(0,8)||'1',10)%999999+1
+      : 1;
+    console.log('[Agora Host] canal:',channelName,'uid:',hostUid);
+    await agoraClient.join(AGORA_APP_ID, channelName, AGORA_TOKEN, hostUid);
     agoraJoined=true;
     [agoraLocalAudio,agoraLocalVideo]=await AgoraRTC.createMicrophoneAndCameraTracks(
       {encoderConfig:'music_standard'},
@@ -5773,12 +5778,14 @@ async function joinAsHost(channelName){
     await agoraClient.publish([agoraLocalAudio,agoraLocalVideo]);
     toast('📡 ¡Estás en vivo!');
   }catch(e){
-    console.error('Agora host:',e);
+    console.error('Agora host error:',e);
     const msg=(e.message||e.code||'').toString();
     if(msg.includes('NOT_SUPPORTED')||msg.includes('MEDIA_NOT_SUPPORT')||msg.includes('PERMISSION')){
       toast('⚠️ Sin acceso a cámara/micrófono — verifica permisos del navegador');
-    } else if(msg.includes('CAN_NOT_GET_GATEWAY')||msg.includes('INVALID_OPERATION')||msg.includes('UID_CONFLICT')){
-      toast('⚠️ Error Agora: App Certificate activado. Ve a console.agora.io → tu proyecto → desactiva el App Certificate (modo no seguro para pruebas)');
+    } else if(msg.includes('CAN_NOT_GET_GATEWAY')||msg.includes('DYNAMIC_KEY')||msg.includes('TOKEN')){
+      toast('⚠️ Error Agora: desactiva el App Certificate en console.agora.io → tu proyecto');
+    } else if(msg.includes('UID_CONFLICT')){
+      toast('⚠️ UID en conflicto — intenta de nuevo');
     } else {
       toast('⚠️ Error al iniciar live: '+msg.slice(0,80));
     }
@@ -6288,11 +6295,14 @@ function startBroadcast(){
     const thumbProd=PRODS[bcSelectedProds[0]||0];
     const thumb=thumbProd?.img||'';
     const minPrice=bcSelectedProds.length?Math.min(...bcSelectedProds.map(i=>PRODS[i]?.p||0)):0;
+    // Calcular el mismo hostUid que usa joinAsHost
+    const hostUid=parseInt(uid.replace(/[^0-9]/g,'').slice(0,8)||'1',10)%999999+1;
     fsSet('streams',channelName,{
       sellerId:uid,
       sellerName, sellerEmoji,
       shopName:window.fbUser?.shop||sellerName,
       channelName, title, cat, thumb, minPrice,
+      hostUid,
       isLive:true, viewerCount:1, startedAt:Date.now(),
       sellerAvatar:window.fbUser?.avatar||'',
       whatsapp:window.fbUser?.whatsapp||''
