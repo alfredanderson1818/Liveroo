@@ -3885,7 +3885,7 @@ function openProd(idx){
     document.getElementById('pd-viewers').textContent=~~(Math.random()*400+80);
     const _mini=document.getElementById('pd-sav-mini');if(_mini){if(s.logo){_mini.innerHTML=`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;_mini.style.background='#000';_mini.style.overflow='hidden';}else{_mini.textContent=s.e;}} 
     document.getElementById('pd-sname-mini').textContent=s.n;
-    startPdLiveSim(s);
+    startPdLiveSim(s,'ic_'+p.s);
   }else{
     stopPdLiveSim();
     videoWrap.style.display='none';
@@ -4234,174 +4234,6 @@ const BIOS=[
   'Belleza y cuidado personal. Productos importados certificados. Asesoría personalizada incluida. 💄',
 ];
 
-
-async function openSellerFS(storeData){
-  // storeData comes from Firestore stores collection
-  const uid=storeData._id||storeData.uid||'';
-  const isLive=storeData.isLive||false;
-  const channelName=storeData.channelName||'';
-
-  // Hero image — use stream thumb if live, else first product image
-  let heroImg='';
-  let prods=[];
-  try{
-    prods=await fsQuery('products',[{field:'sellerId',value:uid}]);
-    if(prods.length)heroImg=prods[0].img||'';
-  }catch(e){}
-  if(isLive&&channelName){
-    try{const s=await fsGet('streams',channelName);if(s?.thumb)heroImg=s.thumb;}catch(e){}
-  }
-
-  const heroEl=document.getElementById('sp-hero-img');
-  if(heroEl){heroEl.src=heroImg;heroEl.style.display=heroImg?'block':'none';}
-
-  // Avatar
-  const avEl=document.getElementById('sp-av-emoji');
-  if(avEl){
-    if(storeData.avatar){
-      avEl.innerHTML=`<img src="${storeData.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-      avEl.style.background='#000';avEl.style.overflow='hidden';
-    } else {
-      avEl.textContent='📡';avEl.style.background='';avEl.style.overflow='';
-    }
-  }
-
-  // Live ring
-  document.getElementById('sp-live-ring').style.display=isLive?'block':'none';
-
-  // Info
-  document.getElementById('sp-name').textContent=storeData.shopName||storeData.ownerName||'Vendedor';
-  document.getElementById('sp-handle').textContent='@'+(storeData.shopName||'tienda').toLowerCase().replace(/\s/g,'');
-  document.getElementById('sp-location').innerHTML=`📍 ${storeData.city||'Venezuela'} 🇻🇪`;
-
-  // Follow btn — can't follow FS sellers yet (no index), show as available
-  const fb=document.getElementById('sp-fol-btn');
-  if(fb){fb.textContent='+ Seguir';fb.className='sp-follow-btn';fb.onclick=()=>toast('💛 ¡Siguiendo!');}
-
-  // Live btn
-  const liveBtn=document.getElementById('sp-live-btn');
-  if(liveBtn){
-    if(isLive&&channelName){
-      liveBtn.style.display='flex';
-      liveBtn.onclick=()=>openStreamFS(channelName);
-    } else {
-      liveBtn.style.display='none';
-    }
-  }
-
-  // Stats from Firestore
-  const viewerCount=isLive?(await fsGet('streams',channelName).catch(()=>null))?.viewerCount||0:0;
-  const totalSales=storeData.totalSales||prods.reduce((_,p)=>_+(p.sales||0),0);
-  const followers=storeData.followers||0;
-  const rating=storeData.rating||'—';
-  document.getElementById('sp-stat-v').textContent=viewerCount||'0';
-  document.getElementById('sp-stat-s').textContent=totalSales||'0';
-  document.getElementById('sp-stat-f').textContent=followers>999?(followers/1000).toFixed(1)+'k':followers;
-  document.getElementById('sp-stat-r').textContent=rating;
-  document.getElementById('sp-rating').textContent=rating;
-  document.getElementById('sp-reviews-count').textContent='Sin reseñas aún';
-
-  // Bio
-  document.getElementById('sp-bio').textContent=storeData.description||storeData.bio||`Vendedor verificado en Liveroo. ${storeData.category||''}`;
-
-  // Rating bars — empty for new sellers
-  document.getElementById('sp-bars').innerHTML='<div style="font-size:12px;color:var(--mu);padding:8px 0">Sin calificaciones aún</div>';
-
-  // Products grid — real from Firestore
-  if(prods.length){
-    document.getElementById('sp-pgrid').innerHTML=prods.map((p,i)=>`
-      <div class="sp-pcard" onclick="openProdFS('${p._id}')">
-        ${p.img?`<img src="${p.img}" onerror="this.style.display='none'">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px">${p.emoji||'📦'}</div>`}
-        ${p.live?`<div class="sp-pcard-live"><div class="lbadge" style="font-size:7px;padding:2px 5px">LIVE</div></div>`:''}
-        <div class="sp-pcard-price">$${p.price||p.p||0}</div>
-      </div>`).join('');
-  } else {
-    document.getElementById('sp-pgrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--mu);font-size:12px">Sin productos aún</div>';
-  }
-
-  // Reviews — empty for now
-  document.getElementById('sp-revs-list').innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:12px">Sin reseñas aún</div>';
-
-  // WhatsApp contact if available
-  const waBtn=document.querySelector('.sp-chat-btn');
-  if(waBtn&&storeData.whatsapp){
-    const msg=encodeURIComponent('Hola, te vi en Liveroo y quiero saber más sobre tus productos 🛍️');
-    waBtn.onclick=()=>window.open(`https://wa.me/${storeData.whatsapp}?text=${msg}`,'_blank');
-    waBtn.textContent='💬 WhatsApp';
-  }
-
-  curSeller=-1; // mark as FS seller
-  spTab('prods');
-  go('seller');
-}
-
-function openSeller(idx){
-  curSeller=idx;
-  const s=SELLERS[idx];
-  const prod=PRODS.find(p=>p.s===idx);
-
-  // Hero
-  document.getElementById('sp-hero-img').src=prod?.img||'';
-  const _spAv=document.getElementById('sp-av-emoji');if(_spAv){if(s.logo){_spAv.innerHTML=`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;_spAv.style.background='#000';_spAv.style.overflow='hidden';}else{_spAv.textContent=s.e;_spAv.style.background='';}} 
-
-  // Live ring visibility
-  document.getElementById('sp-live-ring').style.display='block';
-
-  // Info
-  document.getElementById('sp-name').textContent=s.n;
-  document.getElementById('sp-handle').textContent=`@${s.n.toLowerCase().replace(/\s/g,'')}.ve`;
-  document.getElementById('sp-location').innerHTML=`📍 ${['Caracas','Valencia','Maracaibo','Barquisimeto','Maturín'][idx%5]}, Venezuela`;
-
-  // Follow btn
-  const fb=document.getElementById('sp-fol-btn');
-  fb.textContent=following.has(idx)?'✓ Siguiendo':'+ Seguir';
-  fb.className='sp-follow-btn'+(following.has(idx)?' on':'');
-
-  // Stats
-  document.getElementById('sp-stat-v').textContent=s.v;
-  document.getElementById('sp-stat-s').textContent=Math.floor(s.v*18+200);
-  document.getElementById('sp-stat-f').textContent=s.f;
-  const rating=(4.5+Math.random()*.5).toFixed(1);
-  document.getElementById('sp-stat-r').textContent=rating;
-  document.getElementById('sp-rating').textContent=rating;
-  document.getElementById('sp-reviews-count').textContent=`${Math.floor(Math.random()*200+50)} reseñas`;
-
-  // Bio
-  document.getElementById('sp-bio').textContent=BIOS[idx%BIOS.length];
-
-  // Rating bars
-  document.getElementById('sp-bars').innerHTML=['5','4','3','2','1'].map((star,i)=>{
-    const pct=[70,20,6,2,2][i];
-    return `<div class="sp-bar-row">${star}⭐<div class="sp-bar-track"><div class="sp-bar-fill" style="width:${pct}%"></div></div><span>${pct}%</span></div>`;
-  }).join('');
-
-  // Products grid (seller's products)
-  const sellerProds=PRODS.filter(p=>p.s===idx);
-  const allProds=sellerProds.length?sellerProds:PRODS.slice(0,6);
-  document.getElementById('sp-pgrid').innerHTML=allProds.map((p,i)=>`
-    <div class="sp-pcard" onclick="openProd(${PRODS.indexOf(p)})">
-      ${p.img?`<img src="${p.img}" onerror="this.style.display='none'">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px">${p.e}</div>`}
-      ${p.live?`<div class="sp-pcard-live"><div class="lbadge" style="font-size:7px;padding:2px 5px">LIVE</div></div>`:''}
-      <div class="sp-pcard-price">$${p.p}</div>
-    </div>`).join('');
-
-  // Reviews
-  document.getElementById('sp-revs-list').innerHTML=REVIEWS.map(r=>`
-    <div class="sp-review">
-      <div class="sp-rev-header">
-        <div class="sp-rev-av">${r.av}</div>
-        <div class="sp-rev-name">${r.name}</div>
-        <div class="sp-rev-stars">${'⭐'.repeat(r.stars)}</div>
-        <div class="sp-rev-date">${r.date}</div>
-      </div>
-      <div class="sp-rev-text">${r.text}</div>
-    </div>`).join('');
-
-  // Reset to products tab
-  spTab('prods');
-  go('seller');
-}
-
 // ═══ SELLER PAGE — NUEVA LÓGICA ═══
 let _spCurrentSellerId = null; // Firestore UID of current seller
 let _spIsOwnStore = false;
@@ -4446,11 +4278,6 @@ function spToggleFollow(){
   toast(following.has(_spCurrentSellerId)?'✅ ¡Siguiendo!':'👋 Dejaste de seguir');
 }
 
-function spOpenStream(){
-  const ch = document.getElementById('sp-live-btn')?.dataset?.channel;
-  if(ch) openStreamFS(ch);
-  else if(curSeller!==null) openStream(curSeller);
-}
 
 function spTab(tab){
   ['prods','revs','info'].forEach(t=>{
@@ -4746,29 +4573,28 @@ async function spSubmitItem(){
 function openSeller(idx){
   curSeller=idx;
   const s=SELLERS[idx];
-  // Build synthetic storeData and open
+  if(!s) return;
   _spCurrentSellerId='mock_'+idx;
   _spIsOwnStore=false;
-  const isLive=true;
-  document.getElementById('sp-hero-img').style.display='none';
+  const heroEl=document.getElementById('sp-hero-img');if(heroEl)heroEl.style.display='none';
   const avEl=document.getElementById('sp-av-emoji');
   if(avEl){if(s.logo){avEl.innerHTML=`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;avEl.style.background='#000';avEl.style.overflow='hidden';}else{avEl.textContent=s.e;avEl.style.background='';avEl.style.overflow='';}}
-  document.getElementById('sp-live-ring').classList.add('on');
-  document.getElementById('sp-live-cover-badge').classList.add('on');
+  document.getElementById('sp-live-ring')?.classList.add('on');
+  document.getElementById('sp-live-cover-badge')?.classList.add('on');
   const lb=document.getElementById('sp-live-btn');if(lb){lb.classList.add('on');lb.dataset.channel='';}
-  document.getElementById('sp-name').textContent=s.n;
-  document.getElementById('sp-handle').textContent=`@${s.n.toLowerCase().replace(/\s/g,'')}.ve`;
-  document.getElementById('sp-location').innerHTML=`📍 ${['Caracas','Valencia','Maracaibo','Barquisimeto','Maturín'][idx%5]}, Venezuela 🇻🇪`;
-  document.getElementById('sp-bio').textContent=BIOS[idx%BIOS.length];
-  document.getElementById('sp-verified-badge').style.display='';
-  document.getElementById('sp-wa-btn').style.display='none';
+  const nm=document.getElementById('sp-name');if(nm)nm.textContent=s.n;
+  const hdl=document.getElementById('sp-handle');if(hdl)hdl.textContent=`@${s.n.toLowerCase().replace(/\s/g,'')}.ve`;
+  const loc=document.getElementById('sp-location');if(loc)loc.innerHTML=`📍 ${['Caracas','Valencia','Maracaibo','Barquisimeto','Maturín'][idx%5]}, Venezuela 🇻🇪`;
+  const bio=document.getElementById('sp-bio');if(bio)bio.textContent=BIOS[idx%BIOS.length];
+  const vb=document.getElementById('sp-verified-badge');if(vb)vb.style.display='';
+  const wa=document.getElementById('sp-wa-btn');if(wa)wa.style.display='none';
   const fb=document.getElementById('sp-fol-btn');if(fb){fb.textContent=following.has(idx)?'✓ Siguiendo':'+ Seguir';fb.className='sp-follow-btn'+(following.has(idx)?' on':'');}
-  document.getElementById('sp-stat-v').textContent=s.v;
-  document.getElementById('sp-stat-s').textContent=Math.floor(s.v*18+200);
-  document.getElementById('sp-stat-f').textContent=s.f;
+  const sv=document.getElementById('sp-stat-v');if(sv)sv.textContent=s.v;
+  const ss=document.getElementById('sp-stat-s');if(ss)ss.textContent=Math.floor(s.v*18+200);
+  const sf=document.getElementById('sp-stat-f');if(sf)sf.textContent=s.f;
   const rating=(4.5+Math.random()*.5).toFixed(1);
-  document.getElementById('sp-stat-r').textContent=rating;
-  document.getElementById('sp-fab').classList.remove('on');
+  const sr=document.getElementById('sp-stat-r');if(sr)sr.textContent=rating;
+  const fab=document.getElementById('sp-fab');if(fab)fab.classList.remove('on');
   // Mock products
   const sellerProds=PRODS.filter(p=>p.s===idx).length?PRODS.filter(p=>p.s===idx):PRODS.slice(0,4);
   _spStoreProducts=sellerProds.map(p=>({_id:'p'+PRODS.indexOf(p),name:p.n,price:p.p,img:p.img,qty:p.live?0:2,status:'active'}));
@@ -5001,7 +4827,7 @@ async function openAuction(prodIdx){
   aucTimerIv=setInterval(aucTick,1000);aucTick();
 
   // Polling Firestore cada 3s
-  aucPollIv=setInterval(aucPollFirestore,3000);
+  aucPollIv=setInterval(aucPollFirestore,1500);
 }
 
 async function aucPollFirestore(){
@@ -5020,6 +4846,13 @@ async function aucPollFirestore(){
       const acb=document.getElementById('auc-current-bid');if(acb)acb.textContent=`$${aucCurrentBid}`;
       const amb=document.getElementById('auc-min-bid');if(amb)amb.textContent=`$${aucCurrentBid+1}`;
       aucUpdateBtn();
+      // Push real bid to pd-bids-feed so product page shows real bids
+      const _bf=document.getElementById('pd-bids-feed');
+      if(_bf&&doc.currentWinner){
+        const _d=document.createElement('div');_d.className='pd-chat-msg';
+        _d.innerHTML=`<div class="pd-chat-user">🔨 ${doc.currentWinner}</div><div class="pd-chat-text" style="color:var(--y);font-weight:800">Ofertó $${aucCurrentBid}</div>`;
+        _bf.appendChild(_d);while(_bf.children.length>4)_bf.removeChild(_bf.firstChild);
+      }
       // Notificar si me superaron
       const iWasWinning=aucBids.length>1&&aucBids[1]?.me;
       if(iWasWinning&&doc.currentWinner!==aucMyUser)
@@ -5170,12 +5003,15 @@ async function placeBid(){
 
   // Persist to Firestore
   const recentBids=aucBids.map(b=>`${b.user}:${b.amt}`).join('|');
+  const _aucCh='ic_'+(PRODS[aucProdIdx]?.s||0);
   fsSet('auctions',aucId,{
     currentBid:v,
     currentWinner:aucMyUser,
     recentBids,
     lastBidAt:Date.now()
   }).catch(()=>{});
+  // Write bid to messages so stream chat stays in sync
+  fsAdd('messages',{channel:_aucCh,user:aucMyUser,text:`🔨 Oferta $${v}`,ts:Date.now()}).catch(()=>{});
 }
 function aucAutoBot(){
   if(aucSecs<=8||aucSecs<=0)return;
@@ -5190,7 +5026,9 @@ function aucAutoBot(){
   if(wasWinning)toast(`⚠️ ${bot} te superó con $${nb} — ¡oferta más!`);
   // Persist bot bid to Firestore so other users see it
   const recentBids=aucBids.map(b=>`${b.user}:${b.amt}`).join('|');
+  const _botCh='ic_'+(PRODS[aucProdIdx]?.s||0);
   fsSet('auctions',aucId,{currentBid:nb,currentWinner:bot,recentBids,lastBidAt:Date.now()}).catch(()=>{});
+  fsAdd('messages',{channel:_botCh,user:bot,text:`🔨 Oferta $${nb}`,ts:Date.now()}).catch(()=>{});
   setTimeout(aucAutoBot,10000+Math.random()*20000);
 }
 
@@ -5837,10 +5675,13 @@ function bcSimBid(){
   addBcMsg('💛',user,`Oferta: $${bcAucTopBid}`);
   // Persist bot bid to Firestore so buyers see it too
   const _bid=bcAucTopBid;const _user=user;
+  const _ch=window._bcChannelName||'ic_0';
   if(window._bcGetAucId){
     const _id=window._bcGetAucId();
     if(_id) fsSet('auctions',_id,{currentBid:_bid,currentWinner:_user,lastBidAt:Date.now()}).catch(()=>{});
   }
+  // Also write to messages so viewer chat stays in sync
+  fsAdd('messages',{channel:_ch,user:_user,text:`🔨 Oferta $${_bid}`,ts:Date.now()}).catch(()=>{});
   // Schedule next bid
   if(bcAucIv&&bcAucSecs>5) setTimeout(()=>bcSimBid(),2000+Math.random()*5000);
 }
@@ -6118,7 +5959,7 @@ function startBroadcast(){
         }
       }
     }catch(e){}
-  },3000);
+  },1500);
   window._bcChatLastTs=Date.now();
   window._bcGetAucId=()=>_bcAucId;
   window._bcSetAucId=(id)=>{_bcAucId=id;};
@@ -6895,16 +6736,35 @@ _ORDER.forEach((idx,i)=>{if(i<PRODS.length&&idx<_origProds.length)PRODS[i]=_orig
 let _auctionTiv=null;
 
 // ═══ SIMULADOR LIVE STREAM (página producto) ═══
-let _pdChatIv=null,_pdHeartIv=null,_pdViewIv=null;
+let _pdChatIv=null,_pdHeartIv=null,_pdViewIv=null,_pdRealChatIv=null,_pdRealChatLastTs=0,_pdRealChatChannel='';
 const _PD_NAMES=['carlos.VE','luisa_mpn','el_pana99','yoli_shop','marleny07','pedro_mcs','cristivzla','rosary.ve'];
 const _PD_MSGS=['¡LO QUIERO! 🔥','⚡ Comprando ahora!','¿Quedan más unidades?','✅ Ya pagué','🇻🇪 Desde Maracaibo','¿Envían a todo el país?','🙌🙌🙌','¡Me encanta! 😍','¡Qué belleza! 🔥','Llegó rapidísimo el último 📦','🇻🇪 Desde Valencia','¡Tomado! ✅','segunda unidad para mi mamá 😂','ufff se ve brutal 🔥','¡Pídanlo ya! ⚡'];
 const _PD_HEARTS=['❤️','🧡','💛','💜','🤍','❤️‍🔥'];
-function startPdLiveSim(seller){
+function startPdLiveSim(seller, channel){
   stopPdLiveSim();
   const chat=document.getElementById('pd-chat-msgs');
   const hearts=document.getElementById('pd-hearts');
   const viewers=document.getElementById('pd-viewers');
   if(!chat)return;
+  // Poll real Firestore messages — same channel as stream chat
+  if(channel){
+    _pdRealChatChannel=channel;
+    _pdRealChatLastTs=Date.now()-5000;
+    _pdRealChatIv=setInterval(async()=>{
+      try{
+        const msgs=await fsQuery('messages',[{field:'channel',value:_pdRealChatChannel}]);
+        const fresh=msgs.filter(m=>m.ts>_pdRealChatLastTs).sort((a,b)=>a.ts-b.ts);
+        fresh.forEach(m=>{
+          if(m.ts>_pdRealChatLastTs)_pdRealChatLastTs=m.ts;
+          const panel=document.getElementById('pd-chat-msgs');if(!panel)return;
+          const d=document.createElement('div');d.className='pd-chat-msg';
+          d.innerHTML=`<div class="pd-chat-user">${m.user}</div><div class="pd-chat-text">${m.text}</div>`;
+          panel.appendChild(d);
+          while(panel.children.length>5)panel.removeChild(panel.firstChild);
+        });
+      }catch(e){}
+    },2000);
+  }
   // Chat msgs
   // Feed en stream: alterna entre bids y chat
   const bidsFeed=document.getElementById('pd-bids-feed');
@@ -6954,8 +6814,8 @@ function stopAuction(){
   aucTimerIv=null;aucPollIv=null;aucId='';
 }
 function stopPdLiveSim(){
-  clearInterval(_pdChatIv);clearInterval(_pdHeartIv);clearInterval(_pdViewIv);
-  _pdChatIv=_pdHeartIv=_pdViewIv=null;
+  clearInterval(_pdChatIv);clearInterval(_pdHeartIv);clearInterval(_pdViewIv);clearInterval(_pdRealChatIv);
+  _pdChatIv=_pdHeartIv=_pdViewIv=_pdRealChatIv=null;_pdRealChatLastTs=0;
   const chat=document.getElementById('pd-chat-msgs');
   if(chat)chat.innerHTML='';
   const bf=document.getElementById('pd-bids-feed');
@@ -7257,20 +7117,19 @@ function _startViewerAucPoll(channelName){
       if(live.length){
         const a=live[0];
         const isNew=a._id!==_svCurrentAucId;
-        _svCurrentAucId=a._id;_svCurrentAucEndsAt=a.endsAt||0;
-        // Update panel bid display
+        _svCurrentAucId=a._id;
+        // Always resync endsAt from Firestore so timer stays locked to broadcaster
+        if(a.endsAt) _svCurrentAucEndsAt=a.endsAt;
+        // Always update bid (catches real buyer bids and bot bids)
         const bidEl=document.getElementById('sv-cta-bid');if(bidEl)bidEl.textContent='$'+(a.currentBid||a.startPrice||0);
         const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' IC';
-        // compat
         const old=document.getElementById('sv-sheet-auc-bid');if(old)old.textContent='$'+(a.currentBid||a.startPrice||0);
         if(isNew){
           clearInterval(_svAucTimerIv);_svAucTimerIv=setInterval(_svAucTimerTick,1000);_svAucTimerTick();
           _svCtaBuildPresets(a.currentBid||a.startPrice||0);
           const inp=document.getElementById('sv-cta-input');if(inp)inp.value='';
           svCtaUpdateBtn();
-          // Highlight selling product in slide
           if(a.prodId)_svMarkSlideSelling(a.prodId);
-          // Update idle text with product name
           const idleTxt=document.querySelector('.sv-cta-idle-txt');
           if(idleTxt)idleTxt.textContent='Subasta: '+(a.prodName||'Producto');
         }
@@ -7302,8 +7161,8 @@ function _startViewerAucPoll(channelName){
   }
   _svCtaSetState('idle');
   checkAuc();setTimeout(checkFixed,2000);
-  _svAucPollIv=setInterval(checkAuc,3000);
-  _svFixedPollIv=setInterval(checkFixed,4000);
+  _svAucPollIv=setInterval(checkAuc,1500);
+  _svFixedPollIv=setInterval(checkFixed,3000);
 }
 function _stopViewerAucPoll(){
   clearInterval(_svAucPollIv);clearInterval(_svFixedPollIv);clearInterval(_svAucTimerIv);
