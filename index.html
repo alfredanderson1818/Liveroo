@@ -5489,7 +5489,7 @@ let isMuted=false;
 
 // ═══ AGORA RTC ═══
 const AGORA_APP_ID='2cd32d3fd3554834954d580d57c870b9';
-const AGORA_TOKEN='007eJxTYLjrl/jsv7jVsobTq3N90l7vmDJNi+GctibnmbN5a44tOrhGgcEoOcXYKMU4LcXY1NTEwtjE0tTEwtTUIMXUPNnC3CDJkuHy3cyGQEYGPwtTRkYGCATxWRgyk+MNGBgApYwfgw=='; // Temp token — expira en 24h
+const AGORA_TOKEN='007eJxTYLD9sLxLtmbqMTHhi6wKO+4LNU0V+NzySGJVmIX4bTGByv0KDEbJKcZGKcZpKcampiYWxiaWpiYpphYGKabmyRbmBkmWt67czWwIZGRYy1nGysgAgSA+C0NmcrwBAwMA4mUd5g=='; // Temp token — expira en 24h
 let agoraClient=null, agoraJoined=false;
 let agoraLocalVideo=null, agoraLocalAudio=null;
 
@@ -5639,8 +5639,9 @@ async function joinAsHost(channelName){
     const msg=(e.message||e.code||'').toString();
     if(msg.includes('NOT_SUPPORTED')||msg.includes('MEDIA_NOT_SUPPORT')||msg.includes('PERMISSION')){
       toast('⚠️ Sin acceso a cámara/micrófono — verifica permisos del navegador');
-    } else if(msg.includes('CAN_NOT_GET_GATEWAY')||msg.includes('INVALID_OPERATION')||msg.includes('UID_CONFLICT')){
-      toast('⚠️ Error Agora: App Certificate activado. Ve a console.agora.io → tu proyecto → desactiva el App Certificate (modo no seguro para pruebas)');
+    } else if(msg.includes('CAN_NOT_GET_GATEWAY')){
+      toast('⚠️ Token inválido o expirado — genera uno nuevo en console.agora.io');
+    } else if(msg.includes('INVALID_OPERATION')||msg.includes('UID_CONFLICT')){
     } else {
       toast('⚠️ Error al iniciar live: '+msg.slice(0,80));
     }
