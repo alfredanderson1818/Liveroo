@@ -1,20 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <clipPath id="cp"><rect width="512" height="512" rx="112"/></clipPath>
-  </defs>
-
-  <rect width="512" height="512" fill="#111111" rx="112"/>
-
-  <g clip-path="url(#cp)">
-    <!-- Bold white "L" — centered -->
-    <rect x="96" y="90" width="118" height="330" rx="24" fill="white"/>
-    <rect x="96" y="308" width="320" height="112" rx="24" fill="white"/>
-
-    <!-- Red EN VIVO badge overlapping bottom-right of L -->
-    <rect x="228" y="358" width="224" height="66" rx="18" fill="#D42B2B"/>
-    <circle cx="254" cy="391" r="10" fill="white"/>
-    <text x="368" y="403" text-anchor="middle"
-      font-family="Poppins, Arial, sans-serif"
-      font-weight="900" font-size="28" letter-spacing="2" fill="white">EN VIVO</text>
-  </g>
+  <rect width="512" height="512" rx="112" fill="#111111"/>
+  <rect x="118" y="118" width="22" height="276" rx="11" fill="#FFD000"/>
+  <rect x="158" y="118" width="64" height="276" rx="14" fill="white"/>
+  <rect x="158" y="320" width="218" height="74" rx="14" fill="white"/>
+  <!-- small solid red dot, bottom right corner, no ring -->
+  <circle cx="408" cy="388" r="18" fill="#FF2D2D"/>
 </svg>
