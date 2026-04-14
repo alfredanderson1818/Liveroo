@@ -6193,7 +6193,7 @@ function startBroadcast(){
       isLive:true, viewerCount:1, startedAt:Date.now(),
       sellerAvatar:window.fbUser?.avatar||'',
       whatsapp:window.fbUser?.whatsapp||''
-    });
+    }).then(()=>{ setTimeout(_refreshLiveStrip,500); });
     fsSet('stores',uid,{isLive:true,channelName});
     // Increment total stream count
     fsGet('stores',uid).then(s=>{
