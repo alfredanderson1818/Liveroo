@@ -1718,7 +1718,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       <!-- Gradient -->
       <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,transparent 28%,transparent 52%,rgba(0,0,0,.85) 100%);pointer-events:none"></div>
       <!-- Back -->
-      <button class="bk" onclick="back()" style="position:absolute;top:max(var(--sat),14px);left:14px;z-index:6">←</button>
+      <button class="bk" onclick="goBack()" style="position:absolute;top:max(var(--sat),14px);left:14px;z-index:6">←</button>
       <!-- Like -->
       <button id="sv-like" onclick="likeStream()" style="position:absolute;top:max(var(--sat),14px);right:14px;z-index:6;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;-webkit-tap-highlight-color:transparent">
         <span id="sv-like-emoji" style="font-size:26px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))">🤍</span>
@@ -1727,7 +1727,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       <!-- Bids feed overlay (left side, like screenshot) -->
       <div id="sv-bids-overlay" style="position:absolute;left:12px;bottom:62px;z-index:4;display:flex;flex-direction:column;gap:4px;max-width:52%;pointer-events:none"></div>
       <!-- Chat overlay above bids -->
-      <div class="chat-overlay" id="chat-msgs"></div>
+      <div class="chat-overlay" id="chat-msgs" style="padding-bottom:8px;bottom:68px"></div>
       <!-- Bottom info bar -->
       <div style="position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 14px 12px;display:flex;align-items:center;gap:10px">
         <div style="display:flex;align-items:center;gap:5px;background:var(--rd);border-radius:20px;padding:4px 10px;flex-shrink:0">
@@ -2039,72 +2039,83 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 </div>
 
 <!-- SELLER PROFILE — NUEVO -->
-<div id="s-seller" class="scr">
+<div id="s-seller" class="scr" style="background:var(--dk)">
 
-  <!-- COVER — inner wrapper maneja el overflow, sp-cover no lo hace -->
-  <div class="sp-cover" id="sp-cover">
-    <div class="sp-cover-inner">
-      <div class="sp-cover-bg" id="sp-cover-bg"></div>
-      <div class="sp-cover-mesh"></div>
-      <img id="sp-hero-img" src="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.45;display:none" onerror="this.style.display='none'">
-      <div class="sp-cover-grad"></div>
-    </div>
-    <button class="sp-cover-back" onclick="goBack()">←</button>
-    <button class="sp-cover-share" onclick="spShare()">↗</button>
-    <div class="sp-live-cover-badge" id="sp-live-cover-badge">
-      <div style="width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse-live 1s infinite"></div>
-      EN VIVO AHORA
-    </div>
+  <!-- ── COVER ── -->
+  <div style="position:relative;height:200px;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,#0d0d1a,#1a1200,#0a0a0f)">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 70% 20%,rgba(255,208,0,.18),transparent),radial-gradient(ellipse 60% 60% at 15% 80%,rgba(255,59,59,.1),transparent)"></div>
+    <img id="sp-hero-img" src="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;display:none" onerror="this.style.display='none'">
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1) 0%,var(--dk) 100%)"></div>
+    <!-- Back -->
+    <button onclick="goBack()" style="position:absolute;top:max(var(--sat),16px);left:14px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5">←</button>
+    <!-- Share -->
+    <button onclick="spShare()" style="position:absolute;top:max(var(--sat),16px);right:14px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5">↗</button>
+    <!-- hidden compat -->
+    <div id="sp-live-cover-badge" style="display:none"></div>
   </div>
 
-  <!-- SCROLLABLE BODY -->
+  <!-- ── SCROLLABLE BODY ── -->
   <div class="sb" style="padding-bottom:calc(90px + var(--sab))">
 
-    <!-- TOP ROW: avatar + action buttons -->
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;padding:0 16px;margin-top:-44px;margin-bottom:14px;position:relative;z-index:2">
-      <div class="sp-av-wrap">
-        <div class="sp-avatar" id="sp-av-emoji">🛍️</div>
-        <div class="sp-live-ring" id="sp-live-ring"></div>
+    <!-- Avatar row: overlaps cover -->
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;padding:0 16px;margin-top:-50px;margin-bottom:16px;position:relative;z-index:2">
+      <!-- Avatar -->
+      <div style="position:relative">
+        <div id="sp-av-emoji" style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--y),#e6a800);display:flex;align-items:center;justify-content:center;font-size:42px;border:3.5px solid var(--dk);box-shadow:0 6px 24px rgba(0,0,0,.6);overflow:hidden"></div>
+        <div id="sp-live-ring" style="display:none;position:absolute;inset:-5px;border-radius:50%;border:2.5px solid var(--rd);animation:pulse2 1.8s infinite;pointer-events:none"></div>
       </div>
-      <div style="display:flex;gap:8px;padding-bottom:3px" id="sp-top-actions">
+      <!-- Action buttons -->
+      <div style="display:flex;gap:8px;align-items:center;padding-bottom:4px">
         <button class="sp-follow-btn" id="sp-fol-btn" onclick="spToggleFollow()">+ Seguir</button>
         <div class="sp-wa-btn" id="sp-wa-btn" onclick="spWhatsApp()" style="display:none">💬</div>
         <button class="sp-live-btn" id="sp-live-btn" onclick="spOpenStream()">🔴 Ver Live</button>
       </div>
     </div>
 
-    <!-- NAME + INFO -->
-    <div style="padding:0 16px 4px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <!-- Name + info -->
+    <div style="padding:0 16px 12px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
         <div class="sp-name" id="sp-name">Tienda</div>
-        <div class="sp-verified" id="sp-verified-badge" style="display:none">✅ Verificado</div>
+        <div id="sp-verified-badge" class="sp-verified" style="display:none">✅ Verificado</div>
       </div>
-      <div class="sp-handle" id="sp-handle">@tienda</div>
-      <div class="sp-location" id="sp-location">📍 Venezuela 🇻🇪</div>
+      <div style="font-size:12px;color:var(--mu);margin-bottom:3px" id="sp-handle">@tienda</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.35)" id="sp-location">📍 Venezuela 🇻🇪</div>
     </div>
 
-    <!-- STATS -->
-    <div class="sp-stats">
-      <div class="sp-stat"><div class="sp-stat-n" id="sp-stat-v">0</div><div class="sp-stat-l">Viendo</div></div>
-      <div class="sp-stat"><div class="sp-stat-n" id="sp-stat-s">0</div><div class="sp-stat-l">Ventas</div></div>
-      <div class="sp-stat"><div class="sp-stat-n" id="sp-stat-f">0</div><div class="sp-stat-l">Seguidores</div></div>
-      <div class="sp-stat"><div class="sp-stat-n" id="sp-stat-r">—</div><div class="sp-stat-l">Rating</div></div>
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);margin:0 16px 12px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)">
+      <div style="padding:12px 4px;text-align:center;border-right:1px solid rgba(255,255,255,.07)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);line-height:1" id="sp-stat-v">0</div>
+        <div style="font-size:9px;color:var(--mu);font-weight:700;margin-top:2px">Viendo</div>
+      </div>
+      <div style="padding:12px 4px;text-align:center;border-right:1px solid rgba(255,255,255,.07)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);line-height:1" id="sp-stat-s">0</div>
+        <div style="font-size:9px;color:var(--mu);font-weight:700;margin-top:2px">Ventas</div>
+      </div>
+      <div style="padding:12px 4px;text-align:center;border-right:1px solid rgba(255,255,255,.07)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);line-height:1" id="sp-stat-f">0</div>
+        <div style="font-size:9px;color:var(--mu);font-weight:700;margin-top:2px">Seguidores</div>
+      </div>
+      <div style="padding:12px 4px;text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);line-height:1" id="sp-stat-r">—</div>
+        <div style="font-size:9px;color:var(--mu);font-weight:700;margin-top:2px">Rating</div>
+      </div>
     </div>
 
-    <!-- BIO -->
-    <div class="sp-bio" id="sp-bio">Vendedor en Liveroo 🛍️</div>
+    <!-- Bio -->
+    <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin:0 16px 16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden" id="sp-bio"></div>
 
-    <!-- MODE TABS — slim, clean -->
-    <div class="sp-mode-bar">
-      <div class="sp-mode-tab sp-mode-tab-tienda active" id="sp-mode-tienda" onclick="spMode('tienda')">
-        🏷️ Tienda <span class="sp-mode-badge" id="sp-count-tienda">0</span>
+    <!-- Mode tabs -->
+    <div style="display:flex;margin:0 16px 14px;background:rgba(255,255,255,.05);border-radius:12px;padding:3px;border:1px solid rgba(255,255,255,.07)">
+      <div id="sp-mode-tienda" class="sp-mode-tab sp-mode-tab-tienda active" onclick="spMode('tienda')" style="flex:1;padding:9px 10px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:900;color:var(--mu);transition:all .18s">
+        🏷️ Tienda <span style="font-size:10px;font-weight:900;padding:1px 6px;border-radius:20px;background:rgba(255,208,0,.18);color:var(--y)" id="sp-count-tienda">0</span>
       </div>
-      <div class="sp-mode-tab sp-mode-tab-subasta" id="sp-mode-subasta" onclick="spMode('subasta')">
-        🔨 Subastas <span class="sp-mode-badge" id="sp-count-subasta">0</span>
+      <div id="sp-mode-subasta" class="sp-mode-tab sp-mode-tab-subasta" onclick="spMode('subasta')" style="flex:1;padding:9px 10px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:900;color:var(--mu);transition:all .18s">
+        🔨 Subastas <span style="font-size:10px;font-weight:900;padding:1px 6px;border-radius:20px;background:rgba(255,59,59,.18);color:var(--rd)" id="sp-count-subasta">0</span>
       </div>
     </div>
 
-    <!-- TIENDA PANEL -->
+    <!-- Tienda panel -->
     <div class="sp-panel on" id="sp-panel-tienda">
       <div class="sp2-grid" id="sp2-grid">
         <div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--mu)">
@@ -2115,7 +2126,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       </div>
     </div>
 
-    <!-- SUBASTAS PANEL -->
+    <!-- Subastas panel -->
     <div class="sp-panel" id="sp-panel-subasta">
       <div class="spa-list" id="spa-list">
         <div style="text-align:center;padding:48px 24px;color:var(--mu)">
@@ -2126,21 +2137,13 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       </div>
     </div>
 
-    <!-- RESEÑAS — compact, max 2 -->
-    <div style="padding:0 16px 16px;margin-top:4px" id="sp-reviews-block">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div style="font-size:13px;font-weight:900;color:rgba(255,255,255,.7)">⭐ Reseñas</div>
-        <div style="font-size:11px;color:var(--mu)" id="sp-reviews-count"></div>
-      </div>
-      <div id="sp-revs-list"></div>
-    </div>
-
   </div><!-- /sb -->
 
   <!-- FAB: añadir item (solo mi tienda) -->
   <button class="sp-fab" id="sp-fab" onclick="spOpenAddSheet()">＋</button>
 
 </div><!-- /s-seller -->
+
 
 <!-- ADD ITEM SHEET -->
 <div class="sp-add-sheet" id="sp-add-sheet" onclick="if(event.target===this)spCloseAddSheet()">
@@ -4337,22 +4340,23 @@ function _spRenderProducts(prods){
   }
   grid.innerHTML = prods.map(p=>{
     const sold = (p.qty||1) <= 0;
+    const price = p.price||p.p||0;
+    const name = (p.name||p.n||'Artículo').replace(/'/g,"\'");
     const imgHtml = p.img
-      ? `<img src="${p.img}" style="width:100%;height:140px;object-fit:cover;display:block" onerror="this.parentNode.innerHTML='<div style=width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:44px;background:var(--dk4)>📦</div>'">`
-      : `<div style="width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:44px;background:var(--dk4)">${p.emoji||'📦'}</div>`;
+      ? `<img src="${p.img}" style="width:100%;height:160px;object-fit:cover;display:block" onerror="this.style.display='none'">`
+      : `<div style="width:100%;height:160px;display:flex;align-items:center;justify-content:center;font-size:52px;background:var(--dk4)">${p.emoji||'📦'}</div>`;
     return `
-    <div class="sp2-card">
-      <div class="sp2-img" style="position:relative;overflow:hidden">
+    <div style="border-radius:16px;overflow:hidden;background:var(--dk3);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:transform .18s" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
+      <div style="position:relative;overflow:hidden">
         ${imgHtml}
-        <div class="sp2-badge ${sold?'sp2-badge-sold':'sp2-badge-fixed'}" style="position:absolute;top:8px;left:8px">${sold?'AGOTADO':'PRECIO FIJO'}</div>
+        <div style="position:absolute;top:8px;left:8px;background:${sold?'rgba(255,255,255,.12)':'var(--rd)'};color:#fff;font-size:9px;font-weight:900;padding:3px 8px;border-radius:6px;letter-spacing:.5px">${sold?'AGOTADO':'PRECIO FIJO'}</div>
       </div>
-      <div class="sp2-body">
-        <div class="sp2-name">${p.name||p.n||'Artículo'}</div>
-        <div class="sp2-price">$${p.price||p.p||0}</div>
-        ${p.desc||p.description?`<div style="font-size:10px;color:var(--mu);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.desc||p.description}</div>`:''}
+      <div style="padding:10px 12px 12px">
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name||p.n||'Artículo'}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);line-height:1;margin-bottom:10px">$${price}</div>
         ${!sold
-          ? `<button class="sp2-buy-btn" onclick="spBuyProduct('${p._id||''}',${p.price||p.p||0},'${(p.name||p.n||'').replace(/'/g,"\\'")}',${p.qty||1})">Comprar $${p.price||p.p||0} IC 🛒</button>`
-          : `<button class="sp2-buy-btn" disabled>Agotado</button>`
+          ? `<button onclick="spBuyProduct('${p._id||''}',${price},'${name}',${p.qty||1})" style="width:100%;background:var(--y);color:var(--dk);border:none;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent">Comprar $${price} IC 🛒</button>`
+          : `<button disabled style="width:100%;background:rgba(255,255,255,.07);color:var(--mu);border:none;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:default">Agotado</button>`
         }
       </div>
     </div>`;
@@ -5455,7 +5459,7 @@ async function leaveAgoraChannel(){
     }
     agoraClient=null;
   }catch(e){console.warn('Agora leave:',e);}
-  const sv=document.getElementById('sv-agora-video');
+  const sv=document.getElementById('sv-agora-container');
   if(sv){sv.style.display='none';sv.innerHTML='';}
   const bc=document.getElementById('bc-agora-video');
   if(bc){bc.style.display='none';bc.innerHTML='';}
@@ -5473,7 +5477,7 @@ async function joinAsAudience(channelName){
     agoraClient.on('user-published', async(user,mediaType)=>{
       await agoraClient.subscribe(user,mediaType);
       if(mediaType==='video'){
-        const container=document.getElementById('sv-agora-video');
+        const container=document.getElementById('sv-agora-container');
         if(container){container.style.display='block';user.videoTrack.play(container);}
         const img=document.getElementById('sv-img');
         if(img)img.style.opacity='0';
@@ -5482,7 +5486,7 @@ async function joinAsAudience(channelName){
     });
     agoraClient.on('user-unpublished',(user,mediaType)=>{
       if(mediaType==='video'){
-        const container=document.getElementById('sv-agora-video');
+        const container=document.getElementById('sv-agora-container');
         if(container){container.style.display='none';container.innerHTML='';}
         const img=document.getElementById('sv-img');
         if(img)img.style.opacity='1';
@@ -7013,7 +7017,6 @@ async function svCtaPlaceBid(){
   const currentBidEl=document.getElementById('sv-cta-bid');
   const currentBidVal=parseFloat((currentBidEl?.textContent||'0').replace('$',''))||0;
   if(v<=currentBidVal){toast(`⚠️ Oferta mínima: $${currentBidVal+1}`);return;}
-  if((walletBalance||0)<v){toast('❌ Saldo insuficiente');openDeposit();return;}
   if(btn){btn.textContent='Enviando…';btn.disabled=true;}
   // Demo/mock auction — handle locally without Firestore
   if(_svCurrentAucId==='demo'){
@@ -7031,6 +7034,7 @@ async function svCtaPlaceBid(){
     return;
   }
   // Real Firestore auction
+  if((walletBalance||0)<v){toast('❌ Saldo insuficiente — recarga InstaCreditos');openDeposit();if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
   try{
     const auc=await fsGet('auctions',_svCurrentAucId);
     if(!auc||auc.status!=='active'){toast('❌ La subasta terminó');_svCtaSetState('idle');if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
@@ -7224,6 +7228,7 @@ function _svStartMockAuction(prod){
   _svCurrentAucEndsAt=Date.now()+120000; // 2 min countdown
   // Set initial state
   const bidEl=document.getElementById('sv-cta-bid');if(bidEl)bidEl.textContent='$'+currentBid;
+  const _wEl=document.getElementById('sv-cta-wallet');if(_wEl)_wEl.textContent=(walletBalance||0)+' IC';
   _svCtaBuildPresets(currentBid);
   _svCtaSetState('auc');
   _svAucTimerIv=setInterval(_svAucTimerTick,1000);_svAucTimerTick();
