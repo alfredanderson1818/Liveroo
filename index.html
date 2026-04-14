@@ -16,7 +16,7 @@
 <meta name="description" content="Marketplace de live shopping venezolano — compra y subasta en tiempo real">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js" defer></script>
 <script>
 // ═══ FIREBASE REST API — sin SDK externo ═══
 const FB={
@@ -114,7 +114,11 @@ async function fsSet(col,docId,data){
 }
 async function fsGet(col,docId){
   try{
-    const r=await fetch(`${FB.dbUrl}/${col}/${docId}`,{headers:fsHeaders()});
+    let r=await fetch(`${FB.dbUrl}/${col}/${docId}`,{headers:fsHeaders()});
+    if(r.status===401||r.status===403){
+      await _refreshToken();
+      r=await fetch(`${FB.dbUrl}/${col}/${docId}`,{headers:fsHeaders()});
+    }
     if(!r.ok)return null;
     return fromFS(await r.json());
   }catch(e){return null;}
@@ -1715,8 +1719,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     <div style="position:absolute;inset:0;z-index:3;background:linear-gradient(to bottom,rgba(0,0,0,.72) 0%,transparent 22%,transparent 52%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.94) 100%);pointer-events:none"></div>
   </div>
 
-  <!-- DEBUG STATUS — se puede eliminar una vez funcionando -->
-  <div id="sv-debug" style="position:absolute;top:0;left:0;right:0;z-index:99;background:rgba(0,0,0,.85);padding:8px 12px;font-family:monospace;font-size:11px;color:#0f0;display:flex;flex-direction:column;gap:3px;pointer-events:none"></div>
+  <!-- DEBUG STATUS — oculto en producción -->
+  <div id="sv-debug" style="display:none;position:absolute;top:0;left:0;right:0;z-index:99;background:rgba(0,0,0,.85);padding:8px 12px;font-family:monospace;font-size:11px;color:#0f0;flex-direction:column;gap:3px;pointer-events:none"></div>
 
   <!-- ── TOP BAR ── -->
   <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:9px;padding:max(var(--sat),14px) 12px 10px">
@@ -1787,8 +1791,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       </button>
     </div>
 
-    <!-- ── FIXED SALE PANEL ── -->
-    <div id="sv-cta-fixed" style="display:none;border-top:1px solid rgba(255,255,255,.07);padding:10px 12px 4px">
+    <!-- ── FIXED SALE PANEL — DESACTIVADO ── -->
+    <div id="sv-cta-fixed" style="display:none!important;border-top:1px solid rgba(255,255,255,.07);padding:10px 12px 4px">
       <div style="font-size:10px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">🏷️ Venta directa activa</div>
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
         <img id="sv-cta-fthumb" src="" onerror="this.style.display='none'" style="width:60px;height:60px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--dk3)">
@@ -2171,11 +2175,11 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 <div class="sp-add-sheet" id="sp-add-sheet" onclick="if(event.target===this)spCloseAddSheet()">
   <div class="sp-add-inner">
     <div class="sp-add-handle"></div>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.5px;margin-bottom:4px">Publicar en mi tienda</div>
-    <div style="font-size:12px;color:var(--mu);margin-bottom:20px">Elige cómo quieres vender</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.5px;margin-bottom:4px">Iniciar Subasta en Vivo</div>
+    <div style="font-size:12px;color:var(--mu);margin-bottom:20px">El mejor ofertante gana al cierre del tiempo</div>
 
-    <!-- Type selector -->
-    <div class="sp-add-type-row" id="sp-add-type-row">
+    <!-- Type selector — solo subasta -->
+    <div class="sp-add-type-row" id="sp-add-type-row" style="display:none">
       <div class="sp-add-type sp-add-type-sell sel" id="sp-add-t-sell" onclick="spAddType('sell')">
         <div style="font-size:24px;margin-bottom:6px">🏷️</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--y)">Precio Fijo</div>
@@ -2642,8 +2646,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     <!-- Stats panel -->
     <div id="dpanel-stats" style="display:none;padding:14px 16px;display:none">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="dash-stats-grid"></div>
-      <!-- Seed button — solo para desarrollo -->
-      <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)">
+      <!-- Seed button — solo admin -->
+      <div id="dev-tools-block" style="display:none;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)">
         <div style="font-size:10px;color:var(--mu);margin-bottom:8px;text-align:center;font-weight:700;letter-spacing:.5px;text-transform:uppercase">Herramientas de desarrollo</div>
         <button onclick="seedFirestore()" style="width:100%;padding:12px;background:rgba(255,208,0,.08);border:1.5px dashed rgba(255,208,0,.3);border-radius:12px;color:var(--y);font-size:12px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:10px">🌱 Cargar data de prueba en Firestore</button>
         <div style="font-size:10px;color:var(--mu);margin-bottom:8px;text-align:center;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:14px">📣 Enviar notificación</div>
@@ -2961,11 +2965,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rd)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6l4-4 2.5 2.5-5 5 2 2 5-5 7 7z"/><path d="M14 14l6 6"/><path d="M2 22l5-5"/></svg>
         <div style="font-size:8px;font-weight:900;color:var(--rd);letter-spacing:.3px">SUBASTA</div>
       </div>
-      <!-- Fixed price sell button -->
-      <div id="bc-sell-btn" onclick="bcShowSellPanel()" style="width:52px;flex-shrink:0;background:rgba(255,208,0,.12);border:1.5px solid rgba(255,208,0,.35);border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:all .15s;padding:8px 0">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--y)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-        <div style="font-size:8px;font-weight:900;color:var(--y);letter-spacing:.3px">VENTA</div>
-      </div>
+
     </div>
     <!-- Chat -->
     <div class="bc-msgs" id="bc-msgs"></div>
@@ -3007,12 +3007,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 
       <!-- Duration selector -->
       <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">Duración</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px">
-        <div class="bc-dur-opt on" data-secs="10" onclick="bcSelDur(this,10)">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px">10</div>
-          <div style="font-size:9px;font-weight:800;color:inherit;opacity:.7;margin-top:1px">SEG</div>
-        </div>
-        <div class="bc-dur-opt" data-secs="30" onclick="bcSelDur(this,30)">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px">
+        <div class="bc-dur-opt on" data-secs="30" onclick="bcSelDur(this,30)">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:22px">30</div>
           <div style="font-size:9px;font-weight:800;color:inherit;opacity:.7;margin-top:1px">SEG</div>
         </div>
@@ -3034,8 +3030,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     </div>
   </div>
 
-  <!-- ── FIXED PRICE SELL PANEL (slides up) ── -->
-  <div id="bc-sell-panel" style="display:none;position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);align-items:flex-end">
+  <!-- ── FIXED PRICE SELL PANEL (slides up) — DESACTIVADO ── -->
+  <div id="bc-sell-panel" style="display:none!important;position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);align-items:flex-end">
     <div style="width:100%;background:var(--dk2);border-radius:24px 24px 0 0;padding:20px 20px 40px;border-top:1px solid rgba(255,255,255,.08)">
       <div style="width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 18px"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
@@ -3793,7 +3789,7 @@ function goBack(){if(typeof stopAuction==="function")stopAuction();
     const leaving=hist[hist.length-1];
     hist.pop();stopChat();
     // Leave Agora if we were watching a stream
-    if(leaving==='stream'){leaveAgoraChannel();_stopViewerAucPoll();clearInterval(_mockAucIv);_mockAucIv=null;}
+    if(leaving==='stream'){leaveAgoraChannel();if(typeof _stopViewerAucPoll==='function')_stopViewerAucPoll();_stopFixedSalePoll();clearInterval(_mockAucIv);_mockAucIv=null;}
     const prev=hist[hist.length-1];
     go(prev,false);
     // Si volvemos a prod y el producto es live, reanudar simulador
@@ -4137,15 +4133,21 @@ async function _updateWAButton(cartSnap, orderNum){
 
 async function placeOrder(){
   const btn=document.querySelector('.place-btn');
-  if(btn){btn.disabled=true;btn.textContent='⏳ Guardando...';}
   const sub=cart.reduce((s,i)=>s+(i.overridePrice||PRODS[i.pi].p)*i.q,0);
   const tot=sub+3;
+  // Verificar saldo antes de proceder
+  if(walletBalance<tot){
+    toast('❌ Saldo insuficiente — necesitas $'+tot+' cr');
+    openDeposit();
+    return;
+  }
+  if(btn){btn.disabled=true;btn.textContent='⏳ Guardando...';}
   const num='IC-'+~~(Math.random()*90000+10000);
   const now=new Date();
   const dateStr=now.toLocaleDateString('es-VE',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
   const buyerName=window.fbUser?.displayName||window.fbUser?.name||window.fbUser?.username||'Comprador';
   const buyerPhone=window.fbUser?.phone||window.fbUser?.email||'';
-  const buyerCity=window.fbUser?.city||window.fbUser?.cedula?'Venezuela':'';
+  const buyerCity=window.fbUser?.city||'Venezuela';
   const buyerId=window.fbUser?.uid||'guest';
   const saves=cart.map(item=>{
     const p=PRODS[item.pi];
@@ -4183,6 +4185,14 @@ async function placeOrder(){
     if(btn){btn.disabled=false;btn.textContent='✅ Confirmar Pedido';}
     toast('❌ Error al guardar, intenta de nuevo');
     return;
+  }
+  // Descontar wallet en Firestore
+  walletBalance=Math.max(0,walletBalance-tot);
+  if(window.fbUser?.uid){
+    fsSet('users',window.fbUser.uid,{wallet:walletBalance}).catch(()=>{});
+    updateWalletDisplay();
+    const wpb=document.getElementById('wallet-prof-badge');
+    if(wpb)wpb.textContent=walletBalance+' cr';
   }
   document.getElementById('ok-order').innerHTML=`
     <div class="ok-row"><span class="ok-row-l">N° Pedido</span><span style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px">${num}</span></div>
@@ -4617,7 +4627,7 @@ async function spPlaceBid(aucId, startPrice){
 function spOpenAddSheet(){
   if(!_spIsOwnStore){ toast('Solo puedes editar tu propia tienda'); return; }
   document.getElementById('sp-add-sheet').classList.add('on');
-  spAddType('sell');
+  spAddType('auction'); // Solo subastas
   document.getElementById('sp-add-name').value='';
   document.getElementById('sp-add-desc').value='';
   document.getElementById('sp-add-price').value='';
@@ -4629,11 +4639,16 @@ function spCloseAddSheet(){
 }
 function spAddType(type){
   _spAddSaleType = type;
-  document.getElementById('sp-add-t-sell').classList.toggle('sel', type==='sell');
-  document.getElementById('sp-add-t-auc').classList.toggle('sel', type==='auction');
-  document.getElementById('sp-add-dur-block').style.display = type==='auction'?'block':'none';
-  document.getElementById('sp-add-qty-block').style.display = type==='sell'?'block':'none';
-  const lbl=document.getElementById('sp-add-price-lbl');if(lbl)lbl.textContent=type==='sell'?'Precio ($)':'Precio base ($)';
+  const tSell=document.getElementById('sp-add-t-sell');
+  const tAuc=document.getElementById('sp-add-t-auc');
+  if(tSell)tSell.classList.toggle('sel', type==='sell');
+  if(tAuc)tAuc.classList.toggle('sel', type==='auction');
+  const durBlock=document.getElementById('sp-add-dur-block');
+  const qtyBlock=document.getElementById('sp-add-qty-block');
+  if(durBlock)durBlock.style.display=type==='auction'?'block':'none';
+  if(qtyBlock)qtyBlock.style.display=type==='sell'?'block':'none';
+  const lbl=document.getElementById('sp-add-price-lbl');
+  if(lbl)lbl.textContent=type==='sell'?'Precio ($)':'Precio base ($)';
   const btn=document.getElementById('sp-add-submit');
   if(btn){btn.textContent=type==='sell'?'🏷️ Publicar en mi tienda':'🔨 Crear Subasta';btn.className='sp-add-submit'+(type==='auction'?' rd':'');}
 }
@@ -4896,8 +4911,8 @@ async function openAuction(prodIdx){
   } else {
     // Crear nueva subasta
     aucCurrentBid=basePrice;
-    // Duración varía por producto: 10s / 30s / 60s / 120s
-    const _durations=[10,30,30,60,60,60,120,120];
+    // Duración varía por producto: 30s / 60s / 120s
+    const _durations=[30,60,60,120,120,60,120,30];
     const _dur=_durations[aucProdIdx%_durations.length]*1000;
     aucEndsAt=now+_dur;
     aucBids=[
@@ -4963,7 +4978,7 @@ async function aucPollFirestore(){
   }catch(e){}
 }
 
-function aucTick(){
+async function aucTick(){
   aucSecs=Math.max(0,Math.floor((aucEndsAt-Date.now())/1000));
   const m=~~(aucSecs/60);const s=String(aucSecs%60).padStart(2,'0');
   const el=document.getElementById('pd-auction-timer');
@@ -4973,11 +4988,27 @@ function aucTick(){
   }
   if(aucSecs===0){
     clearInterval(aucTimerIv);clearInterval(aucPollIv);
+    // Verificar en Firestore que realmente ganamos (anti race-condition)
+    try{
+      const freshAuc=await fsGet('auctions',aucId);
+      if(freshAuc&&freshAuc.currentWinner&&freshAuc.currentWinner!==aucMyUser){
+        // Alguien más tiene la oferta más alta en Firestore
+        _showAucResult(false,freshAuc.currentWinner,freshAuc.currentBid||aucCurrentBid);
+        fsSet('auctions',aucId,{status:'ended'}).catch(()=>{});
+        return;
+      }
+    }catch(e){}
     // Marcar subasta como terminada en Firestore
     fsSet('auctions',aucId,{status:'ended'}).catch(()=>{});
     const iWon=aucBids.length>0&&aucBids[0].me;
     const winner=aucBids.length>0?aucBids[0].user:'nadie';
     if(iWon){
+      // Verificar saldo suficiente antes de confirmar victoria
+      if(walletBalance < aucCurrentBid){
+        toast('❌ Saldo insuficiente para cubrir la oferta ganadora');
+        _showAucResult(false,'—',aucCurrentBid);
+        return;
+      }
       const p=PRODS[aucProdIdx];
       const sz=p.sz[0]||'Único';
       const num='IC-'+~~(Math.random()*90000+10000);
@@ -4986,6 +5017,14 @@ function aucTick(){
       const buyerCity=window.fbUser?.city||'';
       const buyerId=window.fbUser?.uid||'guest';
       const orderId=fsId();
+      // Descontar wallet REAL en Firestore
+      walletBalance=Math.max(0,walletBalance-aucCurrentBid);
+      if(window.fbUser?.uid){
+        fsSet('users',buyerId,{wallet:walletBalance}).catch(()=>{});
+        updateWalletDisplay();
+        const wpb=document.getElementById('wallet-prof-badge');
+        if(wpb)wpb.textContent=walletBalance+' cr';
+      }
       const orderData={
         orderId,num,buyerId,buyerName,buyerPhone,buyerCity,
         sellerId:String(p.s),sellerName:SELLERS[p.s].n,
@@ -4998,13 +5037,13 @@ function aucTick(){
       updateCart();
       DASH_ORDERS.unshift({...orderData,buyer:buyerName,_id:orderId});
       fsSet('orders',orderId,orderData).catch(()=>{});
-      // Save wallet debit transaction
+      // Guardar transacción de débito en wallet
       if(window.fbUser?.uid){
         fsAdd('wallet_txs',{
           uid:buyerId,type:'out',
           description:'Subasta ganada: '+p.n,
           amount:aucCurrentBid,
-          balanceAfter:walletBalance-aucCurrentBid,
+          balanceAfter:walletBalance,
           createdAt:Date.now()
         }).catch(()=>{});
       }
@@ -5086,8 +5125,13 @@ async function placeBid(){
   if(requireAccount('🔨','Para ofertar necesitas cuenta','Crea tu cuenta y participa en subastas en vivo.'))return;
   const v=parseFloat(document.getElementById('auc-bid-input').value)||0;
   if(v<=aucCurrentBid){toast(`⚠️ Mínimo $${aucCurrentBid+1}`);return;}
-  if(walletBalance<v){toast('⚠️ Recarga tu wallet primero');return;}
   if(aucSecs<=0){toast('⚠️ La subasta ya cerró');return;}
+  // Refrescar saldo real de Firestore antes de validar
+  if(window.fbUser?.uid){
+    const fresh=await fsGet('users',window.fbUser.uid);
+    if(fresh&&fresh.wallet!==undefined){walletBalance=Number(fresh.wallet)||0;updateWalletDisplay();}
+  }
+  if(walletBalance<v){toast('⚠️ Saldo insuficiente — recarga tu wallet');openDeposit();return;}
 
   // Optimistic local update
   aucCurrentBid=v;
@@ -5139,6 +5183,9 @@ const WEEK_DATA=[42,78,55,91,63,120,88];
 async function openDash(){
   go('dash');
   dashTab('orders');
+  // Mostrar herramientas de dev solo para admin
+  const devBlock=document.getElementById('dev-tools-block');
+  if(devBlock)devBlock.style.display=_isAdmin()?'block':'none';
   const uid=window.fbUser?.uid;
   if(!uid){renderDash();return;}
   const listEl=document.getElementById('dash-orders-list');
@@ -5455,7 +5502,7 @@ function regSubmit(){
   if(!name){toast('⚠️ Escribe tu nombre completo');return;}
   if(!cedula){toast('⚠️ Ingresa tu número de cédula');return;}
   if(!username){toast('⚠️ Elige un nombre de usuario');return;}
-  if(!phone||!phone.includes('@')){toast('⚠️ Ingresa un correo válido');return;}
+  if(!phone||!phone.includes('@')){toast('⚠️ Ingresa un correo electrónico válido');return;}
   if(!pass||pass.length<6){toast('⚠️ Contraseña mínimo 6 caracteres');return;}
   if(pass!==pass2){toast('⚠️ Las contraseñas no coinciden');return;}
   const emailToUse=phone;
@@ -5752,7 +5799,7 @@ function stopCamera(){
 }
 
 // ═══ BROADCAST AUCTION SYSTEM ═══
-let bcAucSecs=120, bcAucIv=null, bcAucTopBid=0, bcAucName='', bcSelDurSecs=10, bcAucEndsAt=0;
+let bcAucSecs=120, bcAucIv=null, bcAucTopBid=0, bcAucName='', bcSelDurSecs=30, bcAucEndsAt=0;
 
 function bcShowAucPanel(){
   if(bcAucIv){toast('⚠️ Ya hay una subasta activa');return;}
@@ -6029,9 +6076,14 @@ async function buyFixedItem(){
 
   const price = _currentFixedSaleDoc.price||0;
   const name  = _currentFixedSaleDoc.name||'item';
-  const bal   = walletBalance;
 
-  if(bal < price){
+  // Refrescar saldo real antes de validar
+  if(window.fbUser?.uid){
+    const fresh=await fsGet('users',window.fbUser.uid);
+    if(fresh&&fresh.wallet!==undefined){walletBalance=Number(fresh.wallet)||0;updateWalletDisplay();}
+  }
+
+  if(walletBalance < price){
     toast('❌ Saldo insuficiente — recarga tu saldo');
     openDeposit();
     return;
@@ -6200,8 +6252,6 @@ function startBroadcast(){
       fsSet('stores',uid,{totalStreams:(s?.totalStreams||0)+1});
     }).catch(()=>{});
   }
-  // Siempre subasta — abrir panel automáticamente
-  setTimeout(()=>bcShowAucPanel(),1000);
 }
 
 function updateBcProd(){
@@ -6457,16 +6507,7 @@ if(window.visualViewport){
 window.addEventListener('orientationchange',()=>setTimeout(setAppHeight,200));
 
 // ═══ NOTIFICATIONS ═══
-let notifData=[
-  {icon:'🔴',type:'live',text:'<strong>MarisolShop</strong> está en vivo ahora con ofertas de calzado',time:'Ahora',unread:true,action:()=>openStream(0)},
-  {icon:'📦',type:'order',text:'Tu pedido <strong>#IC-48291</strong> fue confirmado por el vendedor',time:'Hace 5 min',unread:true,action:()=>openTrack(0)},
-  {icon:'💰',type:'wallet',text:'<strong>+50 créditos</strong> acreditados a tu wallet. Saldo: 300 cr',time:'Hace 22 min',unread:true,action:()=>openWallet()},
-  {icon:'🏍️',type:'order',text:'Tu pedido <strong>#IC-48291</strong> está en camino — llega hoy 3-5 PM',time:'Hace 1h',unread:false,action:()=>openTrack(0)},
-  {icon:'👤',type:'follow',text:'<strong>SnkrsCulture</strong> y 3 vendedores más iniciaron un live',time:'Hace 2h',unread:false,action:()=>nav('exp')},
-  {icon:'🔨',type:'auction',text:'Superaron tu oferta en la subasta de <strong>Jordan 4 Retro</strong>',time:'Hace 3h',unread:false,action:()=>openAuction(29)},
-  {icon:'✅',type:'order',text:'Tu pedido <strong>#IC-47103</strong> fue entregado. ¡Deja una reseña!',time:'Ayer',unread:false,action:()=>toast('⭐ Deja tu reseña')},
-  {icon:'⚡',type:'live',text:'<strong>GamingSetup</strong> tiene un descuento del 30% solo por hoy',time:'Ayer',unread:false,action:()=>openStream(35)},
-];
+let notifData=[];
 
 function openNotifs(){
   renderNotifs();
@@ -7213,7 +7254,11 @@ async function svCtaPlaceBid(){
     const _bo=document.getElementById('sv-bids-overlay');if(_bo){const _myName=window.fbUser?.username||window.fbUser?.displayName||'tú';const _r=document.createElement('div');_r.innerHTML=`<div style="font-size:11px;font-weight:900;color:rgba(255,255,255,.75)">🔨 ${_myName}</div><div style="font-size:13px;font-weight:900;color:var(--y)">Ofertó $${v}</div>`;_bo.appendChild(_r);while(_bo.children.length>4)_bo.removeChild(_bo.firstChild);}
     return;
   }
-  // Real Firestore auction
+  // Real Firestore auction — refrescar saldo antes de validar
+  if(window.fbUser?.uid){
+    const fresh=await fsGet('users',window.fbUser.uid);
+    if(fresh&&fresh.wallet!==undefined){walletBalance=Number(fresh.wallet)||0;updateWalletDisplay();}
+  }
   if((walletBalance||0)<v){toast('❌ Saldo insuficiente — recarga tu saldo');openDeposit();if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
   try{
     const auc=await fsGet('auctions',_svCurrentAucId);
@@ -7920,7 +7965,7 @@ function fbLogout(){
 <!-- PWA Install Banner -->
 <div id="pwa-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;z-index:10000;background:linear-gradient(135deg,#1a1a25,#22222f);border:1.5px solid rgba(255,208,0,.35);border-radius:18px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,.5);backdrop-filter:blur(12px)">
   <div style="display:flex;align-items:center;gap:12px">
-    <div style="width:44px;height:44px;border-radius:12px;background:#FFD000;display:flex;align-items:center;justify-content:center;font-family:Arial Black,sans-serif;font-weight:900;font-size:14px;color:#0A0A0F;flex-shrink:0">IC</div>
+    <div style="width:44px;height:44px;border-radius:12px;background:#FFD000;display:flex;align-items:center;justify-content:center;font-family:Arial Black,sans-serif;font-weight:900;font-size:14px;color:#0A0A0F;flex-shrink:0">LV</div>
     <div style="flex:1;min-width:0">
       <div style="font-size:13px;font-weight:900;color:#fff;margin-bottom:2px">Instalar Liveroo</div>
       <div style="font-size:11px;color:rgba(255,255,255,.5)">Agrega a tu pantalla de inicio</div>
