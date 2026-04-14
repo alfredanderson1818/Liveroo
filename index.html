@@ -1703,6 +1703,10 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     <!-- Products -->
     <div class="sh">
       <div class="sh-title">Populares</div>
+      <div id="live-status-badge" style="display:none;align-items:center;gap:5px;background:rgba(255,59,59,.12);border:1px solid rgba(255,59,59,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:900;color:var(--rd)">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--rd);animation:pulse-live 1s infinite"></div>
+        <span id="live-status-txt">EN VIVO</span>
+      </div>
       <span class="sh-more" onclick="nav('exp')">Ver todos →</span>
     </div>
     <div class="pgrid" id="pgrid"></div>
@@ -3463,6 +3467,18 @@ function buildGrid(list){
 
   // ── FS Live stream cards (pcard format, sorted first) ───────────────────
   const _fsStreams=window._fsLiveStreams||[];
+
+  // Actualizar badge de estado live en el header
+  const liveBadge=document.getElementById('live-status-badge');
+  const liveTxt=document.getElementById('live-status-txt');
+  if(liveBadge){
+    if(_fsStreams.length>0){
+      liveBadge.style.display='flex';
+      if(liveTxt)liveTxt.textContent=_fsStreams.length===1?'1 EN VIVO':_fsStreams.length+' EN VIVO';
+    } else {
+      liveBadge.style.display='none';
+    }
+  }
   const fsLiveCards=_fsStreams.map((s,i)=>{
     const ch=s.channelName||s._id;
     const name=s.sellerName||s.shopName||'Vendedor';
@@ -3773,6 +3789,12 @@ function nav(id){
   addNavRipple(id);
   if(id==='prof') loadProfData();
   if(id==='exp') buildExpScreen();
+  if(id==='home'){
+    // Refrescar inmediatamente y reiniciar el poll al volver al home
+    _refreshLiveStrip();
+    clearInterval(_homePollIv);
+    _homePollIv=setInterval(_refreshLiveStrip,5000);
+  }
   go(id,false);
 }
 
@@ -7142,9 +7164,9 @@ let _homePollIv=null;
 async function loadHomeFeed(){
   buildGrid();buildSellers();
   await _refreshLiveStrip();
-  // Poll every 30s to catch new/ended streams
+  // Poll cada 5s para mostrar lives casi en tiempo real
   clearInterval(_homePollIv);
-  _homePollIv=setInterval(_refreshLiveStrip, 30000);
+  _homePollIv=setInterval(_refreshLiveStrip, 5000);
   const prods=await fsQuery('products');
   if(prods.length>0){
     const grid=document.getElementById('pgrid');
@@ -7637,14 +7659,40 @@ function openProdFS(id){openProd(0);}
 // Cache live FS streams — shown first in home grid
 window._fsLiveCache={};
 window._fsLiveStreams=[];
+let _liveStripFailCount=0;
 async function _refreshLiveStrip(){
   try{
-    const streams=await fsQuery('streams',[{field:'isLive',value:true}]);
+    // Usar fsQuery que ya maneja auth, retry y CORS correctamente
+    const all=await fsQuery('streams');
+    const streams=all.filter(s=>s.isLive===true);
+    _liveStripFailCount=0; // reset en éxito
     window._fsLiveCache={};
     window._fsLiveStreams=streams;
     streams.forEach(s=>{const ch=s.channelName||s._id;if(ch)window._fsLiveCache[ch]=s;});
-    buildGrid(); // re-render grid with live streams at top
-  }catch(e){}
+    buildGrid();
+    if(streams.length>0){
+      console.log('[Live] Streams activos:',streams.map(s=>s.sellerName||s.channelName));
+    } else {
+      console.log('[Live] Sin streams activos. Total docs en streams:',all.length,
+        all.length===0?'— verifica Firestore Rules (streams debe ser readable)':'');
+    }
+  }catch(e){
+    _liveStripFailCount++;
+    // Backoff exponencial — no spamear consola ni Firestore si hay error de red
+    if(_liveStripFailCount<=3){
+      console.warn('[Live] Error al cargar streams (intento '+_liveStripFailCount+'):',e.message);
+    }
+    // Si falla muchas veces, pausar el poll para no gastar batería/red
+    if(_liveStripFailCount>=5){
+      clearInterval(_homePollIv);
+      console.warn('[Live] Poll pausado tras 5 errores. Reintentando en 60s...');
+      setTimeout(()=>{
+        _liveStripFailCount=0;
+        _refreshLiveStrip();
+        _homePollIv=setInterval(_refreshLiveStrip,5000);
+      },60000);
+    }
+  }
 }
 loadHomeFeed();
 // Show initial unread count

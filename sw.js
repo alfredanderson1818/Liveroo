@@ -1,10 +1,24 @@
-// Liveroo Service Worker v4
-const CACHE_NAME = 'liveroo-v4';
+// Liveroo Service Worker v5
+const CACHE_NAME = 'liveroo-v5';
 const STATIC_ASSETS = [
   '/liveroo/',
   '/liveroo/index.html',
   '/liveroo/manifest.json',
   '/liveroo/icon.svg',
+];
+
+// Dominios externos que NUNCA se interceptan
+const PASSTHROUGH_ORIGINS = [
+  'firestore.googleapis.com',
+  'identitytoolkit.googleapis.com',
+  'securetoken.googleapis.com',
+  'accounts.google.com',
+  'agora.io',
+  'sd-rtn.com',
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
+  'download.agora.io',
+  'cdnjs.cloudflare.com',
 ];
 
 self.addEventListener('install', e => {
@@ -23,13 +37,22 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if(e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
+
+  // Nunca interceptar peticiones a APIs externas
+  if(PASSTHROUGH_ORIGINS.some(origin => url.hostname.includes(origin))) return;
+
+  // Solo interceptar GET a rutas propias
+  if(e.request.method !== 'GET') return;
   if(!url.pathname.startsWith('/liveroo')) return;
+
   // Network first — siempre intenta red, fallback a cache
   e.respondWith(
     fetch(e.request).then(res => {
-      if(res.ok){const clone=res.clone();caches.open(CACHE_NAME).then(c=>c.put(e.request,clone));}
+      if(res.ok && res.status < 400){
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+      }
       return res;
     }).catch(() => caches.match(e.request))
   );
