@@ -3864,8 +3864,33 @@ function openStream(idx){
   _svStartMockAuction(slideProds[0]);
   svTab('chat');
   go('stream');
-  // Join Agora channel as viewer
-  joinAsAudience(getChannelForSeller(idx));
+  // Buscar canal real en Firestore — si el seller tiene un live activo, usar su channelName real
+  // Si no, usar el canal demo (ic_idx) para el mock
+  (async()=>{
+    try{
+      // Buscar en streams activos por sellerId o channelName que empiece con live_
+      const activeStreams=await fsQuery('streams',[{field:'isLive',value:true}]);
+      // Intentar matchear por nombre del seller
+      const sellerName=(s.n||'').toLowerCase().replace(/\s+/g,'');
+      const match=activeStreams.find(st=>{
+        const stName=(st.sellerName||st.shopName||'').toLowerCase().replace(/\s+/g,'');
+        return stName===sellerName||(st.channelName&&st.channelName.startsWith('live_'));
+      });
+      if(match&&match.channelName){
+        // Hay un seller real transmitiendo — usar su canal
+        window._currentStreamChannel=match.channelName;
+        joinAsAudience(match.channelName);
+        // Actualizar UI con datos reales
+        const vEl=document.getElementById('sv-viewers');
+        if(vEl)vEl.textContent=match.viewerCount||1;
+      } else {
+        // No hay live real — modo demo, no conectar Agora (no hay nadie transmitiendo)
+        joinAsAudience(getChannelForSeller(idx));
+      }
+    }catch(e){
+      joinAsAudience(getChannelForSeller(idx));
+    }
+  })();
 }
 
 let timerSecs=14*60+32,timerIv=null;
@@ -5691,6 +5716,27 @@ async function joinAsAudience(channelName){
       for(const user of r3) await _trySubscribeUser(user);
     },4000);
 
+    // Retry a 8s — redes lentas como Venezuela (alta latencia)
+    setTimeout(async()=>{
+      if(!agoraJoined)return;
+      const container=document.getElementById('sv-agora-container');
+      if(container&&container.style.display==='block')return;
+      const r4=agoraClient?.remoteUsers||[];
+      _svDebug('retry (8s) hosts: '+r4.length);
+      for(const user of r4) await _trySubscribeUser(user);
+    },8000);
+
+    // Retry a 12s — último intento
+    setTimeout(async()=>{
+      if(!agoraJoined)return;
+      const container=document.getElementById('sv-agora-container');
+      if(container&&container.style.display==='block')return;
+      const r5=agoraClient?.remoteUsers||[];
+      _svDebug('retry (12s) hosts: '+r5.length);
+      for(const user of r5) await _trySubscribeUser(user);
+      if(!r5.length)toast('📡 Conectado — esperando al vendedor...');
+    },12000);
+
     toast('📡 Conectado al live');
     fsGet('streams',channelName).then(doc=>{
       const v=(doc?.viewerCount||0)+1;
@@ -5703,7 +5749,12 @@ async function joinAsAudience(channelName){
 }
 
 async function joinAsHost(channelName){
-  if(typeof AgoraRTC==='undefined'){toast('⚠️ SDK de stream no disponible');return;}
+  // Esperar hasta que AgoraRTC cargue (puede tardar si hay defer)
+  if(typeof AgoraRTC==='undefined'){
+    let tries=0;
+    while(typeof AgoraRTC==='undefined'&&tries<20){await new Promise(r=>setTimeout(r,300));tries++;}
+    if(typeof AgoraRTC==='undefined'){toast('⚠️ SDK de stream no disponible — recarga la página');return;}
+  }
   try{
     if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}
     await leaveAgoraChannel();
