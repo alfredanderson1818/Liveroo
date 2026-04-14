@@ -3823,7 +3823,8 @@ function openStream(idx){
   const pi=PRODS.findIndex(p=>p.s===idx);
   const prod=pi>=0?PRODS[pi]:PRODS[0];
   curStreamProd=pi>=0?pi:0;
-  document.getElementById('sv-img').src=prod.img||'';
+  const _svImgEl=document.getElementById('sv-img');
+  if(_svImgEl){_svImgEl.style.opacity='1';_svImgEl.src=prod.img||'';}
   document.getElementById('sv-viewers').textContent=s.v;
   document.getElementById('sv-hot').textContent=~~(s.v*.03+1);
   const _svAv=document.getElementById('sv-av');const _svAvS=document.getElementById('sv-av-small');[_svAv,_svAvS].forEach(el=>{if(!el)return;if(s.logo){el.innerHTML=`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;el.style.background='#000';el.style.overflow='hidden';}else{el.textContent=s.e;el.style.background='';el.style.overflow='';}}); 
@@ -5489,7 +5490,7 @@ let isMuted=false;
 
 // ═══ AGORA RTC ═══
 const AGORA_APP_ID='2cd32d3fd3554834954d580d57c870b9';
-const AGORA_TOKEN='007eJxTYLD9sLxLtmbqMTHhi6wKO+4LNU0V+NzySGJVmIX4bTGByv0KDEbJKcZGKcZpKcampiYWxiaWpiYpphYGKabmyRbmBkmWt67czWwIZGRYy1nGysgAgSA+C0NmcrwBAwMA4mUd5g=='; // Temp token — expira en 24h
+const AGORA_TOKEN=null; // App Certificate desactivado — no se necesita token
 let agoraClient=null, agoraJoined=false;
 let agoraLocalVideo=null, agoraLocalAudio=null;
 
@@ -5521,6 +5522,8 @@ async function leaveAgoraChannel(){
   }catch(e){console.warn('Agora leave:',e);}
   const sv=document.getElementById('sv-agora-container');
   if(sv){sv.style.display='none';sv.innerHTML='';}
+  const svImg=document.getElementById('sv-img');
+  if(svImg)svImg.style.opacity='1';
   const bc=document.getElementById('bc-agora-video');
   if(bc){bc.style.display='none';bc.innerHTML='';}
 }
@@ -5639,9 +5642,8 @@ async function joinAsHost(channelName){
     const msg=(e.message||e.code||'').toString();
     if(msg.includes('NOT_SUPPORTED')||msg.includes('MEDIA_NOT_SUPPORT')||msg.includes('PERMISSION')){
       toast('⚠️ Sin acceso a cámara/micrófono — verifica permisos del navegador');
-    } else if(msg.includes('CAN_NOT_GET_GATEWAY')){
-      toast('⚠️ Token inválido o expirado — genera uno nuevo en console.agora.io');
-    } else if(msg.includes('INVALID_OPERATION')||msg.includes('UID_CONFLICT')){
+    } else if(msg.includes('CAN_NOT_GET_GATEWAY')||msg.includes('INVALID_OPERATION')||msg.includes('UID_CONFLICT')){
+      toast('⚠️ Error Agora: App Certificate activado. Ve a console.agora.io → tu proyecto → desactiva el App Certificate (modo no seguro para pruebas)');
     } else {
       toast('⚠️ Error al iniciar live: '+msg.slice(0,80));
     }
@@ -7433,7 +7435,7 @@ async function openStreamFS(channelName){
     window._fsStreamData=s;
     window._fsStreamChannel=channelName;
     const svImg=document.getElementById('sv-img');
-    if(svImg)svImg.src=s.thumb||'';
+    if(svImg){svImg.style.opacity='1';svImg.src=s.thumb||'';}
     document.getElementById('sv-viewers').textContent=s.viewerCount||1;
     document.getElementById('sv-hot').textContent=Math.max(1,~~((s.viewerCount||1)*.03));
     const _svAv=document.getElementById('sv-av');
@@ -7521,7 +7523,7 @@ loadHomeFeed();
 
 
 // ═══ ADMIN PANEL ═══
-const ADMIN_UIDS=['i6el8ICacKYNALR7Ibc9nWKkHZV2'];
+const ADMIN_UIDS=['LZlboQOfGlbopbZEE9FFujnFCul2'];
 
 function _isAdmin(){return ADMIN_UIDS.includes(window.fbUser?.uid);}
 
