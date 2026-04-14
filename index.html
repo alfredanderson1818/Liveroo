@@ -5500,7 +5500,7 @@ async function joinAsAudience(channelName){
   }
   try{
     await leaveAgoraChannel();
-    agoraClient=AgoraRTC.createClient({mode:'live',codec:'h264'});
+    agoraClient=AgoraRTC.createClient({mode:'live',codec:'vp8'});
 
     // ── CRÍTICO: registrar handlers ANTES de join() ──────────────────────
     // Si los registras después, el evento user-published ya fue disparado
@@ -5569,7 +5569,7 @@ async function joinAsHost(channelName){
   try{
     if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}
     await leaveAgoraChannel();
-    agoraClient=AgoraRTC.createClient({mode:'live',codec:'h264'});
+    agoraClient=AgoraRTC.createClient({mode:'live',codec:'vp8'});
     await agoraClient.setClientRole('host');
     await agoraClient.join(AGORA_APP_ID, channelName, AGORA_TOKEN, null);
     agoraJoined=true;
