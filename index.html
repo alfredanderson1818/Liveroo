@@ -16,7 +16,7 @@
 <meta name="description" content="Marketplace de live shopping venezolano — compra y subasta en tiempo real">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js" defer></script>
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
 <script>
 // ═══ FIREBASE REST API — sin SDK externo ═══
 const FB={
@@ -5466,6 +5466,11 @@ function getMySellerIdx(){
   const idx=SELLERS.findIndex(s=>s.n.toLowerCase().replace(/[^a-z0-9]/g,'')===u);
   return idx>=0?idx:0;
 }
+// Canal unico por UID — evita colisiones entre vendedores reales
+function getMyChannel(){
+  if(window.fbUser?.uid) return 'live_'+window.fbUser.uid.replace(/[^a-z0-9]/gi,'').slice(0,24);
+  return 'ic_0';
+}
 
 async function leaveAgoraChannel(){
   try{
@@ -5486,22 +5491,30 @@ async function leaveAgoraChannel(){
 
 async function joinAsAudience(channelName){
   window._currentStreamChannel=channelName;
-  if(typeof AgoraRTC==='undefined'){toast('⚠️ SDK de stream no disponible');return;}
+  // Si el SDK aún no cargó, reintenta hasta 10 veces cada 500ms
+  if(typeof AgoraRTC==='undefined'){
+    let tries=0;
+    const wait=()=>new Promise(r=>setTimeout(r,500));
+    while(typeof AgoraRTC==='undefined'&&tries<10){await wait();tries++;}
+    if(typeof AgoraRTC==='undefined'){toast('⚠️ SDK de stream no disponible');return;}
+  }
   try{
     await leaveAgoraChannel();
     agoraClient=AgoraRTC.createClient({mode:'live',codec:'h264'});
-    await agoraClient.setClientRole('audience');
-    await agoraClient.join(AGORA_APP_ID, channelName, AGORA_TOKEN, null);
-    agoraJoined=true;
+
+    // ── CRÍTICO: registrar handlers ANTES de join() ──────────────────────
+    // Si los registras después, el evento user-published ya fue disparado
+    // y el comprador nunca ve el stream del vendedor.
+    function _svPlayVideo(user){
+      const container=document.getElementById('sv-agora-container');
+      if(container){container.style.display='block';user.videoTrack.play(container);}
+      const img=document.getElementById('sv-img');
+      if(img)img.style.opacity='0';
+    }
     agoraClient.on('user-published', async(user,mediaType)=>{
       await agoraClient.subscribe(user,mediaType);
-      if(mediaType==='video'){
-        const container=document.getElementById('sv-agora-container');
-        if(container){container.style.display='block';user.videoTrack.play(container);}
-        const img=document.getElementById('sv-img');
-        if(img)img.style.opacity='0';
-      }
-      if(mediaType==='audio'){user.audioTrack.play();}
+      if(mediaType==='video') _svPlayVideo(user);
+      if(mediaType==='audio') user.audioTrack.play();
     });
     agoraClient.on('user-unpublished',(user,mediaType)=>{
       if(mediaType==='video'){
@@ -5511,6 +5524,35 @@ async function joinAsAudience(channelName){
         if(img)img.style.opacity='1';
       }
     });
+    agoraClient.on('user-left',()=>{
+      const container=document.getElementById('sv-agora-container');
+      if(container){container.style.display='none';container.innerHTML='';}
+      const img=document.getElementById('sv-img');
+      if(img)img.style.opacity='1';
+      toast('📴 El vendedor terminó el live');
+    });
+    // ────────────────────────────────────────────────────────────────────
+
+    await agoraClient.setClientRole('audience');
+    await agoraClient.join(AGORA_APP_ID, channelName, AGORA_TOKEN, null);
+    agoraJoined=true;
+
+    // ── Fallback: suscribir a hosts ya presentes en el canal ─────────────
+    // Por si el join tardó y el evento ya pasó
+    for(const user of agoraClient.remoteUsers){
+      try{
+        if(user.hasVideo){
+          await agoraClient.subscribe(user,'video');
+          _svPlayVideo(user);
+        }
+        if(user.hasAudio){
+          await agoraClient.subscribe(user,'audio');
+          user.audioTrack.play();
+        }
+      }catch(e2){console.warn('sub fallback:',e2);}
+    }
+    // ────────────────────────────────────────────────────────────────────
+
     toast('📡 Conectado al live');
     fsGet('streams',channelName).then(doc=>{
       const v=(doc?.viewerCount||0)+1;
@@ -5518,7 +5560,7 @@ async function joinAsAudience(channelName){
     }).catch(()=>{});
   }catch(e){
     console.error('Agora audience:',e);
-    toast('⚠️ No se pudo conectar al stream');
+    toast('⚠️ Stream error: '+(e.message||e.code||'desconocido').toString().slice(0,60));
   }
 }
 
@@ -6028,7 +6070,7 @@ function startBroadcast(){
   pushNotif('🔴','live',`<strong>Tú</strong> estás en vivo ahora — ${title}`,()=>go('broadcast'),false);
   go('broadcast');
   // Join Agora as host
-  const channelName=getChannelForSeller(getMySellerIdx());
+  const channelName=getMyChannel();
   window._bcChannelName=channelName;
   window._currentStreamChannel=channelName;
   joinAsHost(channelName);
@@ -6114,7 +6156,7 @@ function endBroadcast(){
   leaveAgoraChannel();
   // Mark stream offline in Firestore
   const uid=window.fbUser?.uid;
-  const channelName=getChannelForSeller(getMySellerIdx());
+  const channelName=getMyChannel();
   if(uid){
     fsSet('streams',channelName,{isLive:false,endedAt:Date.now()});
     fsSet('stores',uid,{isLive:false});
@@ -7296,8 +7338,9 @@ function _svStartMockAuction(prod){
 async function openStreamFS(channelName){
   if(!channelName){openStream(0);return;}
   try{
-    let s=window._fsLiveCache&&window._fsLiveCache[channelName]?window._fsLiveCache[channelName]:null;
-    if(!s){s=await fsGet('streams',channelName);if(!s){await _refreshToken();s=await fsGet('streams',channelName);}}
+    // Siempre fetch fresco — cache puede tener isLive stale
+    let s=await fsGet('streams',channelName);
+    if(!s){await _refreshToken();s=await fsGet('streams',channelName);}
     // Always navigate — show "ended" state if not live instead of blocking
     if(!s){
       // Stream doc not found at all — fallback to static
@@ -7356,12 +7399,10 @@ async function openStreamFS(channelName){
     window._chatChannel=channelName;
     startChat(-1);
     startTimer();
-    if(s.isLive){
-      _startFixedSalePoll(channelName);
-      _startViewerAucPoll(channelName);
-      // Join Agora as audience
-      joinAsAudience(channelName);
-    }
+    // Siempre iniciar polls y conectar Agora — si el host está activo, user-published dispara
+    _startFixedSalePoll(channelName);
+    _startViewerAucPoll(channelName);
+    joinAsAudience(channelName);
     // Poll viewer count
     clearInterval(window._fsViewerIv);
     window._fsViewerIv=setInterval(async()=>{
