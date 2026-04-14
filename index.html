@@ -246,7 +246,7 @@ async function fbRestoreSession(){
             walletBalance=Number(d.wallet)||0;
             updateWalletDisplay();
             const wpb=document.getElementById('wallet-prof-badge');
-            if(wpb)wpb.textContent=walletBalance+' IC';
+            if(wpb)wpb.textContent=walletBalance+' cr';
           }
         }
       }).catch(()=>{});
@@ -1705,155 +1705,171 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 </div>
 
 <!-- STREAM -->
-<div id="s-stream" class="scr" style="display:flex;flex-direction:column;background:var(--dk)">
+<div id="s-stream" class="scr" style="position:relative;overflow:hidden;background:#000">
 
-  <!-- ── SCROLLABLE BODY ── -->
-  <div class="sb" style="padding-bottom:80px">
+  <!-- ── FULLSCREEN VIDEO ── -->
+  <div style="position:absolute;inset:0;z-index:1">
+    <img id="sv-img" style="width:100%;height:100%;object-fit:cover;display:block">
+    <div id="sv-agora-container" style="position:absolute;inset:0;z-index:2;display:none;background:#000"></div>
+    <div style="position:absolute;inset:0;z-index:3;background:linear-gradient(to bottom,rgba(0,0,0,.72) 0%,transparent 22%,transparent 52%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.94) 100%);pointer-events:none"></div>
+  </div>
 
-    <!-- ── HERO IMAGE ── -->
-    <div style="position:relative;height:56vh;min-height:300px;background:#000;overflow:hidden;flex-shrink:0">
-      <img id="sv-img" style="width:100%;height:100%;object-fit:cover;opacity:.88;display:block">
-      <!-- Agora real video -->
-      <div id="sv-agora-container" style="position:absolute;inset:0;z-index:1;display:none;background:#000"></div>
-      <!-- Gradient -->
-      <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,transparent 28%,transparent 52%,rgba(0,0,0,.85) 100%);pointer-events:none"></div>
-      <!-- Back -->
-      <button class="bk" onclick="goBack()" style="position:absolute;top:max(var(--sat),14px);left:14px;z-index:6">←</button>
-      <!-- Like -->
-      <button id="sv-like" onclick="likeStream()" style="position:absolute;top:max(var(--sat),14px);right:14px;z-index:6;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;-webkit-tap-highlight-color:transparent">
-        <span id="sv-like-emoji" style="font-size:26px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))">🤍</span>
-        <span id="sv-likes" style="font-size:10px;font-weight:900;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.7)">0</span>
-      </button>
-      <!-- Bids feed overlay (left side, like screenshot) -->
-      <div id="sv-bids-overlay" style="position:absolute;left:12px;bottom:62px;z-index:4;display:flex;flex-direction:column;gap:4px;max-width:52%;pointer-events:none"></div>
-      <!-- Chat overlay above bids -->
-      <div class="chat-overlay" id="chat-msgs" style="padding-bottom:8px;bottom:68px"></div>
-      <!-- Bottom info bar -->
-      <div style="position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 14px 12px;display:flex;align-items:center;gap:10px">
-        <div style="display:flex;align-items:center;gap:5px;background:var(--rd);border-radius:20px;padding:4px 10px;flex-shrink:0">
-          <div style="width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse-live 1s infinite"></div>
-          <span style="font-size:11px;font-weight:900;color:#fff">EN VIVO</span>
+  <!-- ── TOP BAR ── -->
+  <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:9px;padding:max(var(--sat),14px) 12px 10px">
+    <button onclick="goBack()" style="width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:none;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">←</button>
+    <div onclick="openSellerShop()" style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;cursor:pointer">
+      <div id="sv-av" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;border:2.5px solid var(--y);overflow:hidden;flex-shrink:0"></div>
+      <div style="min-width:0;flex:1">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span id="sv-name" style="font-weight:900;font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Vendedor</span>
+          <div style="display:flex;align-items:center;gap:3px;background:var(--rd);border-radius:20px;padding:2px 7px;flex-shrink:0">
+            <div style="width:5px;height:5px;border-radius:50%;background:#fff;animation:pulse-live 1s infinite"></div>
+            <span style="font-size:9px;font-weight:900;color:#fff;letter-spacing:.3px">EN VIVO</span>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:5px;color:rgba(255,255,255,.85);font-size:12px;font-weight:700">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          <span id="sv-viewers">0</span> viendo
-        </div>
-        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;cursor:pointer" onclick="openSellerShop()">
-          <div id="sv-av" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid rgba(255,255,255,.4);overflow:hidden;flex-shrink:0"></div>
-          <span id="sv-name" style="font-weight:900;font-size:13px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6)">Vendedor</span>
-        </div>
+        <div id="sv-foll" style="font-size:10px;color:rgba(255,255,255,.55)">0 seguidores</div>
       </div>
     </div>
-
-    <!-- ── PRODUCT TITLE ── -->
-    <div style="padding:14px 16px 6px">
-      <div id="sv-prod-title" style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.5px;color:#fff;line-height:1.15">Producto en Vivo</div>
+    <button id="sv-fol" class="fol" onclick="event.stopPropagation();toggleFollow()" style="flex-shrink:0;font-size:12px;padding:6px 13px">Seguir</button>
+    <div style="display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:20px;padding:5px 10px;flex-shrink:0">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span id="sv-viewers" style="font-size:11px;font-weight:800;color:#fff">0</span>
     </div>
+  </div>
 
-    <!-- ── SELLER CARD ── -->
-    <div onclick="openSellerShop()" style="margin:0 12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;display:flex;align-items:center;padding:12px 14px;gap:12px;cursor:pointer;-webkit-tap-highlight-color:transparent">
-      <div id="sv-av-small" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0"></div>
-      <div style="flex:1;min-width:0">
-        <div id="sv-name-mini" style="font-weight:900;font-size:15px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Vendedor</div>
-        <div id="sv-foll" style="font-size:11px;color:var(--mu)">0 seguidores</div>
+  <!-- ── RIGHT SIDEBAR ── -->
+  <div style="position:absolute;right:10px;bottom:264px;z-index:20;display:flex;flex-direction:column;align-items:center;gap:16px">
+    <button id="sv-like" onclick="likeStream()" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;-webkit-tap-highlight-color:transparent;padding:0">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center">
+        <span id="sv-like-emoji" style="font-size:22px;line-height:1">🤍</span>
       </div>
-      <button id="sv-fol" class="fol" onclick="event.stopPropagation();toggleFollow()">Seguir</button>
-      <div style="display:flex;align-items:center;gap:4px;background:var(--rd);border-radius:20px;padding:5px 12px;flex-shrink:0">
-        <div style="width:5px;height:5px;border-radius:50%;background:#fff;animation:pulse-live 1s infinite"></div>
-        <span style="font-size:10px;font-weight:900;color:#fff">EN VIVO</span>
+      <span id="sv-likes" style="font-size:10px;font-weight:900;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.9)">0</span>
+    </button>
+    <button onclick="toast('🔗 Enlace copiado')" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;-webkit-tap-highlight-color:transparent;padding:0">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       </div>
-    </div>
-
-    <!-- ── AUCTION / FIXED CARD ── -->
-    <div style="margin:0 12px 16px;background:rgba(18,4,4,.98);border:1.5px solid rgba(255,59,59,.22);border-radius:20px;overflow:hidden">
-
-      <!-- Fixed sale panel -->
-      <div id="sv-cta-fixed" style="display:none;padding:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-          <div style="min-width:0;flex:1">
-            <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.4px;margin-bottom:3px">🏷️ EN VENTA AHORA</div>
-            <div id="sv-cta-fname" style="font-size:14px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">—</div>
-            <div id="sv-cta-fprice" style="font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--y);line-height:1">$0</div>
-          </div>
-          <button id="sv-cta-buy-btn" onclick="buyFixedItem()" style="background:var(--y);color:var(--dk);border:none;border-radius:14px;padding:15px 22px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(255,208,0,.35);flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent">🛒 Comprar</button>
-        </div>
+      <span style="font-size:10px;font-weight:900;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.9)">Compartir</span>
+    </button>
+    <button onclick="openWallet()" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;-webkit-tap-highlight-color:transparent;padding:0">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#FFD000" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14.5" r="1.5" fill="#FFD000" stroke="none"/></svg>
       </div>
-
-      <!-- Auction / idle panel -->
-      <div id="sv-cta-main">
-
-        <!-- Header: SUBASTA EN VIVO + timer -->
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,.06)">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:15px">🔨</span>
-            <span id="sv-cta-lbl" style="font-weight:900;font-size:12px;color:var(--rd);letter-spacing:.5px;text-transform:uppercase">SUBASTA EN VIVO</span>
-            <div style="background:var(--rd);border-radius:20px;padding:3px 8px;display:flex;align-items:center;gap:4px">
-              <div style="width:5px;height:5px;border-radius:50%;background:#fff;animation:pulse-live 1s infinite"></div>
-              <span style="font-size:9px;font-weight:900;color:#fff">EN VIVO</span>
-            </div>
-          </div>
-          <div id="sv-cta-timer-wrap" style="background:rgba(0,0,0,.5);border:1.5px solid rgba(255,59,59,.3);border-radius:12px;padding:5px 14px;display:flex;align-items:center;gap:6px;transition:opacity .3s">
-            <span style="font-size:12px">⏱</span>
-            <div id="sv-cta-timer" style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--rd);letter-spacing:2px;line-height:1;font-variant-numeric:tabular-nums">--:--</div>
-          </div>
-        </div>
-
-        <!-- Bid amount + wallet -->
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:14px 16px 10px">
-          <div>
-            <div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:.5px;margin-bottom:4px">OFERTA MÁS ALTA</div>
-            <div id="sv-cta-bid" style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--rd);line-height:1">$—</div>
-            <div id="sv-cta-base" style="font-size:11px;color:var(--mu);margin-top:5px">Base: $—</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:.5px;margin-bottom:4px">TU SALDO</div>
-            <div id="sv-cta-wallet" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);line-height:1">0 IC</div>
-            <div onclick="openDeposit()" style="font-size:11px;color:var(--y);font-weight:800;cursor:pointer;margin-top:5px">+ Recargar ›</div>
-          </div>
-        </div>
-
-        <!-- Status alert (outbid / idle) -->
-        <div id="sv-cta-status-wrap" style="display:none;margin:0 16px 12px;background:rgba(255,59,59,.1);border:1px solid rgba(255,59,59,.2);border-radius:12px;padding:10px 14px">
-          <div style="font-weight:900;font-size:13px;color:var(--rd);margin-bottom:2px">😬 ¡Te superaron!</div>
-          <div id="sv-cta-status-txt" style="font-size:11px;color:rgba(255,255,255,.55)">Oferta más para ganar</div>
-        </div>
-
-        <!-- Input + bid button -->
-        <div style="border-top:1px solid rgba(255,255,255,.06);padding:12px 16px 18px">
-          <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,.4);margin-bottom:9px;text-transform:uppercase;letter-spacing:.3px">Tu Oferta — mín. <span id="sv-cta-min-lbl" style="color:var(--y)">$1</span></div>
-          <div id="sv-cta-input-wrap" style="display:flex;align-items:center;background:rgba(0,0,0,.4);border:2px solid rgba(255,59,59,.4);border-radius:14px;padding:12px 16px;margin-bottom:10px;transition:border-color .15s">
-            <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--rd);margin-right:6px;line-height:1">$</span>
-            <input type="number" id="sv-cta-input" placeholder="0" oninput="svCtaUpdateBtn()" style="flex:1;background:none;border:none;outline:none;font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;width:100%;letter-spacing:.5px">
-            <span style="font-size:12px;font-weight:800;color:var(--mu)">IC</span>
-          </div>
-          <div id="sv-cta-presets" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"></div>
-          <button id="sv-cta-bid-btn" onclick="svCtaPlaceBid()" style="width:100%;background:var(--rd);color:#fff;border:none;border-radius:14px;padding:17px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 4px 22px rgba(255,59,59,.45);transition:all .15s;-webkit-tap-highlight-color:transparent">🔨 Ofertar</button>
-          <div class="sv-cta-idle-txt" style="text-align:center;padding:9px 0 2px;font-size:11px;color:rgba(255,255,255,.25)">Esperando próxima subasta…</div>
-        </div>
+      <span id="sv-cta-wallet" style="font-size:10px;font-weight:900;color:var(--y);text-shadow:0 1px 6px rgba(0,0,0,.9)">$0</span>
+    </button>
+    <button onclick="document.getElementById('sv-slide-wrap').style.display='flex'" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;-webkit-tap-highlight-color:transparent;padding:0">
+      <div id="sv-shop-thumb" style="width:44px;height:44px;border-radius:10px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;overflow:hidden">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       </div>
-    </div>
-
-    <!-- ── MORE PRODUCTS ── -->
-    <div style="padding:0 0 16px">
-      <div style="font-size:10px;font-weight:800;color:var(--mu);letter-spacing:.5px;padding:0 16px 8px">MÁS PRODUCTOS</div>
-      <div id="sv-slide-wrap" style="overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 12px">
-        <div id="sv-slide-track" style="display:flex;gap:8px"></div>
-      </div>
-    </div>
-
-  </div><!-- end .sb -->
-
-  <!-- ── CHAT INPUT BAR ── -->
-  <div class="chat-bar">
-    <input class="ci" type="text" placeholder="Comenta algo…" id="chat-in" onkeydown="if(event.key==='Enter')sendChat()">
-    <button class="giftbtn" onclick="spawnGift()">🎁</button>
-    <button class="sendbtn" onclick="sendChat()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--dk)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      <span style="font-size:10px;font-weight:900;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.9)">Tienda</span>
     </button>
   </div>
 
-  <!-- Hidden compat elements -->
+  <!-- ── CHAT OVERLAY ── -->
+  <div class="chat-overlay" id="chat-msgs" style="position:absolute;left:0;right:76px;bottom:240px;z-index:10;padding:0 12px 8px;pointer-events:none;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;max-height:36%;overflow:hidden"></div>
+
+  <!-- ── BIDS FEED ── -->
+  <div id="sv-bids-overlay" style="position:absolute;left:12px;bottom:240px;z-index:11;display:flex;flex-direction:column;gap:5px;max-width:55%;pointer-events:none"></div>
+
+  <!-- ══ BOTTOM PANEL ══ -->
+  <div id="sv-bottom-panel" style="position:absolute;bottom:0;left:0;right:0;z-index:20;background:rgba(7,7,12,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08)">
+
+    <!-- Chat input -->
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px 6px">
+      <input class="ci" type="text" id="chat-in" placeholder="Comenta algo…" onkeydown="if(event.key==='Enter')sendChat()" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.13);border-radius:22px;padding:9px 15px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;outline:none;-webkit-appearance:none">
+      <button class="giftbtn" onclick="spawnGift()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">🎁</button>
+      <button class="sendbtn" onclick="sendChat()" style="width:36px;height:36px;border-radius:50%;background:var(--y);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--dk)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+
+    <!-- ── FIXED SALE PANEL ── -->
+    <div id="sv-cta-fixed" style="display:none;border-top:1px solid rgba(255,255,255,.07);padding:10px 12px 4px">
+      <div style="font-size:10px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">🏷️ Venta directa activa</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+        <img id="sv-cta-fthumb" src="" onerror="this.style.display='none'" style="width:60px;height:60px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--dk3)">
+        <div style="flex:1;min-width:0">
+          <div id="sv-cta-fname" style="font-size:12px;font-weight:900;color:#fff;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.35;margin-bottom:4px">—</div>
+          <div id="sv-cta-fprice" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);line-height:1">$0</div>
+        </div>
+        <button id="sv-cta-buy-btn" onclick="buyFixedItem()" style="background:var(--y);color:var(--dk);border:none;border-radius:12px;padding:13px 18px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 16px rgba(255,208,0,.35);transition:transform .15s">🛒 Comprar</button>
+      </div>
+    </div>
+
+    <!-- ── AUCTION PANEL ── -->
+    <div id="sv-cta-main" style="border-top:1px solid rgba(255,255,255,.07)">
+
+      <!-- Status bar: winner label + timer -->
+      <div style="padding:6px 14px 3px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span id="sv-cta-lbl" style="font-size:11px;font-weight:900;color:var(--y);letter-spacing:.3px;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">SUBASTA EN VIVO</span>
+        <div id="sv-cta-timer-wrap" style="display:flex;align-items:center;gap:4px;background:rgba(255,59,59,.13);border:1px solid rgba(255,59,59,.32);border-radius:8px;padding:3px 9px;flex-shrink:0;transition:opacity .3s">
+          <div style="width:5px;height:5px;border-radius:50%;background:var(--rd);animation:pulse-live 1s infinite"></div>
+          <div id="sv-cta-timer" style="font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--rd);letter-spacing:1.5px;line-height:1;font-variant-numeric:tabular-nums">--:--</div>
+        </div>
+      </div>
+
+      <!-- Product row -->
+      <div style="display:flex;gap:10px;align-items:center;padding:4px 12px 6px">
+        <img id="sv-prod-thumb" src="" onerror="this.style.display='none'" style="width:62px;height:62px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--dk3)">
+        <div style="flex:1;min-width:0">
+          <div id="sv-prod-title" style="font-size:12px;font-weight:900;color:#fff;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;margin-bottom:2px">Producto en Vivo</div>
+          <div id="sv-cta-base" style="font-size:10px;color:var(--mu)">Base: $—</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;min-width:56px">
+          <div id="sv-cta-bid" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);line-height:1">$—</div>
+          <div style="font-size:10px;color:var(--mu)">oferta actual</div>
+        </div>
+      </div>
+
+      <!-- Outbid alert -->
+      <div id="sv-cta-status-wrap" style="display:none;margin:0 12px 6px;background:rgba(255,59,59,.1);border:1px solid rgba(255,59,59,.22);border-radius:10px;padding:8px 12px">
+        <div style="font-weight:900;font-size:12px;color:var(--rd)">😬 ¡Te superaron!</div>
+        <div id="sv-cta-status-txt" style="font-size:11px;color:rgba(255,255,255,.5)">Oferta más para ganar</div>
+      </div>
+
+      <!-- Idle text -->
+      <div class="sv-cta-idle-txt" style="text-align:center;padding:4px 0 2px;font-size:11px;color:rgba(255,255,255,.3)">Esperando próxima subasta…</div>
+
+      <!-- Quick presets -->
+      <div id="sv-cta-presets" style="display:none;padding:2px 12px 6px;flex-wrap:wrap;gap:6px"></div>
+
+      <!-- Custom amount input (toggled) -->
+      <div id="sv-custom-input-row" style="display:none;padding:2px 12px 6px;align-items:center;gap:8px">
+        <div id="sv-cta-input-wrap" style="flex:1;display:flex;align-items:center;background:rgba(0,0,0,.5);border:2px solid rgba(255,59,59,.45);border-radius:12px;padding:9px 13px;gap:5px;transition:border-color .15s">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--rd);line-height:1">$</span>
+          <input type="number" id="sv-cta-input" placeholder="0" oninput="svCtaUpdateBtn()" style="flex:1;background:none;border:none;outline:none;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;min-width:0;width:100%">
+          <span style="font-size:10px;font-weight:800;color:var(--mu)">mín <span id="sv-cta-min-lbl" style="color:var(--y)">$1</span></span>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div style="display:flex;gap:8px;padding:6px 12px;padding-bottom:calc(var(--sab) + 8px)">
+        <button onclick="svShowCustomInput()" style="flex:0 0 auto;background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.16);border-radius:12px;padding:13px 15px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;color:rgba(255,255,255,.85);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s">Personalizar</button>
+        <button id="sv-cta-bid-btn" onclick="svCtaPlaceBid()" style="flex:1;background:var(--y);color:var(--dk);border:none;border-radius:12px;padding:13px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 4px 20px rgba(255,208,0,.35);transition:all .15s">
+          🔨 Ofertar
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--dk)" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- end #sv-bottom-panel -->
+
+  <!-- ── PRODUCTS SHEET ── -->
+  <div id="sv-slide-wrap" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:30;background:rgba(7,7,12,.98);border-top:1px solid rgba(255,255,255,.1);flex-direction:column;max-height:55vh">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff">Más Productos</div>
+      <button onclick="document.getElementById('sv-slide-wrap').style.display='none'" style="background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.7);font-size:18px;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="overflow-y:auto;padding:10px 12px 12px;scrollbar-width:none">
+      <div id="sv-slide-track" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+    </div>
+  </div>
+
+  <!-- ── COMPAT HIDDEN ── -->
   <div style="display:none">
+    <div id="sv-av-small"></div>
+    <div id="sv-name-mini"></div>
+    <div id="st-fol">0</div>
     <div id="spbar"><div id="spthumb"></div><div id="spname"></div><div id="spprice"></div><span id="spold"></span><span id="sp-disc"></span><button id="spbuy"></button></div>
     <span id="sv-sheet-auc-name"></span><span id="sv-sheet-auc-bid"></span><span id="sv-sheet-auc-timer"></span><span id="sv-sheet-wallet"></span>
     <div id="sv-sheet-presets"></div><input id="sv-sheet-bid-input">
@@ -1948,7 +1964,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
             <div>
               <div style="font-size:9px;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:2px">PRECIO</div>
               <div style="font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--y);line-height:1" id="fs-item-price">$0</div>
-              <div style="font-size:10px;color:var(--mu);margin-top:3px">Pago con InstaCreditos</div>
+              <div style="font-size:10px;color:var(--mu);margin-top:3px">Pago con Saldo</div>
             </div>
             <button id="fs-buy-btn" onclick="buyFixedItem()" style="background:var(--y);color:var(--dk);border:none;border-radius:14px;padding:14px 20px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;white-space:nowrap;transition:all .18s cubic-bezier(.34,1.3,.64,1);box-shadow:0 4px 20px rgba(255,208,0,.35)">
               Comprar ahora 🛒
@@ -2019,7 +2035,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
         </div>
 
         <!-- Legal -->
-        <div style="padding:0 16px 10px;font-size:9px;color:rgba(255,255,255,.2);text-align:center">Al ofertar, tus InstaCreditos quedan reservados hasta el cierre.</div>
+        <div style="padding:0 16px 10px;font-size:9px;color:rgba(255,255,255,.2);text-align:center">Al ofertar, tu Saldo queda reservado hasta el cierre.</div>
       </div>
       <div class="lbl">Descripción</div>
       <div class="pd-desc" id="pd-desc"></div>
@@ -2141,6 +2157,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 
   <!-- FAB: añadir item (solo mi tienda) -->
   <button class="sp-fab" id="sp-fab" onclick="spOpenAddSheet()">＋</button>
+  <!-- hidden compat -->
+  <div style="display:none"><div id="sp-revs-list"></div><div id="sp-rating"></div><div id="sp-reviews-count"></div><div id="sp-bars"></div></div>
 
 </div><!-- /s-seller -->
 
@@ -2642,15 +2660,15 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
         <div class="co-row"><span class="co-l">Ciudad</span><span class="co-v" id="co-city-display">Venezuela 🇻🇪</span></div>
         <div class="co-row"><span class="co-l">Método</span><span class="co-v">🏍️ Moto · $3 USD</span></div>
       </div>
-      <div class="co-sec-t">⚡ Pagar con InstaCreditos</div>
+      <div class="co-sec-t">⚡ Pagar con Saldo</div>
       <div id="co-pays">
         <div style="background:linear-gradient(135deg,rgba(255,208,0,.1),rgba(255,208,0,.05));border:1.5px solid rgba(255,208,0,.3);border-radius:14px;padding:16px;margin-bottom:4px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
             <div style="display:flex;align-items:center;gap:9px">
               <div style="width:36px;height:36px;border-radius:10px;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:18px">⚡</div>
               <div>
-                <div style="font-size:13px;font-weight:900;color:var(--y)">InstaCreditos</div>
-                <div style="font-size:10px;color:var(--mu)">1 InstaCredito = 1 USD</div>
+                <div style="font-size:13px;font-weight:900;color:var(--y)">Saldo</div>
+                <div style="font-size:10px;color:var(--mu)">1 crédito = 1 USD</div>
               </div>
             </div>
             <div style="text-align:right">
@@ -2697,18 +2715,18 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
   <div class="wallet-hdr">
     <button class="bk" style="position:static;background:var(--dk3);border:1px solid rgba(255,255,255,.07)" onclick="goBack()">←</button>
     <div class="wallet-title">Mi Wallet</div>
-    <div style="font-size:11px;font-weight:800;color:var(--mu);cursor:pointer" onclick="go('wallet-history')">Historial</div>
+    <div style="font-size:11px;font-weight:800;color:var(--mu);cursor:pointer" onclick="toast('📋 Historial próximamente')">Historial</div>
   </div>
 
   <div class="sb" style="padding-bottom:80px">
     <!-- Balance card -->
     <div class="wallet-hero">
-      <div class="wallet-hero-label">InstaCreditos disponibles</div>
+      <div class="wallet-hero-label">Saldo disponible</div>
       <div class="wallet-balance" id="wallet-bal">250</div>
       <div class="wallet-balance-usd" id="wallet-bal-usd">≈ $25.00 USD</div>
       <div class="wallet-hero-actions">
         <button class="wallet-action-btn primary" onclick="openDeposit()">+ Recargar</button>
-        <button class="wallet-action-btn secondary" onclick="toast('💬 Soporte: @instacompras.ve')">Ayuda</button>
+        <button class="wallet-action-btn secondary" onclick="toast('💬 Soporte: @liveroo.ve')">Ayuda</button>
       </div>
     </div>
 
@@ -2720,7 +2738,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 
     <div style="padding:0 16px 16px">
       <button style="width:100%;background:var(--y);color:var(--dk);border:none;border-radius:13px;padding:15px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;transition:all .2s" onclick="openDeposit()">+ Recargar Créditos</button>
-      <div style="font-size:11px;color:var(--mu);text-align:center;margin-top:8px;line-height:1.6">1 USD = 1 InstaCredito · Mínimo $1 USD<br>Los créditos no tienen fecha de vencimiento</div>
+      <div style="font-size:11px;color:var(--mu);text-align:center;margin-top:8px;line-height:1.6">1 USD = 1 crédito · Mínimo $1 USD<br>El saldo no tiene fecha de vencimiento</div>
     </div>
 
     <!-- Transaction history -->
@@ -3393,7 +3411,7 @@ const PRODS=[
   {n:'PAW3R Cap Logo',s:46,p:13,op:30,img:'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80',e:'🧢',sz:['Única'],d:'Gorra PAW3R logo bordado. Dad hat algodón lavado, cierre metálico ajustable. Varios colores.',live:false},
 ];
 const CATS=['🔥 Todo','👟 Calzado','📱 Tech','👗 Ropa','💄 Belleza','🏠 Hogar','⚽ Deportes','💍 Joyería','🎮 Gaming','☕ Comida','🎸 Música'];
-const PAYOPTS=[{i:'💜',n:'Zelle'},{i:'🏦',n:'Pago Móvil'},{i:'₿',n:'Binance Pay'},{i:'⬡',n:'Reserve'},{i:'💵',n:'Efectivo USD'}];
+const PAYOPTS=[{i:'🏦',n:'Pago Móvil'}];
 
 // ═══ STATE ═══
 let cart=[],curProd=null,curStream=null,hist=['home'],selPay=0,qty=1,curSz='',wish=new Set(),following=new Set(),likes=0,chatIv=null,viewIv=null;
@@ -3800,6 +3818,7 @@ function openStream(idx){
   const _svPt=document.getElementById('sv-prod-title');if(_svPt)_svPt.textContent=prod.n.toUpperCase();
   const _svBase=document.getElementById('sv-cta-base');if(_svBase)_svBase.textContent='Base: $'+prod.p;
   const _svMin=document.getElementById('sv-cta-min-lbl');if(_svMin)_svMin.textContent='$'+(prod.p+1);
+  const _svThumb=document.getElementById('sv-prod-thumb');if(_svThumb){_svThumb.src=prod.img||'';_svThumb.style.display='';}
   // Clear bids overlay
   const _svBO=document.getElementById('sv-bids-overlay');if(_svBO)_svBO.innerHTML='';
   startChat(idx);startViewers(idx);startTimer();
@@ -3898,7 +3917,7 @@ function openProd(idx){
   const videoWrap=document.getElementById('pd-video-wrap');
   const imgEl=document.getElementById('pd-img');
   const liveBar=document.getElementById('pd-live-bar');
-  const iframe=document.getElementById('pd-iframe');
+  const iframe=document.getElementById('pd-iframe'); // may be null, handled below
   if(p.live){
     videoWrap.style.display='block';
     imgEl.style.display='none';
@@ -4025,7 +4044,7 @@ function updateCo(){
   const cityEl=document.getElementById('co-city-display');
   if(cityEl) cityEl.textContent=(u?.city?u.city+' 🇻🇪':'Venezuela 🇻🇪');
   const walEl=document.getElementById('co-wallet-balance');
-  if(walEl) walEl.textContent=(u?.wallet||u?.credits||0)+' IC';
+  if(walEl) walEl.textContent=(u?.wallet||u?.credits||0)+' cr';
   const sub=cart.reduce((s,i)=>s+(i.overridePrice||PRODS[i.pi].p)*i.q,0);
   const tot=sub+(sub>0?3:0);
   document.getElementById('co-tot').textContent=`$${tot} USD`;
@@ -4131,7 +4150,7 @@ async function placeOrder(){
     <div class="ok-row"><span class="ok-row-l">N° Pedido</span><span style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px">${num}</span></div>
     <div class="ok-row"><span class="ok-row-l">Fecha</span><span>${dateStr}</span></div>
     <div class="ok-row"><span class="ok-row-l">Productos</span><span>${cart.length} ítem(s)</span></div>
-    <div class="ok-row"><span class="ok-row-l">Pago</span><span>⚡ InstaCreditos</span></div>
+    <div class="ok-row"><span class="ok-row-l">Pago</span><span>⚡ Saldo</span></div>
     <div class="ok-row"><span class="ok-row-l">Total</span><span>$${tot} USD</span></div>`;
   document.getElementById('st-spent').textContent=parseInt(document.getElementById('st-spent').textContent||'0')+tot;
   document.getElementById('st-buy').textContent=parseInt(document.getElementById('st-buy').textContent||'0')+1;
@@ -4515,7 +4534,7 @@ async function _spLoadStoreAuctions(){
 async function spBuyProduct(prodId, price, name, qty){
   if(requireAccount('🛒','Para comprar necesitas cuenta','Regístrate gratis y empieza a comprar.')) return;
   if(!prodId){ toast('⚠️ Artículo no disponible'); return; }
-  if(walletBalance < price){ toast('❌ Saldo insuficiente — recarga InstaCreditos'); openDeposit(); return; }
+  if(walletBalance < price){ toast('❌ Saldo insuficiente — recarga tu saldo'); openDeposit(); return; }
   const prod = await fsGet('storeProducts', prodId);
   if(!prod || (prod.qty||0)<=0){ toast('❌ Artículo agotado'); _spLoadStoreItems(); return; }
   // Deduct wallet
@@ -4530,7 +4549,7 @@ async function spBuyProduct(prodId, price, name, qty){
   // Win overlay
   document.getElementById('win-emoji').textContent='🛒';
   document.getElementById('win-item').textContent=name;
-  document.getElementById('win-price').textContent='$'+price+' IC';
+  document.getElementById('win-price').textContent='$'+price+' cr';
   const ov=document.getElementById('win-overlay');const wc=document.getElementById('win-card');
   if(ov){ov.style.display='flex';if(wc)wc.style.transform='translate(-50%,-50%) scale(1)';}
   toast('🎉 ¡Compraste '+name+'!');
@@ -4675,7 +4694,7 @@ function _txDate(ts){
 }
 
 async function openWallet(){
-  document.getElementById('wallet-methods').innerHTML=WALLET_METHODS.map((m,i)=>`<div class="wallet-method ${i===walletSelMethod?'sel':''}" onclick="walletSelPay(${i})"><div class="wm-icon">${m.i}</div><div class="wm-info"><div class="wm-name">${m.n}</div><div class="wm-detail">${m.d}</div></div><div class="wm-radio ${i===walletSelMethod?'on':''}"></div></div>`).join('');
+  const _wm=document.getElementById('wallet-methods');if(_wm)_wm.innerHTML=WALLET_METHODS.map((m,i)=>`<div class="wallet-method ${i===walletSelMethod?'sel':''}" onclick="walletSelPay(${i})"><div class="wm-icon">${m.i}</div><div class="wm-info"><div class="wm-name">${m.n}</div><div class="wm-detail">${m.d}</div></div><div class="wm-radio ${i===walletSelMethod?'on':''}"></div></div>`).join('');
   updateWalletDisplay();
   go('wallet');
   // Skeleton while loading
@@ -4734,8 +4753,8 @@ function walletSelPay(i){
   walletSelMethod=i;
   document.querySelectorAll('.wallet-method').forEach((e,j)=>{e.classList.toggle('sel',j===i);e.querySelector('.wm-radio').className='wm-radio'+(j===i?' on':'');});
 }
-function walletSetAmount(v){document.getElementById('wallet-amount').value=v;walletUpdatePreview();}
-function walletUpdatePreview(){const v=parseFloat(document.getElementById('wallet-amount').value)||0;document.getElementById('wallet-credits-preview').innerHTML=`Recibirás <strong style="color:var(--y)">${v} créditos</strong>`;}
+function walletSetAmount(v){const _wa=document.getElementById('wallet-amount')||document.getElementById('dep-amount');if(_wa)_wa.value=v;walletUpdatePreview();}
+function walletUpdatePreview(){const _wi=document.getElementById('wallet-amount')||document.getElementById('dep-amount');const v=parseFloat(_wi?.value)||0;const _wp=document.getElementById('wallet-credits-preview')||document.getElementById('dep-credits-preview');if(_wp)_wp.innerHTML=`Recibirás <strong style="color:var(--y)">${v} créditos</strong>`;}
 
 // ═══ DEPOSIT PAGE ═══
 function openDeposit(){
@@ -5393,8 +5412,8 @@ function regSubmit(){
   const pass=document.getElementById('reg-pass').value.trim();
   const pass2=document.getElementById('reg-pass2')?.value.trim()||'';
   const city=(document.getElementById('reg-city')?.value||'').trim();
-  const shop=(document.getElementById('reg-shop')?.value||'').trim();
-  const whatsapp=(document.getElementById('reg-whatsapp')?.value||'').trim().replace(/[^0-9]/g,'');
+  const shop='';
+  const whatsapp='';//(document.getElementById('reg-whatsapp')?.value||'').trim().replace(/[^0-9]/g,'');
   if(!name){toast('⚠️ Escribe tu nombre completo');return;}
   if(!cedula){toast('⚠️ Ingresa tu número de cédula');return;}
   if(!username){toast('⚠️ Elige un nombre de usuario');return;}
@@ -5878,7 +5897,7 @@ async function buyFixedItem(){
   const bal   = walletBalance;
 
   if(bal < price){
-    toast('❌ Saldo insuficiente — recarga InstaCreditos');
+    toast('❌ Saldo insuficiente — recarga tu saldo');
     openDeposit();
     return;
   }
@@ -5929,7 +5948,7 @@ async function buyFixedItem(){
     const card=document.getElementById('win-card');
     document.getElementById('win-emoji').textContent='🛒';
     document.getElementById('win-item').textContent=name;
-    document.getElementById('win-price').textContent='$'+price+' IC';
+    document.getElementById('win-price').textContent='$'+price+' cr';
     const overlay=document.getElementById('win-overlay');
     if(overlay){overlay.style.display='flex';if(card)card.style.transform='translate(-50%,-50%) scale(1)';}
     toast('🎉 ¡Compraste '+name+'!');
@@ -6406,11 +6425,11 @@ async function loadProfData(){
   // Update all wallet displays
   updateWalletDisplay();
   const wpb=document.getElementById('wallet-prof-badge');
-  if(wpb) wpb.textContent=walletBalance+' IC';
+  if(wpb) wpb.textContent=walletBalance+' cr';
   const awd=document.getElementById('auc-wallet-display');
-  if(awd) awd.textContent=walletBalance+' IC';
+  if(awd) awd.textContent=walletBalance+' cr';
   const coWal=document.getElementById('co-wallet-balance');
-  if(coWal) coWal.textContent=walletBalance+' IC';
+  if(coWal) coWal.textContent=walletBalance+' cr';
   // Name
   const nameEl=document.getElementById('prof-name-display');
   if(nameEl) nameEl.textContent=u.name||u.displayName||u.email||'Usuario';
@@ -6449,7 +6468,7 @@ async function loadProfData(){
   if(coName) coName.textContent=u.name||u.displayName||'—';
   // Wallet badge
   const wbal=document.getElementById('wallet-prof-badge');
-  if(wbal) wbal.textContent=(u.wallet||u.credits||500)+' IC';
+  if(wbal) wbal.textContent=(u.wallet||u.credits||500)+' cr';
 
   // Fetch real order stats from Firestore
   if(u.uid){
@@ -6607,7 +6626,7 @@ function openProfEdit(){
   if(!modal)return;
   document.getElementById('prof-edit-name').value=document.getElementById('prof-name-display').textContent;
   const h=document.getElementById('prof-handle-display').textContent.split('@')[1]?.split('·')[0]?.trim()||'';
-  document.getElementById('prof-edit-handle').value=h;
+  const _peh=document.getElementById('prof-edit-handle');if(_peh)_peh.value=h;
   document.getElementById('prof-edit-bio').value=document.getElementById('prof-bio-display').textContent.trim();
   const waEl=document.getElementById('prof-edit-whatsapp');if(waEl)waEl.value=window.fbUser?.whatsapp||'';
   updateBioCount();
@@ -6709,7 +6728,7 @@ function _renderTrackUI(order){
   document.getElementById('track-prod-name').textContent=order.prod||'Producto';
   document.getElementById('track-prod-seller').textContent=order.sellerName||'Vendedor';
   document.getElementById('track-prod-price').textContent='$'+(order.amt||0);
-  document.getElementById('track-pay').textContent='⚡ InstaCreditos';
+  document.getElementById('track-pay').textContent='⚡ Saldo';
   // ETA según status
   const etas={pending:'En preparación',processing:'Hoy entre 3–5 PM',transit:'En camino, 20–40 min',delivered:'¡Entregado!'};
   document.getElementById('track-eta').textContent=etas[order.status]||'En proceso';
@@ -6956,6 +6975,7 @@ function _svCtaSetState(mode){
     const timer=document.getElementById('sv-cta-timer');if(timer)timer.textContent='--:--';
     const rtime=document.getElementById('sv-ring-time');if(rtime)rtime.textContent='--:--';
     if(presetsEl){presetsEl.innerHTML='';presetsEl.style.display='none';}
+    const customRow=document.getElementById('sv-custom-input-row');if(customRow)customRow.style.display='none';
   }
 }
 
@@ -7005,6 +7025,15 @@ function svCtaUpdateBtn(){
   btn.style.opacity=v>0?'1':'.55';
 }
 
+// Toggle custom bid input row
+function svShowCustomInput(){
+  const row=document.getElementById('sv-custom-input-row');
+  if(!row)return;
+  const shown=row.style.display==='flex';
+  row.style.display=shown?'none':'flex';
+  if(!shown){const inp=document.getElementById('sv-cta-input');if(inp)setTimeout(()=>inp.focus(),50);}
+}
+
 // ── Place bid from new panel ─────────────────────────────────────────────────
 async function svCtaPlaceBid(){
   if(requireAccount('🔨','Para ofertar necesitas cuenta','Crea tu cuenta gratis.'))return;
@@ -7022,19 +7051,21 @@ async function svCtaPlaceBid(){
   if(_svCurrentAucId==='demo'){
     await new Promise(r=>setTimeout(r,400)); // simulate network
     if(currentBidEl)currentBidEl.textContent='$'+v;
-    const _minLbl=document.getElementById('sv-cta-min-lbl');if(_minLbl)_minLbl.textContent='$'+(v+1);
+    const _myName=window.fbUser?.username||window.fbUser?.displayName||'tú';
+    const _lblEl=document.getElementById('sv-cta-lbl');if(_lblEl)_lblEl.textContent=`🔨 ${_myName} va ganando`;
+    const _svMinLbl=document.getElementById('sv-cta-min-lbl');if(_svMinLbl)_svMinLbl.textContent='$'+(v+1);
     _svCtaBuildPresets(v);
     if(inp)inp.value='';
     if(btn){btn.textContent='✅ ¡Ofertado!';setTimeout(()=>{btn.textContent='🔨 Ofertar';btn.disabled=false;},1800);}
     spawnParticle(btn,'🔨');
     toast(`🔒 Oferta $${v} aceptada — ¡Vas ganando!`);
-    const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' IC';
+    const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' cr';
     // Add to bids overlay
     const _bo=document.getElementById('sv-bids-overlay');if(_bo){const _myName=window.fbUser?.username||window.fbUser?.displayName||'tú';const _r=document.createElement('div');_r.innerHTML=`<div style="font-size:11px;font-weight:900;color:rgba(255,255,255,.75)">🔨 ${_myName}</div><div style="font-size:13px;font-weight:900;color:var(--y)">Ofertó $${v}</div>`;_bo.appendChild(_r);while(_bo.children.length>4)_bo.removeChild(_bo.firstChild);}
     return;
   }
   // Real Firestore auction
-  if((walletBalance||0)<v){toast('❌ Saldo insuficiente — recarga InstaCreditos');openDeposit();if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
+  if((walletBalance||0)<v){toast('❌ Saldo insuficiente — recarga tu saldo');openDeposit();if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
   try{
     const auc=await fsGet('auctions',_svCurrentAucId);
     if(!auc||auc.status!=='active'){toast('❌ La subasta terminó');_svCtaSetState('idle');if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
@@ -7043,7 +7074,7 @@ async function svCtaPlaceBid(){
     const me=window.fbUser?.username||window.fbUser?.displayName||window.fbUser?.uid||'comprador';
     await fsSet('auctions',_svCurrentAucId,{currentBid:v,currentWinner:me,lastBidAt:Date.now()});
     if(currentBidEl)currentBidEl.textContent='$'+v;
-    const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' IC';
+    const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' cr';
     if(inp)inp.value='';
     _svCtaBuildPresets(v);
     svCtaUpdateBtn();
@@ -7170,7 +7201,7 @@ function _startViewerAucPoll(channelName){
         if(a.endsAt) _svCurrentAucEndsAt=a.endsAt;
         // Always update bid (catches real buyer bids and bot bids)
         const bidEl=document.getElementById('sv-cta-bid');if(bidEl)bidEl.textContent='$'+(a.currentBid||a.startPrice||0);
-        const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' IC';
+        const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' cr';
         const old=document.getElementById('sv-sheet-auc-bid');if(old)old.textContent='$'+(a.currentBid||a.startPrice||0);
         if(isNew){
           clearInterval(_svAucTimerIv);_svAucTimerIv=setInterval(_svAucTimerTick,1000);_svAucTimerTick();
@@ -7228,13 +7259,15 @@ function _svStartMockAuction(prod){
   _svCurrentAucEndsAt=Date.now()+120000; // 2 min countdown
   // Set initial state
   const bidEl=document.getElementById('sv-cta-bid');if(bidEl)bidEl.textContent='$'+currentBid;
-  const _wEl=document.getElementById('sv-cta-wallet');if(_wEl)_wEl.textContent=(walletBalance||0)+' IC';
+  const _wEl=document.getElementById('sv-cta-wallet');if(_wEl)_wEl.textContent=(walletBalance||0)+' cr';
   _svCtaBuildPresets(currentBid);
   _svCtaSetState('auc');
   _svAucTimerIv=setInterval(_svAucTimerTick,1000);_svAucTimerTick();
   // Wire min label + base price
   const _svMinLbl=document.getElementById('sv-cta-min-lbl');if(_svMinLbl)_svMinLbl.textContent='$'+(startPrice+1);
   if(prod){const _svBase=document.getElementById('sv-cta-base');if(_svBase)_svBase.textContent='Base: $'+prod.p;}
+  // Sync product thumb
+  if(prod){const _svThumb=document.getElementById('sv-prod-thumb');if(_svThumb&&prod.img){_svThumb.src=prod.img;_svThumb.style.display='';}}
   // Clear bids overlay
   const _svBO=document.getElementById('sv-bids-overlay');if(_svBO)_svBO.innerHTML='';
   // Bot bids every 10-25s
@@ -7246,10 +7279,12 @@ function _svStartMockAuction(prod){
     const bot=bots[~~(Math.random()*bots.length)];
     currentBid+=~~(Math.random()*8+1);
     const bidEl=document.getElementById('sv-cta-bid');if(bidEl)bidEl.textContent='$'+currentBid;
+    // Update winner label
+    const lblEl=document.getElementById('sv-cta-lbl');if(lblEl)lblEl.textContent=`🔨 ${bot} va ganando`;
     // Update min label
     const minLbl=document.getElementById('sv-cta-min-lbl');if(minLbl)minLbl.textContent='$'+(currentBid+1);
     _svCtaBuildPresets(currentBid);
-    const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' IC';
+    const walletEl=document.getElementById('sv-cta-wallet');if(walletEl)walletEl.textContent=(walletBalance||0)+' cr';
     // Add bid row to overlay
     const bo=document.getElementById('sv-bids-overlay');
     if(bo){const r=document.createElement('div');r.innerHTML=`<div style="font-size:11px;font-weight:900;color:rgba(255,255,255,.75)">🔨 ${bot}</div><div style="font-size:13px;font-weight:900;color:var(--y)">Ofertó $${currentBid}</div>`;bo.appendChild(r);while(bo.children.length>4)bo.removeChild(bo.firstChild);}
