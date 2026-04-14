@@ -1751,7 +1751,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     </div>
 
     <!-- ── SELLER CARD ── -->
-    <div style="margin:0 12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;display:flex;align-items:center;padding:12px 14px;gap:12px">
+    <div onclick="openSellerShop()" style="margin:0 12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;display:flex;align-items:center;padding:12px 14px;gap:12px;cursor:pointer;-webkit-tap-highlight-color:transparent">
       <div id="sv-av-small" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0"></div>
       <div style="flex:1;min-width:0">
         <div id="sv-name-mini" style="font-weight:900;font-size:15px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Vendedor</div>
@@ -1900,7 +1900,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       <div class="pd-live-bar" id="pd-live-bar" style="display:none">
         <div class="pd-live-pill"><div class="pd-live-dot"></div>EN VIVO</div>
         <div class="pd-view-pill">👁 <span id="pd-viewers">247</span> viendo</div>
-        <div id="pd-seller-mini" style="margin-left:auto;display:flex;align-items:center;gap:6px;cursor:pointer" onclick="openStream(PRODS[curProd]?.s)">
+        <div id="pd-seller-mini" style="margin-left:auto;display:flex;align-items:center;gap:6px;cursor:pointer" onclick="openSeller(PRODS[curProd]?.s)">
           <div id="pd-sav-mini" style="width:24px;height:24px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:12px">🛍️</div>
           <div style="font-size:11px;font-weight:800;color:#fff" id="pd-sname-mini"></div>
         </div>
@@ -3481,7 +3481,7 @@ function prodCard(p,i,list){
     </div>
     <div class="pcard-body">
       <div class="pcard-name">${p.n}</div>
-      <div class="pcard-seller-row">
+      <div class="pcard-seller-row" onclick="event.stopPropagation();openSeller(${p.s})" style="cursor:pointer">
         <div class="pcard-seller-dot" style="${s.logo?'overflow:hidden;background:#000;':''}">${s.logo?`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover">`:s.e}</div>
         <div class="pcard-seller-name">${s.n}</div>
       </div>
@@ -3925,7 +3925,7 @@ function openProd(idx){
   const _pdSav=document.getElementById('pd-sav');if(_pdSav){if(s.logo){_pdSav.innerHTML=`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;_pdSav.style.background='#000';_pdSav.style.overflow='hidden';}else{_pdSav.textContent=s.e;_pdSav.style.background='';_pdSav.style.overflow='';}} 
   document.getElementById('pd-sname').textContent=s.n;
   document.getElementById('pd-sfoll').textContent=`${s.f} seguidores`;
-  document.getElementById('pd-seller').onclick=()=>openStream(p.s);
+  document.getElementById('pd-seller').onclick=()=>openSeller(p.s);
   document.getElementById('pd-wish').textContent=wish.has(idx)?'❤️':'🤍';
   // Show auction for live, buy card for non-live
   const aucCard=document.getElementById('auc-inline-card');
@@ -3941,9 +3941,24 @@ function openProd(idx){
   go('prod');
 }
 function openSellerShop(){
-  // Navigate to current stream's seller profile
   if(curStream!==null&&curStream>=0){
+    // Static seller
     openSeller(curStream);
+  } else if(window._fsStreamData){
+    // Real Firestore stream — open seller profile from stream data
+    const s=window._fsStreamData;
+    const storeData={
+      _id:s.sellerId||'',uid:s.sellerId||'',
+      shopName:s.sellerName||s.shopName||'Vendedor',
+      ownerName:s.sellerName||'Vendedor',
+      avatar:s.sellerAvatar||'',
+      isLive:true,
+      channelName:s.channelName||window._fsStreamChannel||'',
+      whatsapp:s.whatsapp||'',
+      followers:s.followers||0,
+      description:s.bio||''
+    };
+    openSellerFS(storeData);
   }
 }
 function toggleWish(){
