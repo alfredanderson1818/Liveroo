@@ -3908,7 +3908,15 @@ function goBack(){if(typeof stopAuction==="function")stopAuction();
     const leaving=hist[hist.length-1];
     hist.pop();stopChat();
     // Leave Agora if we were watching a stream
-    if(leaving==='stream'){leaveAgoraChannel();if(typeof _stopViewerAucPoll==='function')_stopViewerAucPoll();_stopFixedSalePoll();clearInterval(_mockAucIv);_mockAucIv=null;}
+    if(leaving==='stream'){
+      leaveAgoraChannel();
+      if(typeof _stopViewerAucPoll==='function')_stopViewerAucPoll();
+      _stopFixedSalePoll();
+      clearInterval(_mockAucIv);_mockAucIv=null;
+      // Limpiar fondo del stream
+      const streamScr=document.getElementById('s-stream');
+      if(streamScr){streamScr.style.backgroundImage='';streamScr.style.backgroundSize='';}
+    }
     const prev=hist[hist.length-1];
     go(prev,false);
     // Si volvemos a prod y el producto es live, reanudar simulador
@@ -3939,8 +3947,23 @@ function openStream(idx){
   const pi=PRODS.findIndex(p=>p.s===idx);
   const prod=pi>=0?PRODS[pi]:PRODS[0];
   curStreamProd=pi>=0?pi:0;
+
+  // Fondo del stream — usar background-image en el screen para garantizar visibilidad en móvil
+  const streamScr=document.getElementById('s-stream');
+  if(streamScr&&prod.img){
+    streamScr.style.backgroundImage=`url('${prod.img}')`;
+    streamScr.style.backgroundSize='cover';
+    streamScr.style.backgroundPosition='center';
+  }
+
   const _svImgEl=document.getElementById('sv-img');
-  if(_svImgEl){_svImgEl.style.opacity='1';_svImgEl.src=prod.img||'';}
+  if(_svImgEl){
+    _svImgEl.style.opacity='1';
+    _svImgEl.src=prod.img||'';
+    // Blur+scale para dar sensación de stream real en modo demo
+    _svImgEl.style.filter='blur(0px)';
+    _svImgEl.style.transform='scale(1.02)';
+  }
   document.getElementById('sv-viewers').textContent=s.v;
   document.getElementById('sv-hot').textContent=~~(s.v*.03+1);
   const _svAv=document.getElementById('sv-av');const _svAvS=document.getElementById('sv-av-small');[_svAv,_svAvS].forEach(el=>{if(!el)return;if(s.logo){el.innerHTML=`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;el.style.background='#000';el.style.overflow='hidden';}else{el.textContent=s.e;el.style.background='';el.style.overflow='';}}); 
@@ -5836,7 +5859,8 @@ async function joinAsAudience(channelName){
       if(!rs.length){_svDebug('⚠️ Sin host en el canal — verifica App Certificate en console.agora.io');}
     },12000);
 
-    toast('📡 Conectado al live');
+    // No mostrar toast — la UI ya indica que está conectando
+    // Incrementar viewer count en Firestore
     fsGet('streams',channelName).then(doc=>{
       const v=(doc?.viewerCount||0)+1;
       fsSet('streams',channelName,{viewerCount:v});
@@ -7740,6 +7764,16 @@ async function openStreamFS(channelName){
     curStream=-1; // -1 = real FS stream
     window._fsStreamData=s;
     window._fsStreamChannel=channelName;
+    // Fondo del stream — usar background-image en el screen para garantizar visibilidad en móvil
+    const streamScr=document.getElementById('s-stream');
+    if(streamScr){
+      const bgImg=s.thumb||s.sellerAvatar||'';
+      if(bgImg){
+        streamScr.style.backgroundImage=`url('${bgImg}')`;
+        streamScr.style.backgroundSize='cover';
+        streamScr.style.backgroundPosition='center';
+      }
+    }
     const svImg=document.getElementById('sv-img');
     if(svImg){svImg.style.opacity='1';svImg.src=s.thumb||'';}
     document.getElementById('sv-viewers').textContent=s.viewerCount||1;
