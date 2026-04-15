@@ -1327,6 +1327,19 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 
 /* bgs */
 .bgb{background:linear-gradient(135deg,#1a1a3e,#0d1f4e)}
+/* report */
+.report-opt{padding:14px 16px;background:var(--dk3);border-radius:12px;border:1px solid rgba(255,255,255,.06);cursor:pointer;font-size:13px;font-weight:700;color:var(--tx);transition:all .15s}
+.report-opt:active{background:rgba(255,59,59,.1);border-color:rgba(255,59,59,.3);color:var(--rd)}
+/* reviews */
+.review-card{background:var(--dk3);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.06)}
+.review-stars{font-size:14px;letter-spacing:1px;margin-bottom:4px}
+.review-author{font-size:11px;font-weight:800;color:var(--y);margin-bottom:5px}
+.review-text{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+.review-date{font-size:10px;color:var(--mu);margin-top:6px}
+/* terms */
+.terms-section{margin-bottom:22px}
+.terms-h{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--y);margin-bottom:8px;letter-spacing:.3px}
+.terms-p{font-size:13px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:10px}
 .bgp{background:linear-gradient(135deg,#2a1a3e,#1d0d4e)}
 .bgt{background:linear-gradient(135deg,#0e2e2e,#0d3d3e)}
 .bgr{background:linear-gradient(135deg,#3e1a1a,#4e0d0d)}
@@ -1776,6 +1789,12 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       </div>
       <span style="font-size:10px;font-weight:900;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.9)">Tienda</span>
     </button>
+    <button onclick="openStreamReport()" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;-webkit-tap-highlight-color:transparent;padding:0">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <span style="font-size:10px;font-weight:900;color:rgba(255,255,255,.6);text-shadow:0 1px 6px rgba(0,0,0,.9)">Reportar</span>
+    </button>
   </div>
 
   <!-- ── CHAT OVERLAY ── -->
@@ -2134,13 +2153,16 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     <!-- Bio -->
     <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin:0 16px 16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden" id="sp-bio"></div>
 
-    <!-- Mode tabs -->
+    <!-- Mode tabs — 3 tabs: Tienda, Subastas, Reseñas -->
     <div style="display:flex;margin:0 16px 14px;background:rgba(255,255,255,.05);border-radius:12px;padding:3px;border:1px solid rgba(255,255,255,.07)">
-      <div id="sp-mode-tienda" class="sp-mode-tab sp-mode-tab-tienda active" onclick="spMode('tienda')" style="flex:1;padding:9px 10px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:900;color:var(--mu);transition:all .18s">
-        🏷️ Tienda <span style="font-size:10px;font-weight:900;padding:1px 6px;border-radius:20px;background:rgba(255,208,0,.18);color:var(--y)" id="sp-count-tienda">0</span>
+      <div id="sp-mode-tienda" class="sp-mode-tab sp-mode-tab-tienda active" onclick="spMode('tienda')" style="flex:1;padding:9px 6px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:900;color:var(--mu);transition:all .18s">
+        🏷️ Tienda <span style="font-size:10px;font-weight:900;padding:1px 5px;border-radius:20px;background:rgba(255,208,0,.18);color:var(--y)" id="sp-count-tienda">0</span>
       </div>
-      <div id="sp-mode-subasta" class="sp-mode-tab sp-mode-tab-subasta" onclick="spMode('subasta')" style="flex:1;padding:9px 10px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:900;color:var(--mu);transition:all .18s">
-        🔨 Subastas <span style="font-size:10px;font-weight:900;padding:1px 6px;border-radius:20px;background:rgba(255,59,59,.18);color:var(--rd)" id="sp-count-subasta">0</span>
+      <div id="sp-mode-subasta" class="sp-mode-tab sp-mode-tab-subasta" onclick="spMode('subasta')" style="flex:1;padding:9px 6px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:900;color:var(--mu);transition:all .18s">
+        🔨 Historial <span style="font-size:10px;font-weight:900;padding:1px 5px;border-radius:20px;background:rgba(255,59,59,.18);color:var(--rd)" id="sp-count-subasta">0</span>
+      </div>
+      <div id="sp-mode-reviews" class="sp-mode-tab" onclick="spMode('reviews')" style="flex:1;padding:9px 6px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:900;color:var(--mu);transition:all .18s">
+        ⭐ Reseñas <span style="font-size:10px;font-weight:900;padding:1px 5px;border-radius:20px;background:rgba(255,208,0,.1);color:var(--y)" id="sp-count-reviews">0</span>
       </div>
     </div>
 
@@ -2155,13 +2177,39 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       </div>
     </div>
 
-    <!-- Subastas panel -->
+    <!-- Historial Subastas panel -->
     <div class="sp-panel" id="sp-panel-subasta">
       <div class="spa-list" id="spa-list">
         <div style="text-align:center;padding:48px 24px;color:var(--mu)">
           <div style="font-size:40px;margin-bottom:10px">🔨</div>
           <div style="font-size:13px;font-weight:800;color:var(--tx);margin-bottom:4px">Sin subastas activas</div>
           <div style="font-size:11px">El vendedor creará subastas pronto</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews panel -->
+    <div class="sp-panel" id="sp-panel-reviews">
+      <div id="sp-reviews-wrap" style="padding:0 16px 16px">
+        <!-- Rating summary -->
+        <div style="background:var(--dk3);border-radius:16px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:16px;border:1px solid rgba(255,255,255,.06)">
+          <div style="text-align:center;flex-shrink:0">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--y);line-height:1" id="sp-rating-big">—</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:2px">de 5.0</div>
+          </div>
+          <div style="flex:1" id="sp-rating-bars"></div>
+        </div>
+        <!-- Write review button (only if bought from this seller) -->
+        <div id="sp-write-review-wrap" style="display:none;margin-bottom:14px">
+          <button onclick="openWriteReview()" style="width:100%;background:rgba(255,208,0,.1);border:1.5px solid rgba(255,208,0,.3);border-radius:12px;padding:13px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--y);cursor:pointer">⭐ Dejar mi reseña</button>
+        </div>
+        <!-- Reviews list -->
+        <div id="sp-reviews-list-new" style="display:flex;flex-direction:column;gap:10px">
+          <div style="text-align:center;padding:32px 24px;color:var(--mu)">
+            <div style="font-size:36px;margin-bottom:8px">💬</div>
+            <div style="font-size:13px;font-weight:800;color:var(--tx);margin-bottom:3px">Sin reseñas aún</div>
+            <div style="font-size:11px">Compra para ser el primero en opinar</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2173,6 +2221,33 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
   <!-- hidden compat -->
   <div style="display:none"><div id="sp-revs-list"></div><div id="sp-rating"></div><div id="sp-reviews-count"></div><div id="sp-bars"></div></div>
 
+</div>
+
+<!-- WRITE REVIEW MODAL -->
+<div id="review-modal" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center">
+  <div style="width:100%;max-width:430px;background:var(--dk2);border-radius:24px 24px 0 0;padding:24px 20px max(env(safe-area-inset-bottom),32px);border-top:1px solid rgba(255,255,255,.08)">
+    <div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:0 auto 20px"></div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;margin-bottom:4px">Deja tu reseña</div>
+    <div style="font-size:12px;color:var(--mu);margin-bottom:18px" id="review-seller-name">sobre el vendedor</div>
+
+    <!-- Star rating -->
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:18px" id="review-stars-row">
+      <span class="review-star" onclick="setReviewStar(1)" style="font-size:36px;cursor:pointer;opacity:.3;transition:all .15s">⭐</span>
+      <span class="review-star" onclick="setReviewStar(2)" style="font-size:36px;cursor:pointer;opacity:.3;transition:all .15s">⭐</span>
+      <span class="review-star" onclick="setReviewStar(3)" style="font-size:36px;cursor:pointer;opacity:.3;transition:all .15s">⭐</span>
+      <span class="review-star" onclick="setReviewStar(4)" style="font-size:36px;cursor:pointer;opacity:.3;transition:all .15s">⭐</span>
+      <span class="review-star" onclick="setReviewStar(5)" style="font-size:36px;cursor:pointer;opacity:.3;transition:all .15s">⭐</span>
+    </div>
+    <div style="font-size:13px;font-weight:800;text-align:center;color:var(--y);margin-bottom:14px;min-height:18px" id="review-star-label"></div>
+
+    <!-- Text -->
+    <textarea id="review-text" maxlength="200" rows="3" placeholder="Cuéntanos tu experiencia con este vendedor…" style="width:100%;background:var(--dk3);border:1.5px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;color:var(--tx);font-family:'Nunito',sans-serif;font-size:13px;outline:none;resize:none;box-sizing:border-box;line-height:1.5;margin-bottom:14px" onfocus="this.style.borderColor='rgba(255,208,0,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'"></textarea>
+
+    <div style="display:flex;gap:10px">
+      <button onclick="closeReviewModal()" style="flex:1;background:var(--dk3);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--mu);cursor:pointer">Cancelar</button>
+      <button onclick="submitReview()" id="review-submit-btn" style="flex:2;background:var(--y);border:none;border-radius:12px;padding:13px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;color:var(--dk);cursor:pointer">Publicar reseña</button>
+    </div>
+  </div>
 </div><!-- /s-seller -->
 
 
@@ -2453,6 +2528,16 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
         <div class="pmia">›</div>
       </div>
 
+      <!-- Términos y Privacidad -->
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <div onclick="openTerms('terms')" style="flex:1;padding:12px;background:var(--dk3);border-radius:11px;border:1px solid rgba(255,255,255,.06);cursor:pointer;text-align:center">
+          <div style="font-size:12px;font-weight:800;color:var(--mu)">📄 Términos de Uso</div>
+        </div>
+        <div onclick="openTerms('privacy')" style="flex:1;padding:12px;background:var(--dk3);border-radius:11px;border:1px solid rgba(255,255,255,.06);cursor:pointer;text-align:center">
+          <div style="font-size:12px;font-weight:800;color:var(--mu)">🔒 Privacidad</div>
+        </div>
+      </div>
+
       <!-- Sign out -->
       <div style="margin-top:10px;padding:14px 16px;background:rgba(255,59,59,.06);border:1px solid rgba(255,59,59,.15);border-radius:13px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="fbLogout()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rd)" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
@@ -2559,17 +2644,21 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 
     <!-- Contact -->
     <div class="track-contact">
-      <button class="track-contact-btn primary" onclick="toast('📞 Llamando al vendedor...')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--dk)" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        Llamar
+      <button class="track-contact-btn primary" id="track-wa-btn" onclick="trackContactSeller('wa')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.99.576 3.842 1.568 5.407L2 22l4.713-1.543A9.954 9.954 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+        WhatsApp Vendedor
       </button>
-      <button class="track-contact-btn secondary" onclick="toast('💬 Abriendo chat...')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        Chat
-      </button>
-      <button class="track-contact-btn secondary" onclick="toast('⚠️ Problema reportado')">
+      <button class="track-contact-btn secondary" onclick="trackContactSeller('report')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         Problema
+      </button>
+    </div>
+
+    <!-- Review section — aparece solo si el pedido fue entregado -->
+    <div id="track-review-section" style="display:none;margin:0 16px 24px">
+      <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">¿Cómo fue tu experiencia?</div>
+      <button onclick="openWriteReviewFromTrack()" style="width:100%;background:rgba(255,208,0,.08);border:1.5px solid rgba(255,208,0,.25);border-radius:13px;padding:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;color:var(--y);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        ⭐ Calificar al vendedor
       </button>
     </div>
   </div>
@@ -3136,6 +3225,17 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
   </div>
 </div>
 
+<!-- TÉRMINOS Y PRIVACIDAD -->
+<div id="s-terms" class="scr">
+  <div style="display:flex;align-items:center;gap:12px;padding:max(var(--sat),14px) 16px 14px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06)">
+    <button class="bk" style="position:static;background:var(--dk3);border:1px solid rgba(255,255,255,.07)" onclick="goBack()">←</button>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;flex:1" id="terms-title">Términos y Condiciones</div>
+  </div>
+  <div class="sb" style="padding:20px 20px 40px;line-height:1.7;font-size:13px;color:rgba(255,255,255,.75)">
+    <div id="terms-content"></div>
+  </div>
+</div>
+
 <!-- ADMIN PANEL -->
 <div id="s-admin" class="scr">
   <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);background:var(--dk)">
@@ -3276,6 +3376,23 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       <button onclick="submitSellerUpgrade()" style="width:100%;background:var(--y);color:var(--dk);border:none;border-radius:14px;padding:15px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;margin-top:4px">📡 Activar cuenta vendedor</button>
       <div onclick="closeSellerUpgrade()" style="font-size:13px;color:var(--mu);font-weight:700;cursor:pointer;padding:8px;text-align:center">Ahora no</div>
     </div>
+  </div>
+</div>
+
+<!-- REPORT STREAM MODAL -->
+<div id="report-modal" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center">
+  <div style="width:100%;max-width:430px;background:var(--dk2);border-radius:24px 24px 0 0;padding:24px 20px max(env(safe-area-inset-bottom),32px);border-top:1px solid rgba(255,255,255,.08)">
+    <div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:0 auto 20px"></div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;margin-bottom:4px">Reportar stream</div>
+    <div style="font-size:12px;color:var(--mu);margin-bottom:18px">¿Por qué quieres reportar este live?</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+      <div class="report-opt" onclick="submitReport('contenido_inapropiado')">🔞 Contenido inapropiado o adulto</div>
+      <div class="report-opt" onclick="submitReport('spam')">🚫 Spam o actividad sospechosa</div>
+      <div class="report-opt" onclick="submitReport('estafa')">⚠️ Posible estafa o fraude</div>
+      <div class="report-opt" onclick="submitReport('violencia')">🚨 Violencia o comportamiento agresivo</div>
+      <div class="report-opt" onclick="submitReport('otro')">📝 Otro motivo</div>
+    </div>
+    <button onclick="document.getElementById('report-modal').style.display='none'" style="width:100%;background:var(--dk3);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--mu);cursor:pointer">Cancelar</button>
   </div>
 </div>
 
@@ -3786,9 +3903,8 @@ function go(id,push=true){
   const next=document.getElementById('s-'+id);
   if(next){next.classList.add('on');}
   if(push&&hist[hist.length-1]!==id)hist.push(id);
-  // Stop home poll when leaving home
   if(id!=='home')clearInterval(_homePollIv);
-  const hide=['stream','co','ok','onboard','register','seller','wallet','deposit','dash','notif','track','my-orders','admin'].includes(id);
+  const hide=['stream','co','ok','onboard','register','seller','wallet','deposit','dash','notif','track','my-orders','admin','terms'].includes(id);
   document.getElementById('nav').className='nav'+(hide?' hide':'');
   ['home','exp','cart','prof'].forEach(n=>document.getElementById('ni-'+n)?.classList.toggle('on',n===id));
 }
@@ -4409,10 +4525,17 @@ let _spAucPollIvs = {}; // timers per auction
 
 function spMode(mode){
   _spCurrentMode = mode;
-  ['tienda','subasta'].forEach(m=>{
-    document.getElementById('sp-mode-'+m)?.classList.toggle('active', m===mode);
-    document.getElementById('sp-panel-'+m)?.classList.toggle('on', m===mode);
+  ['tienda','subasta','reviews'].forEach(m=>{
+    const tab=document.getElementById('sp-mode-'+m);
+    const panel=document.getElementById('sp-panel-'+m);
+    const active=m===mode;
+    if(tab){
+      tab.style.background=active?'rgba(255,255,255,.12)':'transparent';
+      tab.style.color=active?'#fff':'var(--mu)';
+    }
+    if(panel) panel.classList.toggle('on',active);
   });
+  if(mode==='reviews') _spLoadReviews();
 }
 
 function spShare(){
@@ -6359,6 +6482,8 @@ function startBroadcast(){
         console.log('[Stream] ✅ Guardado OK — canal:',channelName);
         toast('🔴 ¡Live publicado! — apareces en el home');
         setTimeout(_refreshLiveStrip,500);
+        // Feature 1: Notificar a seguidores
+        sendLiveNotification(streamData.sellerName||'Vendedor', channelName);
       } else if(attempt<3){
         console.warn('[Stream] ⚠️ Intento',attempt,'fallido — reintentando en 2s...');
         await _refreshToken();
@@ -7034,6 +7159,7 @@ function _buildTrackSteps(status){
 function _renderTrackUI(order){
   if(!order)return;
   _curTrackOrder=order;
+  window._curTrackOrder=order; // accesible globalmente para trackContactSeller
   const num=order.num||order.orderId||order._id||'IC-00000';
   document.getElementById('track-order-num').textContent='#'+num;
   document.getElementById('track-num2').textContent='#'+num;
@@ -7058,6 +7184,12 @@ function _renderTrackUI(order){
         <div class="track-step-desc">${s.desc}</div>
       </div>
     </div>`).join('');
+  // Botón WA al vendedor
+  const waBtn=document.getElementById('track-wa-btn');
+  if(waBtn) waBtn.style.display=order.sellerId?'flex':'none';
+  // Sección de reseña solo si entregado
+  const revSection=document.getElementById('track-review-section');
+  if(revSection) revSection.style.display=(order.status==='delivered')?'block':'none';
 }
 
 async function openTrack(orderOrIdx){
@@ -8122,6 +8254,330 @@ function fbLogout(){
   toast('👋 Sesión cerrada');
   setTimeout(()=>go('register',false),400);
 }
+
+// ═══════════════════════════════════════════════════════
+// FEATURE 1 — NOTIFICACIONES PUSH CUANDO ALGUIEN INICIA LIVE
+// ═══════════════════════════════════════════════════════
+async function sendLiveNotification(sellerName, channelName){
+  // Notificar a todos los seguidores cuando el seller inicia live
+  try{
+    const followers = await fsQuery('follows',[{field:'sellerId',value:window.fbUser?.uid}]);
+    if(!followers.length) return;
+    const notifData = {
+      title:`🔴 ${sellerName} está en vivo`,
+      body:'Entra ahora y participa en las subastas',
+      icon:'/liveroo/icon-192.png',
+      tag:'live-'+channelName,
+      url:'/liveroo/'
+    };
+    // Guardar notificación pendiente en Firestore para cada seguidor
+    const saves = followers.map(f => fsAdd('notifications',{
+      toUid: f.followerUid,
+      fromUid: window.fbUser?.uid,
+      type:'live_started',
+      sellerName,
+      channelName,
+      message:`${sellerName} está en vivo ahora`,
+      read:false,
+      ts:Date.now()
+    }));
+    await Promise.all(saves).catch(()=>{});
+    console.log('[Push] Notificaciones enviadas a',followers.length,'seguidores');
+  }catch(e){ console.warn('[Push] Error al notificar:',e.message); }
+}
+
+async function _checkLiveNotifications(){
+  const uid = window.fbUser?.uid;
+  if(!uid) return;
+  try{
+    const notifs = await fsQuery('notifications',[{field:'toUid',value:uid},{field:'read',value:false}]);
+    const liveNotifs = notifs.filter(n=>n.type==='live_started' && (Date.now()-n.ts)<3600000);
+    liveNotifs.forEach(n=>{
+      pushNotif('🔴','live',`<strong>${n.sellerName}</strong> está en vivo ahora`,()=>{
+        if(n.channelName) openStreamFS(n.channelName);
+      },true);
+      fsSet('notifications',n._id,{read:true}).catch(()=>{});
+    });
+  }catch(e){}
+}
+// Integrar en startBroadcast — llamar sendLiveNotification al iniciar
+const _origStartBroadcast = startBroadcast;
+
+// ═══════════════════════════════════════════════════════
+// FEATURE 2 — SELLER PROFILE: HISTORIAL Y REVIEWS
+// ═══════════════════════════════════════════════════════
+
+async function _spLoadReviews(){
+  if(!_spCurrentSellerId) return;
+  const wrap = document.getElementById('sp-reviews-list-new');
+  const ratingBig = document.getElementById('sp-rating-big');
+  const ratingBars = document.getElementById('sp-rating-bars');
+  const countEl = document.getElementById('sp-count-reviews');
+  if(wrap) wrap.innerHTML='<div style="text-align:center;padding:24px;color:var(--mu);font-size:12px">⏳ Cargando...</div>';
+  try{
+    const reviews = await fsQuery('reviews',[{field:'sellerId',value:_spCurrentSellerId}]);
+    if(countEl) countEl.textContent=reviews.length||'0';
+    if(!reviews.length){
+      if(ratingBig) ratingBig.textContent='—';
+      if(wrap) wrap.innerHTML='<div style="text-align:center;padding:32px 24px;color:var(--mu)"><div style="font-size:36px;margin-bottom:8px">💬</div><div style="font-size:13px;font-weight:800;color:var(--tx);margin-bottom:3px">Sin reseñas aún</div><div style="font-size:11px">Compra para ser el primero en opinar</div></div>';
+      if(ratingBars) ratingBars.innerHTML='';
+      _checkCanReview();
+      return;
+    }
+    const avg=(reviews.reduce((s,r)=>s+(r.stars||5),0)/reviews.length).toFixed(1);
+    if(ratingBig) ratingBig.textContent=avg;
+    // Rating bars
+    const counts=[5,4,3,2,1].map(s=>({s,c:reviews.filter(r=>r.stars===s).length}));
+    if(ratingBars) ratingBars.innerHTML=counts.map(({s,c})=>`
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <span style="font-size:10px;font-weight:800;color:var(--mu);width:12px">${s}</span>
+        <div style="flex:1;height:5px;background:var(--dk4);border-radius:3px;overflow:hidden">
+          <div style="width:${reviews.length?Math.round(c/reviews.length*100):0}%;height:100%;background:var(--y);border-radius:3px;transition:width .6s ease"></div>
+        </div>
+        <span style="font-size:10px;color:var(--mu);width:16px;text-align:right">${c}</span>
+      </div>`).join('');
+    // Reviews list
+    if(wrap) wrap.innerHTML=reviews.sort((a,b)=>b.ts-a.ts).map(r=>`
+      <div class="review-card">
+        <div class="review-stars">${'⭐'.repeat(r.stars||5)}</div>
+        <div class="review-author">${r.buyerName||'Comprador'}</div>
+        <div class="review-text">${r.text||''}</div>
+        <div class="review-date">${r.ts?new Date(r.ts).toLocaleDateString('es-VE',{day:'2-digit',month:'short',year:'numeric'}):'—'}</div>
+      </div>`).join('');
+    _checkCanReview();
+  }catch(e){
+    if(wrap) wrap.innerHTML='<div style="text-align:center;padding:24px;color:var(--mu);font-size:12px">Error al cargar reseñas</div>';
+  }
+}
+
+async function _checkCanReview(){
+  const uid=window.fbUser?.uid;
+  const wrap=document.getElementById('sp-write-review-wrap');
+  if(!wrap||!uid||!_spCurrentSellerId) return;
+  if(_spIsOwnStore){wrap.style.display='none';return;}
+  try{
+    const orders=await fsQuery('orders',[{field:'buyerId',value:uid},{field:'sellerId',value:_spCurrentSellerId}]);
+    const delivered=orders.filter(o=>o.status==='delivered');
+    const existing=await fsQuery('reviews',[{field:'buyerId',value:uid},{field:'sellerId',value:_spCurrentSellerId}]);
+    wrap.style.display=(delivered.length>0&&existing.length===0)?'block':'none';
+  }catch(e){ wrap.style.display='none'; }
+}
+
+// ═══════════════════════════════════════════════════════
+// FEATURE 3 — SISTEMA DE REVIEWS
+// ═══════════════════════════════════════════════════════
+let _reviewStar=0;
+function openWriteReview(){
+  const modal=document.getElementById('review-modal');
+  const nameEl=document.getElementById('review-seller-name');
+  if(nameEl) nameEl.textContent='sobre '+(document.getElementById('sp-name')?.textContent||'el vendedor');
+  document.getElementById('review-text').value='';
+  _reviewStar=0;
+  setReviewStar(0);
+  if(modal) modal.style.display='flex';
+}
+function openWriteReviewFromTrack(){
+  const order=window._curTrackOrder;
+  if(!order) return;
+  const modal=document.getElementById('review-modal');
+  const nameEl=document.getElementById('review-seller-name');
+  if(nameEl) nameEl.textContent='sobre '+(order.sellerName||'el vendedor');
+  document.getElementById('review-text').value='';
+  _reviewStar=0;
+  setReviewStar(0);
+  modal._trackOrder=order;
+  if(modal) modal.style.display='flex';
+}
+function closeReviewModal(){
+  const modal=document.getElementById('review-modal');
+  if(modal){modal.style.display='none';modal._trackOrder=null;}
+}
+function setReviewStar(n){
+  _reviewStar=n;
+  const labels=['','Muy malo 😞','Malo 😕','Regular 😐','Bueno 😊','Excelente 🤩'];
+  const stars=document.querySelectorAll('.review-star');
+  stars.forEach((s,i)=>{ s.style.opacity=i<n?'1':'0.3'; s.style.transform=i<n?'scale(1.15)':'scale(1)'; });
+  const lbl=document.getElementById('review-star-label');
+  if(lbl) lbl.textContent=labels[n]||'';
+}
+async function submitReview(){
+  if(!_reviewStar){ toast('⚠️ Selecciona una calificación');return; }
+  const text=document.getElementById('review-text').value.trim();
+  const btn=document.getElementById('review-submit-btn');
+  if(btn){btn.textContent='⏳ Publicando...';btn.disabled=true;}
+  const modal=document.getElementById('review-modal');
+  const sellerId=modal?._trackOrder?.sellerId||_spCurrentSellerId;
+  const sellerName=modal?._trackOrder?.sellerName||(document.getElementById('sp-name')?.textContent||'');
+  if(!sellerId){ toast('❌ Error al identificar vendedor');if(btn){btn.textContent='Publicar reseña';btn.disabled=false;}return; }
+  try{
+    await fsAdd('reviews',{
+      sellerId, sellerName,
+      buyerId:window.fbUser?.uid||'',
+      buyerName:window.fbUser?.name||window.fbUser?.username||'Comprador',
+      stars:_reviewStar, text,
+      ts:Date.now(), status:'active'
+    });
+    // Actualizar rating promedio del seller en stores
+    const allRevs=await fsQuery('reviews',[{field:'sellerId',value:sellerId}]);
+    if(allRevs.length){
+      const avg=parseFloat((allRevs.reduce((s,r)=>s+(r.stars||5),0)/allRevs.length).toFixed(1));
+      fsSet('stores',sellerId,{rating:avg,reviewCount:allRevs.length}).catch(()=>{});
+      const statEl=document.getElementById('sp-stat-r');
+      if(statEl) statEl.textContent=avg+'⭐';
+    }
+    closeReviewModal();
+    toast('⭐ ¡Reseña publicada! Gracias por tu opinión');
+    setTimeout(()=>_spLoadReviews(),500);
+  }catch(e){
+    toast('❌ Error al publicar: '+e.message);
+  }finally{
+    if(btn){btn.textContent='Publicar reseña';btn.disabled=false;}
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// FEATURE 4 — TRACKING REAL CON WHATSAPP
+// ═══════════════════════════════════════════════════════
+async function trackContactSeller(type){
+  const order=window._curTrackOrder;
+  if(!order){ toast('⚠️ Sin información del pedido'); return; }
+  if(type==='report'){
+    const reason=prompt('Describe el problema con tu pedido:');
+    if(!reason) return;
+    fsAdd('reports',{
+      type:'order',orderId:order._id||order.orderId,
+      buyerId:window.fbUser?.uid, sellerId:order.sellerId,
+      reason, ts:Date.now(), status:'pending'
+    }).catch(()=>{});
+    toast('⚠️ Problema reportado — lo revisaremos pronto');
+    return;
+  }
+  // WhatsApp
+  let phone='';
+  try{
+    if(order.sellerId){
+      const seller=await fsGet('users',order.sellerId);
+      phone=seller?.whatsapp||seller?.phone||'';
+      if(!phone){
+        const store=await fsGet('stores',order.sellerId);
+        phone=store?.whatsapp||'';
+      }
+    }
+  }catch(e){}
+  const orderNum=order.num||order.orderId||'';
+  const msg=encodeURIComponent(`Hola! Soy ${window.fbUser?.name||'comprador'}, tengo el pedido #${orderNum} en Liveroo y quiero coordinar la entrega 📦`);
+  const url=phone
+    ?`https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=${msg}`
+    :`https://wa.me/?text=${msg}`;
+  window.open(url,'_blank');
+}
+
+// ═══════════════════════════════════════════════════════
+// FEATURE 5 — MODERACIÓN DE CONTENIDO
+// ═══════════════════════════════════════════════════════
+function openStreamReport(){
+  const modal=document.getElementById('report-modal');
+  if(modal) modal.style.display='flex';
+}
+async function submitReport(reason){
+  const modal=document.getElementById('report-modal');
+  if(modal) modal.style.display='none';
+  const ch=window._currentStreamChannel||window._fsStreamChannel||'';
+  const streamData=window._fsStreamData||{};
+  try{
+    await fsAdd('reports',{
+      type:'stream', channelName:ch,
+      sellerId:streamData.sellerId||'',
+      sellerName:streamData.sellerName||'',
+      reportedBy:window.fbUser?.uid||'anonymous',
+      reason, ts:Date.now(), status:'pending'
+    });
+    toast('🚨 Reporte enviado — gracias por ayudarnos');
+    // Auto-kick si el stream recibe 5+ reportes
+    if(ch){
+      const reports=await fsQuery('reports',[{field:'channelName',value:ch},{field:'status',value:'pending'}]);
+      if(reports.length>=5){
+        fsSet('streams',ch,{flagged:true,flagReason:reason}).catch(()=>{});
+        console.warn('[Mod] Stream flagged por',reports.length,'reportes:',ch);
+      }
+    }
+  }catch(e){ toast('❌ Error al enviar reporte'); }
+}
+
+// Admin: resolver reportes
+async function _adminLoadReports(){
+  try{
+    const reports=await fsQuery('reports',[{field:'status',value:'pending'}]);
+    return reports.sort((a,b)=>b.ts-a.ts);
+  }catch(e){ return []; }
+}
+async function adminResolveReport(reportId, action){
+  await fsSet('reports',reportId,{status:action==='remove'?'removed':'dismissed',resolvedAt:Date.now()}).catch(()=>{});
+  toast(action==='remove'?'🚨 Stream removido':'✅ Reporte descartado');
+}
+
+// ═══════════════════════════════════════════════════════
+// FEATURE 6 — TÉRMINOS Y POLÍTICA DE PRIVACIDAD
+// ═══════════════════════════════════════════════════════
+const TERMS_CONTENT={
+  terms:{
+    title:'Términos y Condiciones',
+    sections:[
+      {h:'1. Aceptación',p:'Al usar Liveroo aceptas estos términos. Si no estás de acuerdo, no uses la plataforma.'},
+      {h:'2. Qué es Liveroo',p:'Liveroo es un marketplace de live shopping venezolano que conecta vendedores y compradores en tiempo real mediante transmisiones en vivo y subastas.'},
+      {h:'3. Cuentas de usuario',p:'Debes tener al menos 18 años para crear una cuenta. Eres responsable de mantener la confidencialidad de tu contraseña y de todas las actividades que ocurran bajo tu cuenta.'},
+      {h:'4. Vendedores',p:'Los vendedores son responsables de la veracidad de sus productos, precios y condiciones. Liveroo actúa como intermediario y no es responsable por los productos vendidos. Los vendedores deben cumplir con las leyes venezolanas vigentes.'},
+      {h:'5. Compradores',p:'Al ganar una subasta o confirmar una compra, el comprador se compromete a pagar el monto acordado usando su saldo disponible en la wallet. Las transacciones completadas no son reembolsables salvo casos de fraude comprobado.'},
+      {h:'6. Wallet y créditos',p:'Los créditos de Liveroo son virtuales y corresponden a dólares USD a una tasa 1:1. Liveroo no garantiza la disponibilidad inmediata de retiro. Los créditos no son transferibles entre cuentas.'},
+      {h:'7. Contenido prohibido',p:'Está prohibido transmitir: contenido adulto, violencia, fraude, productos ilegales, armas, o cualquier contenido que viole las leyes venezolanas. El incumplimiento resulta en suspensión permanente.'},
+      {h:'8. Modificaciones',p:'Liveroo puede modificar estos términos en cualquier momento. El uso continuado de la plataforma implica aceptación de los nuevos términos.'},
+      {h:'9. Ley aplicable',p:'Estos términos se rigen por las leyes de la República Bolivariana de Venezuela.'},
+    ]
+  },
+  privacy:{
+    title:'Política de Privacidad',
+    sections:[
+      {h:'Datos que recopilamos',p:'Recopilamos: nombre, correo electrónico, número de cédula, número de WhatsApp, historial de compras y ventas, datos de uso de la plataforma.'},
+      {h:'Cómo usamos tus datos',p:'Usamos tu información para: procesar transacciones, comunicarnos contigo sobre pedidos, mejorar la plataforma, y prevenir fraude.'},
+      {h:'Compartir información',p:'No vendemos tus datos a terceros. Solo compartimos información con vendedores cuando realizas una compra (nombre y ciudad para la entrega).'},
+      {h:'Seguridad',p:'Protegemos tus datos usando Firebase de Google, que cumple con estándares internacionales de seguridad. Las contraseñas están encriptadas.'},
+      {h:'Tus derechos',p:'Tienes derecho a: ver tus datos, corregirlos, o solicitar su eliminación. Para ejercer estos derechos contáctanos en @liveroo.ve en Instagram.'},
+      {h:'Cookies',p:'Usamos localStorage para mantener tu sesión activa. No usamos cookies de rastreo de terceros.'},
+      {h:'Contacto',p:'Para preguntas sobre privacidad: soporte@liveroo.ve o @liveroo.ve en Instagram.'},
+    ]
+  }
+};
+
+function openTerms(type){
+  const data=TERMS_CONTENT[type];
+  if(!data) return;
+  const titleEl=document.getElementById('terms-title');
+  const contentEl=document.getElementById('terms-content');
+  if(titleEl) titleEl.textContent=data.title;
+  if(contentEl) contentEl.innerHTML=`
+    <div style="font-size:11px;color:var(--mu);margin-bottom:20px">Última actualización: Abril 2026</div>
+    ${data.sections.map(s=>`
+      <div class="terms-section">
+        <div class="terms-h">${s.h}</div>
+        <div class="terms-p">${s.p}</div>
+      </div>`).join('')}
+    <div style="margin-top:24px;padding:14px;background:var(--dk3);border-radius:12px;font-size:11px;color:var(--mu);text-align:center;border:1px solid rgba(255,255,255,.06)">
+      Liveroo · Venezuela 🇻🇪 · v1.0 · soporte@liveroo.ve
+    </div>`;
+  go('terms');
+}
+
+// Integrar notificaciones al restaurar sesión
+(()=>{
+  const _orig=fbRestoreSession;
+  fbRestoreSession=async function(){
+    const result=await _orig.apply(this,arguments);
+    if(result) setTimeout(_checkLiveNotifications,5000);
+    return result;
+  };
+})();
+
+// sendLiveNotification se llama desde _saveStream en startBroadcast cuando el stream se guarda exitosamente
 </script>
 
 <!-- PWA Install Banner -->
