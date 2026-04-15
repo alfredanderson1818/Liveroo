@@ -1819,7 +1819,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 
     <!-- OUTBID ALERT -->
     <div id="sv-cta-status-wrap" style="display:none;margin:6px 12px 0;background:rgba(255,59,59,.08);border:1px solid rgba(255,59,59,.2);border-radius:9px;padding:6px 12px;display:none">
-      <span style="font-weight:900;font-size:11px;color:var(--rd)">😬 ¡Te superaron! </span>
+      <span style="font-weight:900;font-size:11px;color:var(--rd)">⚡ ¡Te superaron! </span>
       <span id="sv-cta-status-txt" style="font-size:11px;color:rgba(255,255,255,.5)">Sube tu oferta</span>
     </div>
 
@@ -1863,15 +1863,6 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     </div>
 
   </div><!-- /sv-bottom-panel -->
-
-
-          🔨 Ofertar
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--dk)" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
-    </div>
-
-  </div><!-- end #sv-bottom-panel -->
 
   <!-- ── PRODUCTS SHEET ── -->
   <div id="sv-slide-wrap" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:30;background:rgba(7,7,12,.98);border-top:1px solid rgba(255,255,255,.1);flex-direction:column;max-height:55vh">
@@ -4771,7 +4762,7 @@ async function spPlaceBid(aucId, startPrice){
   const bid = parseFloat(inp?.value)||0;
   const auc = await fsGet('storeAuctions', aucId);
   if(!auc){ toast('⚠️ Subasta no encontrada'); return; }
-  if(auc.status!=='active'||(auc.endsAt||0)<=Date.now()){ toast('⏱ Esta subasta ya terminó'); return; }
+  if(auc.status!=='active'||(auc.endsAt||0)<=Date.now()){ toast('⏱ Esta subasta ya cerró'); return; }
   const minBid = (auc.currentBid||auc.startPrice||0)+1;
   if(bid < minBid){ toast(`⚠️ Mínimo $${minBid}`); return; }
   if(walletBalance < bid){ toast('❌ Saldo insuficiente'); openDeposit(); return; }
@@ -5251,7 +5242,7 @@ function aucRenderBids(){
       sb.style.display='flex';
       sb.style.background='rgba(255,59,59,.18)';
       sb.style.borderColor='rgba(255,59,59,.55)';
-      sb.innerHTML=`<span style="font-size:22px">😬</span><div><div style="font-size:13px;font-weight:900;color:var(--rd)">¡Te superaron!</div><div style="font-size:10px;color:rgba(255,255,255,.5)">Estás #${myPos+1} — oferta más para ganar</div></div>`;
+      sb.innerHTML=`<span style="font-size:22px">⚡</span><div><div style="font-size:13px;font-weight:900;color:var(--rd)">¡Te superaron!</div><div style="font-size:10px;color:rgba(255,255,255,.5)">Estás #${myPos+1} — oferta más para ganar</div></div>`;
     }
   }
 
@@ -5799,7 +5790,7 @@ async function joinAsAudience(channelName){
       if(container){container.style.display='none';container.innerHTML='';}
       const img=document.getElementById('sv-img');
       if(img)img.style.opacity='1';
-      toast('📴 El vendedor terminó el live');
+      toast('📴 El live terminó');
       _svDebug('host salió del canal');
     });
     agoraClient.on('connection-state-change',(cur,prev)=>{
@@ -6291,7 +6282,7 @@ async function buyFixedItem(){
     if(!latest || latest.status!=='active' || latest.qtyLeft<=0){
       toast('❌ Lo siento, ya se agotó');
       document.getElementById('fixed-sale-card').style.display='none';
-      if(btn){ btn.textContent='Agotado 😞'; }
+      if(btn){ btn.textContent='Agotado'; }
       return;
     }
 
@@ -6650,11 +6641,11 @@ function _showAucResult(won, winner, finalBid){
   if(!won){
     card.style.transform='translate(-50%,-50%) scale(0)';
     card.innerHTML=`
-      <div style="font-size:52px;margin-bottom:10px">😔</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;margin-bottom:4px">Subasta terminada</div>
-      <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:16px">Ganó <strong style="color:var(--y)">@${winner}</strong> con <strong style="color:var(--y)">$${finalBid}</strong></div>
-      <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:20px">¡Sigue en el live, hay más subastas! 🔥</div>
-      <button onclick="const o=document.getElementById('win-overlay');o.style.display='none';o.style.pointerEvents='none'" style="width:100%;padding:13px;background:var(--dk3);border:1.5px solid rgba(255,255,255,.15);border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;pointer-events:all">Cerrar</button>`;
+      <div style="font-size:52px;margin-bottom:10px">🔥</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;margin-bottom:4px">¡Quedaste cerca!</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:6px">Ganó <strong style="color:var(--y)">@${winner}</strong> con <strong style="color:var(--y)">$${finalBid}</strong></div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:20px">La próxima subasta viene pronto 💪</div>
+      <button onclick="const o=document.getElementById('win-overlay');o.style.display='none';o.style.pointerEvents='none'" style="width:100%;padding:13px;background:var(--y);border:none;border-radius:12px;color:var(--dk);font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;pointer-events:all">Seguir viendo 🔴</button>`;
   }
   ov.style.display='block';
   ov.style.pointerEvents='all';
@@ -7517,7 +7508,7 @@ async function svCtaPlaceBid(){
   if((walletBalance||0)<v){toast('❌ Saldo insuficiente — recarga tu saldo');openDeposit();if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
   try{
     const auc=await fsGet('auctions',_svCurrentAucId);
-    if(!auc||auc.status!=='active'){toast('❌ La subasta terminó');_svCtaSetState('idle');if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
+    if(!auc||auc.status!=='active'){toast('⏱ Subasta cerrada');_svCtaSetState('idle');if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
     const minBid=(auc.currentBid||auc.startPrice||0)+1;
     if(v<minBid){toast(`⚠️ Oferta mínima: $${minBid}`);if(btn){btn.textContent='🔨 Ofertar';btn.disabled=false;}return;}
     const me=window.fbUser?.username||window.fbUser?.displayName||window.fbUser?.uid||'comprador';
