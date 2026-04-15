@@ -3793,7 +3793,7 @@ function nav(id){
     // Refrescar inmediatamente y reiniciar el poll al volver al home
     _refreshLiveStrip();
     clearInterval(_homePollIv);
-    _homePollIv=setInterval(_refreshLiveStrip,5000);
+    _homePollIv=setInterval(_refreshLiveStrip,15000);
   }
   go(id,false);
 }
@@ -4988,7 +4988,7 @@ async function openAuction(prodIdx){
   aucTimerIv=setInterval(aucTick,1000);aucTick();
 
   // Polling Firestore cada 3s
-  aucPollIv=setInterval(aucPollFirestore,1500);
+  aucPollIv=setInterval(aucPollFirestore,5000);
 }
 
 async function aucPollFirestore(){
@@ -6287,7 +6287,7 @@ function startBroadcast(){
         }
       }
     }catch(e){}
-  },1500);
+  },8000);
   window._bcChatLastTs=Date.now();
   window._bcGetAucId=()=>_bcAucId;
   window._bcSetAucId=(id)=>{_bcAucId=id;};
@@ -6313,27 +6313,45 @@ function startBroadcast(){
     const sellerName=window.fbUser?.name||window.fbUser?.displayName||window.fbUser?.username||'Vendedor';
     const sellerEmoji=window.fbUser?.shop?'📡':'🛍️';
     const cat=document.querySelector('#gl-cats .gl-chip.on')?.textContent?.replace(/^./,'').trim()||'General';
-    // Grab thumbnail from first selected product
     const thumbProd=PRODS[bcSelectedProds[0]||0];
     const thumb=thumbProd?.img||'';
     const minPrice=bcSelectedProds.length?Math.min(...bcSelectedProds.map(i=>PRODS[i]?.p||0)):0;
-    // Calcular el mismo hostUid que usa joinAsHost
     const hostUid=parseInt(uid.replace(/[^0-9]/g,'').slice(0,8)||'1',10)%999999+1;
-    fsSet('streams',channelName,{
+    const streamData={
       sellerId:uid,
       sellerName, sellerEmoji,
-      shopName:window.fbUser?.shop||sellerName,
+      shopName:window.fbUser?.shopName||window.fbUser?.shop||sellerName,
       channelName, title, cat, thumb, minPrice,
       hostUid,
       isLive:true, viewerCount:1, startedAt:Date.now(),
       sellerAvatar:window.fbUser?.avatar||'',
       whatsapp:window.fbUser?.whatsapp||''
-    }).then(()=>{ setTimeout(_refreshLiveStrip,500); });
-    fsSet('stores',uid,{isLive:true,channelName});
-    // Increment total stream count
+    };
+    console.log('[Stream] Guardando en Firestore — canal:',channelName,'uid:',uid);
+    // Intentar guardar con retry
+    const _saveStream=async(attempt=1)=>{
+      const res=await fsSet('streams',channelName,streamData);
+      if(res){
+        console.log('[Stream] ✅ Guardado OK — canal:',channelName);
+        toast('🔴 ¡Live publicado! — apareces en el home');
+        setTimeout(_refreshLiveStrip,500);
+      } else if(attempt<3){
+        console.warn('[Stream] ⚠️ Intento',attempt,'fallido — reintentando en 2s...');
+        await _refreshToken();
+        setTimeout(()=>_saveStream(attempt+1),2000);
+      } else {
+        console.error('[Stream] ❌ No se pudo guardar el stream en Firestore tras 3 intentos');
+        toast('⚠️ Error al publicar el live — verifica tu conexión');
+      }
+    };
+    _saveStream();
+    fsSet('stores',uid,{isLive:true,channelName}).catch(()=>{});
     fsGet('stores',uid).then(s=>{
       fsSet('stores',uid,{totalStreams:(s?.totalStreams||0)+1});
     }).catch(()=>{});
+  } else {
+    console.error('[Stream] ❌ Sin uid — usuario no autenticado');
+    toast('⚠️ Debes iniciar sesión para transmitir');
   }
 }
 
@@ -7164,9 +7182,9 @@ let _homePollIv=null;
 async function loadHomeFeed(){
   buildGrid();buildSellers();
   await _refreshLiveStrip();
-  // Poll cada 5s para mostrar lives casi en tiempo real
+  // Poll cada 15s — balance entre frescura y cuota de Firestore
   clearInterval(_homePollIv);
-  _homePollIv=setInterval(_refreshLiveStrip, 5000);
+  _homePollIv=setInterval(_refreshLiveStrip, 15000);
   const prods=await fsQuery('products');
   if(prods.length>0){
     const grid=document.getElementById('pgrid');
@@ -7517,8 +7535,8 @@ function _startViewerAucPoll(channelName){
   }
   _svCtaSetState('idle');
   checkAuc();setTimeout(checkFixed,2000);
-  _svAucPollIv=setInterval(checkAuc,1500);
-  _svFixedPollIv=setInterval(checkFixed,3000);
+  _svAucPollIv=setInterval(checkAuc,4000);
+  _svFixedPollIv=setInterval(checkFixed,8000);
 }
 function _stopViewerAucPoll(){
   clearInterval(_svAucPollIv);clearInterval(_svFixedPollIv);clearInterval(_svAucTimerIv);
@@ -7662,13 +7680,14 @@ window._fsLiveStreams=[];
 let _liveStripFailCount=0;
 async function _refreshLiveStrip(){
   try{
-    // Usar fsQuery que ya maneja auth, retry y CORS correctamente
     const all=await fsQuery('streams');
     const streams=all.filter(s=>s.isLive===true);
-    _liveStripFailCount=0; // reset en éxito
+    _liveStripFailCount=0;
     window._fsLiveCache={};
     window._fsLiveStreams=streams;
     streams.forEach(s=>{const ch=s.channelName||s._id;if(ch)window._fsLiveCache[ch]=s;});
+    // Guardar en localStorage como respaldo ante quota exceeded
+    try{localStorage.setItem('_liveCache',JSON.stringify({ts:Date.now(),streams}));}catch(e){}
     buildGrid();
     if(streams.length>0){
       console.log('[Live] Streams activos:',streams.map(s=>s.sellerName||s.channelName));
@@ -7678,19 +7697,28 @@ async function _refreshLiveStrip(){
     }
   }catch(e){
     _liveStripFailCount++;
-    // Backoff exponencial — no spamear consola ni Firestore si hay error de red
-    if(_liveStripFailCount<=3){
+    if(_liveStripFailCount<=2){
       console.warn('[Live] Error al cargar streams (intento '+_liveStripFailCount+'):',e.message);
     }
-    // Si falla muchas veces, pausar el poll para no gastar batería/red
+    // Usar caché de localStorage si Firestore falla (quota exceeded, red, etc.)
+    try{
+      const cached=JSON.parse(localStorage.getItem('_liveCache')||'null');
+      if(cached&&cached.streams&&(Date.now()-cached.ts)<3600000){
+        window._fsLiveStreams=cached.streams;
+        cached.streams.forEach(s=>{const ch=s.channelName||s._id;if(ch)window._fsLiveCache[ch]=s;});
+        buildGrid();
+        console.log('[Live] Usando caché local —',cached.streams.length,'stream(s) guardados');
+      }
+    }catch(ce){}
+    // Si falla 5+ veces, pausar el poll completamente
     if(_liveStripFailCount>=5){
       clearInterval(_homePollIv);
-      console.warn('[Live] Poll pausado tras 5 errores. Reintentando en 60s...');
+      console.warn('[Live] Quota o red — poll pausado. Reintentando en 2 min...');
       setTimeout(()=>{
         _liveStripFailCount=0;
         _refreshLiveStrip();
-        _homePollIv=setInterval(_refreshLiveStrip,5000);
-      },60000);
+        _homePollIv=setInterval(_refreshLiveStrip,15000);
+      },120000);
     }
   }
 }
