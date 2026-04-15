@@ -1731,11 +1731,11 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 <div id="s-stream" class="scr" style="background:#000">
 
   <!-- ── VIDEO FULLSCREEN ── -->
-  <div style="position:absolute;inset:0;z-index:1">
-    <img id="sv-img" style="width:100%;height:100%;object-fit:cover;display:block">
+  <div style="position:absolute;inset:0;z-index:1;width:100%;height:100%">
+    <img id="sv-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
     <div id="sv-agora-container" style="position:absolute;inset:0;z-index:2;display:none;background:#000"></div>
     <!-- gradient top + bottom -->
-    <div style="position:absolute;inset:0;z-index:3;background:linear-gradient(to bottom,rgba(0,0,0,.65) 0%,transparent 18%,transparent 55%,rgba(0,0,0,.5) 72%,rgba(0,0,0,.93) 100%);pointer-events:none"></div>
+    <div style="position:absolute;inset:0;z-index:3;background:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,transparent 20%,transparent 52%,rgba(0,0,0,.45) 70%,rgba(0,0,0,.88) 100%);pointer-events:none"></div>
   </div>
 
   <!-- DEBUG (oculto en producción, activar si hay issues) -->
@@ -4091,31 +4091,18 @@ const PD_VIDEOS={
 function openProd(idx){
   curProd=idx;qty=1;curSz=PRODS[idx].sz[0];
   const p=PRODS[idx];const s=SELLERS[p.s];
-  // Hero: mostrar video si producto live, si no mostrar imagen
+  // Si el producto es live → ir directo al stream fullscreen
+  if(p.live){
+    openStream(p.s);
+    return;
+  }
+  // Producto normal — mostrar pantalla de producto
   const videoWrap=document.getElementById('pd-video-wrap');
   const imgEl=document.getElementById('pd-img');
   const liveBar=document.getElementById('pd-live-bar');
-  const iframe=document.getElementById('pd-iframe'); // may be null, handled below
-  if(p.live){
-    videoWrap.style.display='block';
-    imgEl.style.display='none';
-    liveBar.style.display='flex';
-    // Simulador live stream
-    const sbg=document.getElementById('pd-stream-bg');
-    const simg=document.getElementById('pd-stream-img');
-    if(sbg)sbg.src=p.img||'';
-    if(simg)simg.src=p.img||'';
-    document.getElementById('pd-viewers').textContent=~~(Math.random()*400+80);
-    const _mini=document.getElementById('pd-sav-mini');if(_mini){if(s.logo){_mini.innerHTML=`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;_mini.style.background='#000';_mini.style.overflow='hidden';}else{_mini.textContent=s.e;}} 
-    document.getElementById('pd-sname-mini').textContent=s.n;
-    startPdLiveSim(s,'ic_'+p.s);
-  }else{
-    stopPdLiveSim();
-    videoWrap.style.display='none';
-    imgEl.style.display='block';
-    imgEl.src=p.img||'';
-    liveBar.style.display='none';
-  }
+  if(videoWrap) videoWrap.style.display='none';
+  if(imgEl){imgEl.style.display='block';imgEl.src=p.img||'';}
+  if(liveBar) liveBar.style.display='none';
   document.getElementById('pd-emo').textContent=p.e;
   document.getElementById('pd-title').textContent=p.n;
   document.getElementById('pd-price').textContent=`$${p.p}`;
@@ -5739,13 +5726,8 @@ async function joinAsAudience(channelName){
   try{
     await leaveAgoraChannel();
     function _svDebug(msg){
-      const d=document.getElementById('sv-debug');
-      if(!d)return;
-      d.style.display='flex';
-      const line=document.createElement('div');
-      line.textContent=new Date().toLocaleTimeString()+' '+msg;
-      d.appendChild(line);
-      while(d.children.length>8)d.removeChild(d.firstChild);
+      // Solo consola — el overlay visual fue removido para producción
+      console.log('[Agora]', msg);
     }
     _svDebug('Iniciando... canal: '+channelName);
     agoraClient=AgoraRTC.createClient({mode:'live',codec:'vp8'});
@@ -5864,11 +5846,7 @@ async function joinAsAudience(channelName){
     // Mostrar error completo en debug para diagnóstico
     const d=document.getElementById('sv-debug');
     if(d){
-      d.style.display='flex';
-      const line=document.createElement('div');
-      line.style.color='#ff4444';
-      line.textContent='❌ ERROR: '+(e.message||e.code||JSON.stringify(e)).toString().slice(0,120);
-      d.appendChild(line);
+      console.error('[Agora] ERROR:', (e.message||e.code||JSON.stringify(e)).toString().slice(0,120));
     }
     toast('⚠️ Stream error: '+(e.message||e.code||'desconocido').toString().slice(0,60));
   }
