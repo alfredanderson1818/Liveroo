@@ -134,7 +134,8 @@ async function fsAdd(col,data){
 async function fsQuery(col,filters=[],_throw=false){
   try{
     const url='https://firestore.googleapis.com/v1/projects/'+FB.projectId+'/databases/(default)/documents:runQuery';
-    const makeFilter=f=>({fieldFilter:{field:{fieldPath:f.field},op:f.op||'EQUAL',value:toFSVal(f.value)}});
+    const OPS={eq:'EQUAL',gte:'GREATER_THAN_OR_EQUAL',gt:'GREATER_THAN',lte:'LESS_THAN_OR_EQUAL',lt:'LESS_THAN'};
+    const makeFilter=f=>({fieldFilter:{field:{fieldPath:f.field},op:OPS[f.op]||f.op||'EQUAL',value:toFSVal(f.value)}});
     const where=filters.length===0?undefined:filters.length===1?makeFilter(filters[0]):{compositeFilter:{op:'AND',filters:filters.map(makeFilter)}};
     const q={structuredQuery:{from:[{collectionId:col}],...(where?{where}:{}),limit:100}};
     let r=await fetch(url,{method:'POST',headers:fsHeaders(),body:JSON.stringify(q)});
@@ -4386,6 +4387,7 @@ const MSGS=['¡Qué precio! 🔥','¿Envían a Valencia?','A1 👌','¿Tienen m�
 let _chatPollIv=null;
 let _chatLastTs=0;
 let _chatChannel='';
+let _chatSeenIds=new Set(); // cache de IDs ya mostrados — evita re-leer mensajes viejos
 
 function addMsg(name,text,isMine=false){
   const el=document.getElementById('chat-msgs');if(!el)return;
@@ -4424,15 +4426,24 @@ async function sendChat(){
 async function _pollChat(){
   if(!_chatChannel)return;
   try{
-    const msgs=await fsQuery('messages',[{field:'channel',value:_chatChannel}]);
+    // ✅ OPTIMIZADO: filtra por ts>=_chatLastTs para no leer mensajes viejos
+    const msgs=await fsQuery('messages',[
+      {field:'channel',value:_chatChannel},
+      {field:'ts',op:'gte',value:_chatLastTs}
+    ]);
     const myName=window.fbUser?.username||window.fbUser?.displayName||null;
-    const fresh=msgs.filter(m=>m.ts>_chatLastTs).sort((a,b)=>a.ts-b.ts);
+    const fresh=msgs.filter(m=>m._id&&!_chatSeenIds.has(m._id)).sort((a,b)=>a.ts-b.ts);
     fresh.forEach(m=>{
-      // Skip messages I sent (already shown locally)
+      _chatSeenIds.add(m._id);
       const isMe=myName&&(m.user===myName||m.user===myName+' 📡');
       if(!isMe) addMsg(m.user,m.text,false);
       if(m.ts>_chatLastTs)_chatLastTs=m.ts;
     });
+    // Limitar caché de IDs para no crecer infinito
+    if(_chatSeenIds.size>200){
+      const arr=[..._chatSeenIds];
+      _chatSeenIds=new Set(arr.slice(arr.length-100));
+    }
   }catch(e){}
 }
 
@@ -4456,7 +4467,7 @@ function startChat(idx){
     if(Math.random()<.4) addMsg(NAMES[~~(Math.random()*NAMES.length)],MSGS[~~(Math.random()*MSGS.length)]);
   },7000+~~(Math.random()*6000));
   // Poll Firestore cada 2s para mensajes reales
-  _chatPollIv=setInterval(_pollChat,2000);
+  _chatPollIv=setInterval(_pollChat,8000); // ✅ reducido de 2s a 8s
 }
 function startViewers(idx){
   viewIv=setInterval(()=>{
@@ -4476,6 +4487,8 @@ function stopChat(){
   if(_chatPollIv){clearInterval(_chatPollIv);_chatPollIv=null;}
   _stopFixedSalePoll();
   _chatChannel='';
+  _chatLastTs=0;
+  _chatSeenIds=new Set(); // ✅ limpiar caché al salir del live
 }
 
 // ═══ SELLER PROFILE ═══
@@ -5102,7 +5115,7 @@ async function openAuction(prodIdx){
   aucTimerIv=setInterval(aucTick,1000);aucTick();
 
   // Polling Firestore cada 3s
-  aucPollIv=setInterval(aucPollFirestore,5000);
+  aucPollIv=setInterval(aucPollFirestore,10000); // ✅ reducido de 5s a 10s
 }
 
 async function aucPollFirestore(){
@@ -7682,8 +7695,8 @@ function _startViewerAucPoll(channelName){
   }
   _svCtaSetState('idle');
   checkAuc();setTimeout(checkFixed,2000);
-  _svAucPollIv=setInterval(checkAuc,4000);
-  _svFixedPollIv=setInterval(checkFixed,8000);
+  _svAucPollIv=setInterval(checkAuc,8000); // ✅ reducido de 4s a 8s
+  _svFixedPollIv=setInterval(checkFixed,15000); // ✅ reducido de 8s a 15s
 }
 function _stopViewerAucPoll(){
   clearInterval(_svAucPollIv);clearInterval(_svFixedPollIv);clearInterval(_svAucTimerIv);
