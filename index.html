@@ -100,39 +100,47 @@ async function _refreshToken(){
 }
 async function fsSet(col,docId,data){
   try{
+    if(Date.now()<_fsBackoffUntil){return null;} // en backoff
     const keys=Object.keys(data);
     const mask=keys.map(k=>'updateMask.fieldPaths='+encodeURIComponent(k)).join('&');
     let r=await fetch(`${FB.dbUrl}/${col}/${docId}?${mask}`,{method:'PATCH',headers:fsHeaders(),body:JSON.stringify(toFS(data))});
-    // If 401/403, try refreshing token once
-    if(r.status===401||r.status===403){
-      await _refreshToken();
-      r=await fetch(`${FB.dbUrl}/${col}/${docId}?${mask}`,{method:'PATCH',headers:fsHeaders(),body:JSON.stringify(toFS(data))});
-    }
+    if(r.status===401||r.status===403){await _refreshToken();r=await fetch(`${FB.dbUrl}/${col}/${docId}?${mask}`,{method:'PATCH',headers:fsHeaders(),body:JSON.stringify(toFS(data))});}
+    if(r.status===429){_fsBackoffMs=Math.min((_fsBackoffMs||5000)*2,120000);_fsBackoffUntil=Date.now()+_fsBackoffMs;return null;}
     if(!r.ok)return null;
+    _fsBackoffMs=0;
     return fromFS(await r.json());
   }catch(e){return null;}
 }
 async function fsGet(col,docId){
   try{
+    if(Date.now()<_fsBackoffUntil){return null;} // en backoff, no hacer request
     let r=await fetch(`${FB.dbUrl}/${col}/${docId}`,{headers:fsHeaders()});
-    if(r.status===401||r.status===403){
-      await _refreshToken();
-      r=await fetch(`${FB.dbUrl}/${col}/${docId}`,{headers:fsHeaders()});
+    if(r.status===401||r.status===403){await _refreshToken();r=await fetch(`${FB.dbUrl}/${col}/${docId}`,{headers:fsHeaders()});}
+    if(r.status===429){
+      _fsBackoffMs=Math.min((_fsBackoffMs||5000)*2,120000);
+      _fsBackoffUntil=Date.now()+_fsBackoffMs;
+      console.warn('[Firestore] 429 fsGet — backoff',_fsBackoffMs/1000+'s');
+      return null;
     }
     if(!r.ok)return null;
+    _fsBackoffMs=0;
     return fromFS(await r.json());
   }catch(e){return null;}
 }
 async function fsAdd(col,data){
   try{
+    if(Date.now()<_fsBackoffUntil){return null;} // en backoff
     let r=await fetch(`${FB.dbUrl}/${col}`,{method:'POST',headers:fsHeaders(),body:JSON.stringify(toFS(data))});
     if(r.status===401||r.status===403){await _refreshToken();r=await fetch(`${FB.dbUrl}/${col}`,{method:'POST',headers:fsHeaders(),body:JSON.stringify(toFS(data))});}
+    if(r.status===429){_fsBackoffMs=Math.min((_fsBackoffMs||5000)*2,120000);_fsBackoffUntil=Date.now()+_fsBackoffMs;return null;}
     if(!r.ok)return null;
+    _fsBackoffMs=0;
     return fromFS(await r.json());
   }catch(e){return null;}
 }
 async function fsQuery(col,filters=[],_throw=false){
   try{
+    if(Date.now()<_fsBackoffUntil){if(_throw)throw new Error('backoff');return[];} // en backoff
     const url='https://firestore.googleapis.com/v1/projects/'+FB.projectId+'/databases/(default)/documents:runQuery';
     const OPS={eq:'EQUAL',gte:'GREATER_THAN_OR_EQUAL',gt:'GREATER_THAN',lte:'LESS_THAN_OR_EQUAL',lt:'LESS_THAN'};
     const makeFilter=f=>({fieldFilter:{field:{fieldPath:f.field},op:OPS[f.op]||f.op||'EQUAL',value:toFSVal(f.value)}});
@@ -144,11 +152,21 @@ async function fsQuery(col,filters=[],_throw=false){
       r=await fetch(url,{method:'POST',headers:fsHeaders(),body:JSON.stringify(q)});
     }
     if(!r.ok){
+      if(r.status===429){
+        // Exponential backoff: 10s → 20s → 40s → max 120s
+        _fsBackoffMs=Math.min((_fsBackoffMs||5000)*2,120000);
+        _fsBackoffUntil=Date.now()+_fsBackoffMs;
+        console.warn('[Firestore] 429 — backoff por',(_fsBackoffMs/1000)+'s');
+        if(_throw)throw new Error('429 Too Many Requests');
+        return[];
+      }
       const err=await r.json().catch(()=>({}));
       const msg='HTTP '+r.status+': '+(err.error?.message||'Sin permisos');
       if(_throw)throw new Error(msg);
       return[];
     }
+    // Reset backoff on success
+    _fsBackoffMs=0;
     const res=await r.json();
     return res.filter(x=>x.document).map(x=>fromFS(x.document));
   }catch(e){if(_throw)throw e;return[];}
@@ -4388,6 +4406,8 @@ let _chatPollIv=null;
 let _chatLastTs=0;
 let _chatChannel='';
 let _chatSeenIds=new Set(); // cache de IDs ya mostrados — evita re-leer mensajes viejos
+let _fsBackoffUntil=0; // timestamp hasta el que no hacer requests a Firestore
+let _fsBackoffMs=0;    // ms de espera actual (crece con cada 429)
 
 function addMsg(name,text,isMine=false){
   const el=document.getElementById('chat-msgs');if(!el)return;
@@ -7330,33 +7350,35 @@ async function loadHomeFeed(){
   // Poll cada 15s — balance entre frescura y cuota de Firestore
   clearInterval(_homePollIv);
   _homePollIv=setInterval(_refreshLiveStrip, 15000);
-  const prods=await fsQuery('products');
-  if(prods.length>0){
-    const grid=document.getElementById('pgrid');
-    if(!grid)return;
-    const render=(list,offset=0)=>list.map((p,i)=>`
-      <div class="pcard" onclick="openProdFS('${p._id}')">
-        <div class="pcard-img ${BG[(i+offset)%4]}">
-          <img src="${p.img||''}" onerror="this.style.display='none'" loading="lazy">
-          ${(p.origPrice>p.price)?`<div class="pcard-disc">-${Math.round((1-p.price/p.origPrice)*100)}%</div>`:''}
-          <button class="pcard-qadd" onclick="event.stopPropagation();toast('🛒 Agregado!')">🛒</button>
-        </div>
-        <div class="pcard-body">
-          <div class="pcard-name">${p.name||'Producto'}</div>
-          <div class="pcard-seller-row">
-            <div class="pcard-seller-dot">${p.sellerEmoji||'🛍️'}</div>
-            <div class="pcard-seller-name">${p.sellerName||''}</div>
+  if(Date.now()>=_fsBackoffUntil){
+    const prods=await fsQuery('products');
+    if(prods.length>0){
+      const grid=document.getElementById('pgrid');
+      if(!grid)return;
+      const render=(list,offset=0)=>list.map((p,i)=>`
+        <div class="pcard" onclick="openProdFS('${p._id}')">
+          <div class="pcard-img ${BG[(i+offset)%4]}">
+            <img src="${p.img||''}" onerror="this.style.display='none'" loading="lazy">
+            ${(p.origPrice>p.price)?`<div class="pcard-disc">-${Math.round((1-p.price/p.origPrice)*100)}%</div>`:''}
+            <button class="pcard-qadd" onclick="event.stopPropagation();toast('🛒 Agregado!')">🛒</button>
           </div>
-          <div class="pcard-price-row">
-            <div class="pcard-price">$${p.price||0}</div>
-            ${(p.origPrice>p.price)?`<div class="pcard-old">$${p.origPrice}</div>`:''}
+          <div class="pcard-body">
+            <div class="pcard-name">${p.name||'Producto'}</div>
+            <div class="pcard-seller-row">
+              <div class="pcard-seller-dot">${p.sellerEmoji||'🛍️'}</div>
+              <div class="pcard-seller-name">${p.sellerName||''}</div>
+            </div>
+            <div class="pcard-price-row">
+              <div class="pcard-price">$${p.price||0}</div>
+              ${(p.origPrice>p.price)?`<div class="pcard-old">$${p.origPrice}</div>`:''}
+            </div>
           </div>
-        </div>
-      </div>`).join('');
-    grid.innerHTML=render(prods.slice(0,8));
-    if(prods.length>8)requestAnimationFrame(()=>grid.innerHTML+=render(prods.slice(8),8));
-  }
-}
+        </div>`).join('');
+      grid.innerHTML=render(prods.slice(0,8));
+      if(prods.length>8)requestAnimationFrame(()=>grid.innerHTML+=render(prods.slice(8),8));
+    }
+  } // fin backoff guard
+} // fin loadHomeFeed
 
 // ═══ VIEWER ACTION PANEL ═══
 let _svBidMode=null; // compat alias
@@ -7849,6 +7871,7 @@ window._fsLiveCache={};
 window._fsLiveStreams=[];
 let _liveStripFailCount=0;
 async function _refreshLiveStrip(){
+  if(Date.now()<_fsBackoffUntil){return;} // en backoff — usar caché
   try{
     const all=await fsQuery('streams');
     const streams=all.filter(s=>s.isLive===true);
@@ -8302,6 +8325,7 @@ async function sendLiveNotification(sellerName, channelName){
 async function _checkLiveNotifications(){
   const uid = window.fbUser?.uid;
   if(!uid) return;
+  if(Date.now()<_fsBackoffUntil){return;} // en backoff
   try{
     const notifs = await fsQuery('notifications',[{field:'toUid',value:uid},{field:'read',value:false}]);
     const liveNotifs = notifs.filter(n=>n.type==='live_started' && (Date.now()-n.ts)<3600000);
