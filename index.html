@@ -403,8 +403,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 .cat-strip::-webkit-scrollbar{display:none}
 .cat{flex-shrink:0;width:88px;cursor:pointer;transition:transform .15s;-webkit-tap-highlight-color:transparent}
 .cat:active{transform:scale(.93)}
-.cat-img-wrap{width:88px;height:88px;border-radius:14px;background:#1C1C1E;overflow:hidden;position:relative;margin-bottom:6px;border:2.5px solid transparent;transition:border-color .15s}
-.cat.on .cat-img-wrap{border-color:var(--y);box-shadow:0 0 0 1px var(--y)}
+.cat-img-wrap{width:86px;height:86px;border-radius:12px;background:#1C1C1E;overflow:hidden;position:relative;margin-bottom:5px;border:2.5px solid transparent;transition:border-color .15s}
+.cat.on .cat-img-wrap{border-color:var(--y)}
 .cat-img-wrap img{width:100%;height:100%;object-fit:cover}
 .cat-label{font-size:11px;font-weight:800;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cat.on .cat-label{color:var(--y)}
@@ -429,8 +429,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 .sh-title{font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;letter-spacing:-.2px}
 .sh-more{font-size:11px;color:var(--y);font-weight:700;cursor:pointer}
 /* product grid */
-.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 16px 8px}
-.pcard{background:#111;border-radius:16px;overflow:hidden;cursor:pointer;border:none;transition:transform .22s cubic-bezier(.34,1.1,.64,1);position:relative}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:0 14px 8px}
+.pcard{background:#111;border-radius:0;overflow:hidden;cursor:pointer;border:none;transition:transform .22s;position:relative}
 .pcard:active{transform:scale(.96)!important}
 .pcard-img{width:100%;height:195px;overflow:hidden;position:relative;background:#1C1C1E;display:block}
 .pcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .35s cubic-bezier(.4,0,.2,1);display:block}
@@ -1705,53 +1705,68 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 </div>
 
 <!-- HOME -->
-<div id="s-home" class="scr">
-  <div class="top">
-    <div class="logo">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:4px;height:28px;background:var(--y);border-radius:2px;flex-shrink:0"></div>
-        <div>
-          <div style="font-family:system-ui,sans-serif;font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;line-height:1">Liveroo</div>
-          <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
-            <div style="width:6px;height:6px;border-radius:50%;background:var(--rd);flex-shrink:0;animation:pulse-live 2s infinite"></div>
-            <div style="font-size:9px;font-weight:800;color:var(--rd);letter-spacing:3px">EN VIVO</div>
-          </div>
+<div id="s-home" class="scr" style="background:#000">
+
+  <!-- TOP BAR — Logo + icons like Whatnot -->
+  <div style="padding:max(var(--sat),10px) 14px 8px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#000">
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:4px;height:26px;background:var(--y);border-radius:2px"></div>
+      <div>
+        <div style="font-family:system-ui,sans-serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;line-height:1">Liveroo</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:1px">
+          <div style="width:5px;height:5px;border-radius:50%;background:var(--rd);animation:pulse-live 2s infinite"></div>
+          <span style="font-size:9px;font-weight:900;color:var(--rd);letter-spacing:3px">EN VIVO</span>
         </div>
       </div>
     </div>
-    <div class="top-r">
-      <div class="ibtn" id="notif-btn" onclick="openNotifs()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    <!-- Right icons -->
+    <div style="display:flex;align-items:center;gap:6px">
+      <div class="ibtn" onclick="toast('💬 Mensajes próximamente')" style="width:38px;height:38px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <div class="ibtn" id="notif-btn" onclick="openNotifs()" style="width:38px;height:38px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <span class="nb" id="notif-badge" style="display:none">0</span>
       </div>
-      <div class="ibtn" onclick="nav('prof')">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="ibtn" onclick="nav('prof')" style="width:38px;height:38px;background:var(--y);overflow:hidden">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </div>
     </div>
   </div>
+  <!-- SEARCH BAR below logo -->
+  <div class="search-bar" style="margin:0 14px 6px;padding:10px 14px" onclick="this.querySelector('input').focus()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Buscar en Liveroo" oninput="homeSearch(this.value)" style="font-size:14px">
+  </div>
 
   <div class="sb">
-    <!-- Search -->
-    <div class="search-bar" onclick="this.querySelector('input').focus()" style="cursor:text">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" placeholder="Search Liveroo" oninput="homeSearch(this.value)">
-      <div style="width:1px;height:16px;background:rgba(255,255,255,.1);flex-shrink:0"></div>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;cursor:pointer" onclick="event.stopPropagation();toast('🎚️ Filtros próximamente')"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
-    </div>
 
-    <!-- Categories -->
+    <!-- CATEGORY TABS — image squares like Whatnot -->
     <div class="cat-strip" id="cat-strip"></div>
 
-    <!-- Products -->
-    <div class="sh">
-      <div class="sh-title" id="home-grid-title">🔥 En vivo ahora</div>
-      <div id="live-status-badge" style="display:none;align-items:center;gap:5px;background:rgba(255,59,59,.12);border:1px solid rgba(255,59,59,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:900;color:var(--rd)">
-        <div style="width:6px;height:6px;border-radius:50%;background:var(--rd);animation:pulse-live 1s infinite"></div>
-        <span id="live-status-txt">EN VIVO</span>
+    <!-- LIVE SECTION HEADER -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div id="home-live-dot" style="width:8px;height:8px;border-radius:50%;background:var(--rd);animation:pulse-live 1.2s infinite"></div>
+        <span id="home-grid-title" style="font-size:16px;font-weight:900;color:#fff">En Vivo Ahora</span>
+        <div id="live-status-badge" style="display:none;background:rgba(255,59,59,.15);border:1px solid rgba(255,59,59,.3);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:900;color:var(--rd)"><span id="live-status-txt">EN VIVO</span></div>
       </div>
-      <span class="sh-more" onclick="nav('exp')">Ver todos →</span>
+      <span style="font-size:13px;color:var(--y);font-weight:700;cursor:pointer" onclick="nav('exp')">Ver todos →</span>
     </div>
-    <div class="pgrid" id="pgrid"></div>
+
+    <!-- MAIN GRID — 2 col like Whatnot -->
+    <div id="pgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:0 14px;padding-bottom:8px"></div>
+
+    <!-- PRODUCTS SECTION — below lives -->
+    <div id="home-prods-section">
+      <div style="padding:16px 16px 10px;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:16px;font-weight:900;color:#fff">🛍️ Populares</span>
+        <span style="font-size:13px;color:var(--y);font-weight:700;cursor:pointer" onclick="nav('exp')">Ver todos →</span>
+      </div>
+      <div id="pgrid-prods" style="display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:0 14px;padding-bottom:100px"></div>
+    </div>
+
   </div>
 </div>
 
@@ -1780,7 +1795,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       </div>
     </div>
     <!-- Follow btn — yellow outlined like Whatnot -->
-    <button id="sv-fol" onclick="event.stopPropagation();toggleFollow()" style="background:transparent;color:var(--y);border:2px solid var(--y);border-radius:20px;padding:6px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;flex-shrink:0;transition:all .15s">Follow</button>
+    <button id="sv-fol" onclick="event.stopPropagation();toggleFollow()" style="background:transparent;color:var(--y);border:2px solid var(--y);border-radius:20px;padding:6px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;flex-shrink:0;transition:all .15s">Seguir</button>
     <!-- Viewers pill — red like Whatnot -->
     <div style="display:flex;align-items:center;gap:5px;background:rgba(255,59,59,.85);border-radius:20px;padding:6px 12px;flex-shrink:0">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><rect x="2" y="10" width="3" height="8" rx="1"/><rect x="7" y="7" width="3" height="11" rx="1"/><rect x="12" y="4" width="3" height="14" rx="1"/><rect x="17" y="2" width="3" height="16" rx="1"/></svg>
@@ -1817,7 +1832,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 
   <!-- ── CHAT INPUT — always visible bottom left like Whatnot ── -->
   <div style="position:absolute;bottom:175px;left:0;right:64px;z-index:15;padding:0 12px 6px">
-    <input class="ci" type="text" id="chat-in" placeholder="Say something..." onkeydown="if(event.key==='Enter')sendChat()" style="width:100%;background:rgba(40,40,50,.75);border:none;border-radius:100px;padding:10px 16px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;outline:none;-webkit-appearance:none;backdrop-filter:blur(10px)">
+    <input class="ci" type="text" id="chat-in" placeholder="Comenta algo…" onkeydown="if(event.key==='Enter')sendChat()" style="width:100%;background:rgba(40,40,50,.75);border:none;border-radius:100px;padding:10px 16px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;outline:none;-webkit-appearance:none;backdrop-filter:blur(10px)">
   </div>
   <!-- ── CHAT OVERLAY — encima del panel inferior ── -->
   <div id="chat-msgs" style="position:absolute;left:0;right:64px;bottom:175px;z-index:10;padding:0 14px 8px;pointer-events:none;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;max-height:38%;overflow:hidden"></div>
@@ -1830,7 +1845,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     <div id="sv-winning-banner" style="display:none;padding:5px 14px 0">
       <div style="display:flex;align-items:center;gap:5px">
         <span id="sv-winning-user" style="font-size:12px;font-weight:800;color:rgba(255,255,255,.7)">usuario</span>
-        <span style="font-size:12px;font-weight:900;color:var(--y)">is winning!</span>
+        <span style="font-size:12px;font-weight:900;color:var(--y)">¡está ganando!</span>
       </div>
     </div>
 
@@ -1858,10 +1873,10 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     <!-- MAIN ACTION ROW: Custom + Bid -->
     <div style="display:flex;align-items:center;gap:10px;padding:6px 14px;padding-bottom:max(calc(var(--sab)+8px),14px)">
       <!-- Custom button — grey pill like Whatnot -->
-      <button onclick="svShowCustomInput()" style="height:50px;min-width:100px;background:#1C1C1E;color:#fff;border:none;border-radius:100px;padding:0 20px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:all .15s">Custom</button>
+      <button onclick="svShowCustomInput()" style="height:50px;min-width:100px;background:#1C1C1E;color:#fff;border:none;border-radius:100px;padding:0 20px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:all .15s">Personalizar</button>
       <!-- Bid button — yellow pill like Whatnot -->
       <button id="sv-cta-bid-btn" onclick="svCtaPlaceBid()" style="height:50px;flex:1;background:var(--y);color:#000;border:none;border-radius:100px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(255,208,0,.4);transition:all .15s;white-space:nowrap">
-        <span id="sv-bid-btn-lbl">Bid: $1</span><span style="font-size:20px;font-weight:900;letter-spacing:-5px;margin-right:-2px">>></span>
+        <span id="sv-bid-btn-lbl">Ofertar: $1</span><span style="font-size:20px;font-weight:900;letter-spacing:-5px;margin-right:-2px">>></span>
       </button>
     </div>
 
@@ -2375,240 +2390,152 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 </div>
 
 <!-- PROFILE -->
-<div id="s-prof" class="scr">
+<div id="s-prof" class="scr" style="background:#000">
   <input type="file" id="prof-av-input" accept="image/*" style="display:none" onchange="profUploadAv(this)">
-  <input type="file" id="prof-banner-input" accept="image/*" style="display:none" onchange="profUploadBanner(this)">
 
   <div class="sb" style="padding-bottom:88px">
 
-    <!-- BANNER — SVG gradient default, no external URL -->
-    <div id="prof-banner-wrap" style="position:relative;height:160px;overflow:hidden;cursor:pointer" onclick="document.getElementById('prof-banner-input').click()">
-      <div id="prof-banner-bg" style="position:absolute;inset:0;background:linear-gradient(135deg,#06060f 0%,#0e0e2a 35%,#1a0a28 65%,#0a0a18 100%)">
-        <svg width="100%" height="100%" viewBox="0 0 430 160" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0">
-          <defs>
-            <radialGradient id="pg1" cx="75%" cy="25%" r="55%"><stop offset="0%" stop-color="#FFD000" stop-opacity=".28"/><stop offset="100%" stop-color="#FFD000" stop-opacity="0"/></radialGradient>
-            <radialGradient id="pg2" cx="20%" cy="85%" r="45%"><stop offset="0%" stop-color="#9B30FF" stop-opacity=".22"/><stop offset="100%" stop-color="#9B30FF" stop-opacity="0"/></radialGradient>
-            <radialGradient id="pg3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FF3B3B" stop-opacity=".1"/><stop offset="100%" stop-color="#FF3B3B" stop-opacity="0"/></radialGradient>
-            <linearGradient id="goldLine" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFD000" stop-opacity="0"/><stop offset="50%" stop-color="#FFD000" stop-opacity=".5"/><stop offset="100%" stop-color="#FFD000" stop-opacity="0"/></linearGradient>
-          </defs>
-          <!-- Background glows -->
-          <rect width="430" height="160" fill="url(#pg1)"/>
-          <rect width="430" height="160" fill="url(#pg2)"/>
-          <rect width="430" height="160" fill="url(#pg3)"/>
-          <!-- Grid lines -->
-          <line x1="0" y1="53" x2="430" y2="53" stroke="rgba(255,208,0,.06)" stroke-width="1"/>
-          <line x1="0" y1="106" x2="430" y2="106" stroke="rgba(255,208,0,.06)" stroke-width="1"/>
-          <line x1="86" y1="0" x2="86" y2="160" stroke="rgba(255,208,0,.05)" stroke-width="1"/>
-          <line x1="172" y1="0" x2="172" y2="160" stroke="rgba(255,208,0,.05)" stroke-width="1"/>
-          <line x1="258" y1="0" x2="258" y2="160" stroke="rgba(255,208,0,.05)" stroke-width="1"/>
-          <line x1="344" y1="0" x2="344" y2="160" stroke="rgba(255,208,0,.05)" stroke-width="1"/>
-          <!-- Decorative circles -->
-          <circle cx="370" cy="28" r="90" fill="none" stroke="rgba(255,208,0,.09)" stroke-width="1.5"/>
-          <circle cx="370" cy="28" r="130" fill="none" stroke="rgba(255,208,0,.05)" stroke-width="1"/>
-          <circle cx="60" cy="140" r="70" fill="none" stroke="rgba(155,48,255,.12)" stroke-width="1.5"/>
-          <!-- Gold accent line -->
-          <line x1="0" y1="158" x2="430" y2="158" stroke="url(#goldLine)" stroke-width="2"/>
-          <!-- Live signal icon -->
-          <circle cx="390" cy="125" r="3" fill="rgba(255,59,59,.8)"/>
-          <circle cx="390" cy="125" r="7" fill="none" stroke="rgba(255,59,59,.4)" stroke-width="1.2"/>
-          <circle cx="390" cy="125" r="12" fill="none" stroke="rgba(255,59,59,.2)" stroke-width="1"/>
-          <!-- Brand name watermark -->
-          <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="system-ui,sans-serif" font-size="44" font-weight="900" fill="rgba(255,208,0,.05)" letter-spacing="6">LIVEROO</text>
-          <!-- Tagline -->
-          <text x="50%" y="76%" dominant-baseline="middle" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,.1)" letter-spacing="3.5">LIVE SHOPPING VENEZUELA</text>
-        </svg>
-        <img id="prof-banner-img" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none">
-      </div>
-      <!-- Live badge top left -->
-      <div style="position:absolute;top:12px;left:14px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);border-radius:20px;padding:4px 10px;border:1px solid rgba(255,255,255,.1)">
-        <div style="width:6px;height:6px;border-radius:50%;background:var(--rd);animation:pulse-live 2s infinite"></div>
-        <span style="font-size:10px;font-weight:900;color:#fff;letter-spacing:1px" id="prof-type-badge">COMPRADOR</span>
-      </div>
-      <!-- Edit banner hint -->
-      <div style="position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-radius:8px;padding:4px 9px;font-size:10px;font-weight:700;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Cambiar portada
-      </div>
-    </div>
-
-    <!-- AVATAR + ACTIONS ROW -->
-    <div style="padding:0 16px;position:relative;margin-top:-44px;margin-bottom:12px;display:flex;align-items:flex-end;justify-content:space-between">
+    <!-- TOP: Avatar + name + View Profile — Whatnot style -->
+    <div style="padding:max(var(--sat),20px) 20px 16px;display:flex;align-items:center;gap:16px">
       <!-- Avatar -->
-      <div style="position:relative;cursor:pointer" onclick="document.getElementById('prof-av-input').click()">
-        <div id="prof-av" style="width:84px;height:84px;border-radius:50%;border:3px solid var(--dk);overflow:hidden;background:#1C1C1E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <div id="prof-av-initials" style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--y);letter-spacing:1px">?</div>
-          <img id="prof-av-img" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;display:none">
-        </div>
-        <div style="position:absolute;bottom:2px;right:2px;width:22px;height:22px;border-radius:50%;background:var(--y);border:2px solid #000;display:flex;align-items:center;justify-content:center">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--dk)" stroke-width="3" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <div style="position:relative;cursor:pointer;flex-shrink:0" onclick="document.getElementById('prof-av-input').click()">
+        <div id="prof-av" style="width:72px;height:72px;border-radius:50%;background:var(--rd);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+          <div id="prof-av-initials" style="font-size:30px;font-weight:900;color:#fff">?</div>
+          <img id="prof-av-img" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;border-radius:50%">
         </div>
       </div>
-      <!-- Action buttons -->
-      <div style="display:flex;gap:8px;padding-bottom:4px">
-        <button onclick="openProfEdit()" style="background:#1C1C1E;border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          Editar
-        </button>
-        <button onclick="fbLogout()" style="background:rgba(255,59,59,.1);border:1.5px solid rgba(255,59,59,.25);border-radius:10px;padding:8px 14px;color:var(--rd);font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-          Salir
-        </button>
+      <!-- Name + button -->
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <div id="prof-name-display" style="font-size:20px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Mi Perfil</div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <button onclick="openProfEdit()" style="background:transparent;border:1.5px solid rgba(255,255,255,.3);border-radius:100px;padding:7px 20px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer">Ver Perfil</button>
+      </div>
+      <!-- Logout -->
+      <button onclick="fbLogout()" style="background:none;border:none;cursor:pointer;padding:8px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+
+    <!-- ACCOUNT SECTION TITLE -->
+    <div style="padding:4px 20px 12px;font-size:18px;font-weight:900;color:#fff">Cuenta</div>
+
+    <!-- TOP 2 CARDS: Referrals + Rewards — Whatnot style -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 6px">
+      <div onclick="toast('🎁 Referidos próximamente')" style="background:#1C1C1E;border-radius:14px;padding:16px;cursor:pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.8" stroke-linecap="round" style="margin-bottom:10px"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <div style="font-size:13px;font-weight:900;color:#fff;margin-bottom:3px">Referidos y Créditos</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.45)">Saldo: <span style="color:#4CAF50;font-weight:800">$0.00</span></div>
+      </div>
+      <div onclick="toast('👑 Recompensas próximamente')" style="background:#1C1C1E;border-radius:14px;padding:16px;cursor:pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.8" stroke-linecap="round" style="margin-bottom:10px"><path d="M2 4l3 12h14l3-12-6 5-4-7-4 7-6-5z"/></svg>
+        <div style="font-size:13px;font-weight:900;color:#fff;margin-bottom:3px">Mis Recompensas</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.45)">Ver Cupones</div>
       </div>
     </div>
 
-    <!-- NAME + HANDLE -->
-    <div style="padding:0 16px 14px">
-      <div class="prof-name" id="prof-name-display">Mi Perfil</div>
-      <div style="font-size:13px;color:var(--mu);font-weight:700;margin-bottom:8px" id="prof-handle-display">@usuario</div>
-      <div id="prof-bio-display" style="font-size:13px;color:rgba(255,255,255,.5);line-height:1.55"></div>
-    </div>
+    <!-- MENU ROWS — Whatnot style with circle icons -->
+    <div style="margin:14px 0">
 
-    <!-- STATS -->
-    <div style="display:flex;margin:0 16px 16px;background:#1C1C1E;border-radius:14px;border:1px solid rgba(255,255,255,.06);overflow:hidden">
-      <div style="flex:1;padding:14px 0;text-align:center;border-right:1px solid rgba(255,255,255,.06)">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y)" id="st-buy">0</div>
-        <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Compras</div>
-      </div>
-      <div style="flex:1;padding:14px 0;text-align:center;border-right:1px solid rgba(255,255,255,.06)">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y)" id="st-fol">0</div>
-        <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Siguiendo</div>
-      </div>
-      <div style="flex:1;padding:14px 0;text-align:center">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y)">$<span id="st-spent">0</span></div>
-        <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Gastado</div>
-      </div>
-    </div>
-
-    <!-- MENU -->
-    <div style="padding:0 16px;display:flex;flex-direction:column;gap:8px">
-
-      <div style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px">Mi cuenta</div>
-
-      <div class="pmi" onclick="openWallet()" style="border-radius:13px">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,208,0,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--y)" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+      <!-- Mi Wallet -->
+      <div onclick="nav('wallet')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="width:38px;height:38px;border-radius:50%;background:#2C2C2E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
         </div>
-        <div class="pmil">Mi Wallet</div>
-        <div class="pmib" id="wallet-prof-badge" style="background:rgba(255,208,0,.1);color:var(--y);border-radius:8px;padding:3px 8px;font-size:11px">0 IC</div>
-        <div class="pmia">›</div>
-      </div>
-
-      <div class="pmi" onclick="nav('cart')" style="border-radius:13px">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--tx)" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-        </div>
-        <div class="pmil">Mi Carrito</div>
-        <div class="pmib" id="cart-prof-badge" style="background:rgba(255,255,255,.07);border-radius:8px;padding:3px 8px;font-size:11px">0</div>
-        <div class="pmia">›</div>
-      </div>
-
-      <div class="pmi" onclick="openMyOrders()" style="border-radius:13px">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--tx)" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-        </div>
-        <div class="pmil">Mis Pedidos</div>
-        <div class="pmib" id="my-orders-badge" style="background:rgba(255,255,255,.07);border-radius:8px;padding:3px 8px;font-size:11px;display:none"></div>
-        <div class="pmia">›</div>
-      </div>
-
-      <div id="seller-section-label" style="font-size:10px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.7px;margin-top:6px;margin-bottom:2px;display:none">Vendedor</div>
-
-      <div class="pmi" id="dash-vendor-btn" onclick="openDash()" style="border-radius:13px;display:none">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,208,0,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--y)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-        </div>
-        <div class="pmil">Dashboard Vendedor</div>
-        <div class="pmia">›</div>
-      </div>
-
-      <div class="pmi" id="verif-menu-item" onclick="openVerifRequest()" style="border-radius:13px;display:none">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(76,175,80,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">🪪</div>
-        <div class="pmil" id="verif-menu-label">Solicitar verificación</div>
-        <div class="pmia">›</div>
-      </div>
-
-      <!-- Upgrade to seller — only visible for buyers -->
-      <div class="pmi" id="upgrade-seller-btn" onclick="openSellerUpgrade()" style="border-radius:13px;display:none">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,208,0,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">📡</div>
-        <div class="pmil" style="color:var(--y)">Quiero Vender en Vivo</div>
-        <div class="pmia" style="color:var(--y)">›</div>
-      </div>
-
-      <!-- Admin button — only visible for admin UID -->
-      <div id="admin-menu-btn" style="display:none" class="pmi" onclick="openAdmin()" style="border-radius:13px;background:rgba(255,208,0,.05);border:1px solid rgba(255,208,0,.15)">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,208,0,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">⚡</div>
-        <div class="pmil" style="color:var(--y)">Panel Admin</div>
-        <div id="admin-menu-badge" style="display:none;background:var(--rd);color:#fff;font-size:10px;font-weight:900;padding:2px 8px;border-radius:20px"></div>
-        <div class="pmia">›</div>
-      </div>
-
-      <!-- Términos y Privacidad -->
-      <div style="display:flex;gap:8px;margin-top:6px">
-        <div onclick="openTerms('terms')" style="flex:1;padding:12px;background:#1C1C1E;border-radius:11px;border:1px solid rgba(255,255,255,.06);cursor:pointer;text-align:center">
-          <div style="font-size:12px;font-weight:800;color:var(--mu)">📄 Términos de Uso</div>
-        </div>
-        <div onclick="openTerms('privacy')" style="flex:1;padding:12px;background:#1C1C1E;border-radius:11px;border:1px solid rgba(255,255,255,.06);cursor:pointer;text-align:center">
-          <div style="font-size:12px;font-weight:800;color:var(--mu)">🔒 Privacidad</div>
+        <div style="flex:1;font-size:15px;font-weight:700;color:#fff">Mi Wallet</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="wallet-prof-badge" style="font-size:13px;font-weight:900;color:var(--y)">0 cr</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
 
-      <!-- Sign out -->
-      <div style="margin-top:10px;padding:14px 16px;background:rgba(255,59,59,.06);border:1px solid rgba(255,59,59,.15);border-radius:13px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="fbLogout()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rd)" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        <div style="flex:1;font-size:14px;font-weight:800;color:var(--rd)">Cerrar sesión</div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,59,59,.5)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <!-- Mis Pedidos -->
+      <div onclick="nav('my-orders')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="width:38px;height:38px;border-radius:50%;background:#2C2C2E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+        </div>
+        <div style="flex:1;font-size:15px;font-weight:700;color:#fff">Mis Pedidos</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- Salud de Cuenta -->
+      <div onclick="toast('🛡️ Próximamente')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="width:38px;height:38px;border-radius:50%;background:#2C2C2E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div style="flex:1;font-size:15px;font-weight:700;color:#fff">Salud de Cuenta</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- Programa de Afiliados -->
+      <div onclick="toast('💰 Programa de afiliados próximamente')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="width:38px;height:38px;border-radius:50%;background:#2C2C2E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div style="flex:1;font-size:15px;font-weight:700;color:#fff">Programa de Afiliados</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- Pagos y Envíos -->
+      <div onclick="toast('💳 Pagos y envíos próximamente')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="width:38px;height:38px;border-radius:50%;background:#2C2C2E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div style="flex:1;font-size:15px;font-weight:700;color:#fff">Pagos y Envíos</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- Notificaciones -->
+      <div onclick="openNotifs()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="width:38px;height:38px;border-radius:50%;background:#2C2C2E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </div>
+        <div style="flex:1;font-size:15px;font-weight:700;color:#fff">Notificaciones</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- Dashboard Vendedor -->
+      <div id="prof-seller-row" onclick="nav('dash')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="width:38px;height:38px;border-radius:50%;background:#2C2C2E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        <div style="flex:1;font-size:15px;font-weight:700;color:#fff">Dashboard Vendedor</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- Cambiar Email -->
+      <div onclick="toast('✉️ Cambiar email próximamente')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">
+        <div style="width:38px;height:38px;border-radius:50%;background:#2C2C2E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:700;color:#fff">Cambiar Email</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:1px" id="prof-email-display">—</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
 
     </div>
+
+    <!-- Version -->
+    <div style="text-align:center;padding:8px 0 4px;font-size:11px;color:rgba(255,255,255,.2)">Liveroo v1.0 · Venezuela 🇻🇪</div>
+
+
+  <!-- Ghost elements for JS compatibility (hidden) -->
+  <div style="display:none">
+    <span id="prof-bio-display"></span>
+    <span id="prof-handle-display"></span>
+    <span id="prof-type-badge"></span>
+    <span id="st-buy">0</span>
+    <span id="st-spent">0</span>
+    <span id="prof-bio-count"></span>
+    <div id="wallet-methods"></div>
+    <div id="verif-menu-label"></div>
   </div>
 
-  <!-- Modal editar perfil -->
-  <div id="prof-edit-modal" style="position:absolute;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(12px);display:none;align-items:flex-end;justify-content:center">
-    <div style="width:100%;background:#111;border-radius:24px 24px 0 0;padding:24px 20px 40px;border-top:1px solid rgba(255,255,255,.08)">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.5px">Editar Perfil</div>
-        <button onclick="closeProfEdit()" style="background:#1C1C1E;border:1px solid rgba(255,255,255,.08);border-radius:50%;width:32px;height:32px;color:var(--mu);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
-      </div>
-      <div style="font-size:10px;font-weight:800;color:var(--mu);letter-spacing:.5px;text-transform:uppercase;margin-bottom:7px">Nombre</div>
-      <input id="prof-edit-name" type="text" maxlength="40" placeholder="Tu nombre" style="width:100%;background:#1C1C1E;border:1.5px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 16px;color:#fff;font-family:'Nunito',sans-serif;font-size:15px;outline:none;box-sizing:border-box;margin-bottom:14px;transition:border-color .15s" onfocus="this.style.borderColor='rgba(255,208,0,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'">
-      <div style="display:flex;align-items:center;gap:10px;background:#1C1C1E;border:1.5px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 16px;margin-bottom:14px;transition:border-color .15s" id="prof-edit-wa-wrap">
-        <span style="font-size:16px;flex-shrink:0">💬</span>
-        <input id="prof-edit-whatsapp" type="tel" placeholder="WhatsApp: 04120000000" style="background:none;border:none;outline:none;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;width:100%" onfocus="document.getElementById('prof-edit-wa-wrap').style.borderColor='rgba(255,208,0,.4)'" onblur="document.getElementById('prof-edit-wa-wrap').style.borderColor='rgba(255,255,255,.08)'">
-      </div>
-      <div style="font-size:10px;font-weight:800;color:var(--mu);letter-spacing:.5px;text-transform:uppercase;margin-bottom:7px">Bio</div>
-      <textarea id="prof-edit-bio" maxlength="120" rows="3" placeholder="Cuéntanos algo sobre ti…" style="width:100%;background:#1C1C1E;border:1.5px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 16px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;outline:none;resize:none;box-sizing:border-box;margin-bottom:6px;line-height:1.5;transition:border-color .15s" onfocus="this.style.borderColor='rgba(255,208,0,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'"></textarea>
-      <div style="text-align:right;font-size:10px;color:var(--mu);margin-bottom:18px"><span id="prof-bio-count">0</span>/120</div>
-      <button onclick="saveProfEdit()" style="width:100%;background:var(--y);color:#000;border:none;border-radius:13px;padding:15px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;cursor:pointer;transition:all .15s">Guardar cambios</button>
-    </div>
   </div>
 </div>
-
-<!-- MIS PEDIDOS -->
-<div id="s-my-orders" class="scr">
-  <div style="display:flex;align-items:center;gap:12px;padding:max(var(--sat),14px) 16px 14px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06)">
-    <button class="bk" style="position:static;background:#1C1C1E;border:1px solid rgba(255,255,255,.07)" onclick="goBack()">←</button>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;flex:1">Mis Pedidos</div>
-    <div id="my-orders-count" style="font-size:11px;color:var(--mu);font-weight:700"></div>
-  </div>
-
-  <!-- Stats -->
-  <div id="mo-stats" style="display:flex;gap:8px;padding:14px 16px 0;flex-shrink:0"></div>
-
-  <!-- Tabs -->
-  <div style="display:flex;padding:12px 16px 0;gap:0;flex-shrink:0">
-    <button id="mo-tab-buy" onclick="moTab('buy')" style="flex:1;padding:11px;background:var(--y);color:#000;border:none;border-radius:10px 0 0 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:all .2s">🛒 Mis Compras</button>
-    <button id="mo-tab-sell" onclick="moTab('sell')" style="flex:1;padding:11px;background:#1C1C1E;color:var(--mu);border:1px solid rgba(255,255,255,.06);border-left:none;border-radius:0 10px 10px 0;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:all .2s">💰 Mis Ventas</button>
-  </div>
-
-  <div class="sb" id="my-orders-list">
-    <div style="text-align:center;padding:48px 24px;color:var(--mu)">
-      <div style="font-size:40px;margin-bottom:12px">📦</div>
-      <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:6px">Sin pedidos aún</div>
-      <div style="font-size:12px">Tus compras aparecerán aquí</div>
-    </div>
-  </div>
-</div>
-
 <!-- NOTIFICATIONS -->
 <div id="s-notif" class="scr">
   <div class="notif-hdr">
@@ -2891,7 +2818,7 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
 
     <!-- HEADER -->
     <div style="padding:max(var(--sat),16px) 16px 0;display:flex;align-items:center;justify-content:space-between">
-      <div style="font-size:26px;font-weight:900;color:#fff">Seller Hub</div>
+      <div style="font-size:26px;font-weight:900;color:#fff">Centro de Vendedor</div>
       <button onclick="goBack()" style="background:#1C1C1E;border:none;color:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer">✕</button>
     </div>
 
@@ -2908,8 +2835,8 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
         <div id="sh-avatar" style="width:72px;height:72px;border-radius:50%;background:var(--rd);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff;margin:0 auto 16px;border:3px solid rgba(255,255,255,.15)">
           L
         </div>
-        <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:6px">Get Ready to Go Live</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.5)">You can edit or reschedule your show anytime!</div>
+        <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:6px">¡Prepárate para ir en Vivo!</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5)">Puedes editar o reprogramar tu show cuando quieras</div>
       </div>
 
       <!-- Checklist steps -->
@@ -2918,28 +2845,28 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
           <div style="width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
-          <div style="flex:1;font-size:15px;font-weight:800;color:#fff">Create your show</div>
+          <div style="flex:1;font-size:15px;font-weight:800;color:#fff">Crea tu show</div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
-        <div onclick="go('s-addprod')" style="display:flex;align-items:center;gap:14px;padding:16px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer;opacity:.5">
+        <div onclick="openAddProduct()" style="display:flex;align-items:center;gap:14px;padding:16px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer;opacity:.5">
           <div style="width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
           </div>
-          <div style="flex:1;font-size:15px;font-weight:800;color:rgba(255,255,255,.6)">Add products to your shop</div>
+          <div style="flex:1;font-size:15px;font-weight:800;color:rgba(255,255,255,.6)">Agrega productos a tu tienda</div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div style="display:flex;align-items:center;gap:14px;padding:16px;border-bottom:1px solid rgba(255,255,255,.06);opacity:.35">
           <div style="width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
           </div>
-          <div style="flex:1;font-size:15px;font-weight:800;color:rgba(255,255,255,.5)">Bring in buyers</div>
+          <div style="flex:1;font-size:15px;font-weight:800;color:rgba(255,255,255,.5)">Atrae compradores</div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div style="display:flex;align-items:center;gap:14px;padding:16px;opacity:.35">
           <div style="width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
           </div>
-          <div style="flex:1;font-size:15px;font-weight:800;color:rgba(255,255,255,.5)">Go live!</div>
+          <div style="flex:1;font-size:15px;font-weight:800;color:rgba(255,255,255,.5)">¡Ir en vivo!</div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
@@ -3057,20 +2984,20 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
     <div class="ni-ico-wrap">
       <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
     </div>
-    <div class="ni-label">Home</div>
+    <div class="ni-label">Inicio</div>
   </div>
   <!-- Explorar -->
   <div class="ni" id="ni-exp" onclick="nav('exp')">
     <div class="ni-ico-wrap">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </div>
-    <div class="ni-label">Categories</div>
+    <div class="ni-label">Categorías</div>
   </div>
   <!-- Seller Hub (center) -->
   <div class="ni-center" id="ni-sell" onclick="openSellerHub()">
     <div class="ni-live-wrap">
       <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      <div class="ni-live-label">Seller Hub</div>
+      <div class="ni-live-label">Vender</div>
     </div>
   </div>
   <!-- Carrito -->
@@ -3079,14 +3006,14 @@ body{min-height:100%;min-height:-webkit-fill-available;overflow:hidden;backgroun
       <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <span class="nb" id="cart-nb" style="display:none">0</span>
     </div>
-    <div class="ni-label">Activity</div>
+    <div class="ni-label">Actividad</div>
   </div>
   <!-- Cuenta -->
   <div class="ni" id="ni-prof" onclick="nav('prof')">
     <div class="ni-ico-wrap">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </div>
-    <div class="ni-label">Account</div>
+    <div class="ni-label">Cuenta</div>
   </div>
 </div>
 
@@ -3742,7 +3669,7 @@ const PRODS=[
   {n:'PAW3R Cap Logo',s:46,p:13,op:30,img:'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80',e:'🧢',sz:['Única'],d:'Gorra PAW3R logo bordado. Dad hat algodón lavado, cierre metálico ajustable. Varios colores.',live:false},
 ];
 const CATS=[
-  {l:'Para Ti',k:'',img:'',bg:'#FFD000'},
+  {l:'Para Tí',k:'',img:'',bg:'#FFD000'},
   {l:'Calzado',k:'calzado',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=150&q=70'},
   {l:'Tech',k:'tech',img:'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=150&q=70'},
   {l:'Moda',k:'moda',img:'https://images.unsplash.com/photo-1445205170230-053b83016050?w=150&q=70'},
@@ -3774,19 +3701,23 @@ function buildCats(){
 }
 function buildGrid(list){
   const grid=document.getElementById('pgrid');
+  const prodsGrid=document.getElementById('pgrid-prods');
   if(!grid)return;
 
   const _fsStreams=window._fsLiveStreams||[];
 
-  // Actualizar título de sección y badge según estado de streams
-  const shTitle=document.querySelector('#s-home .sh-title');
+  // Update live section
+  const liveDot=document.getElementById('home-live-dot');
   const liveBadge=document.getElementById('live-status-badge');
   const liveTxt=document.getElementById('live-status-txt');
+  const titleEl=document.getElementById('home-grid-title');
   if(_fsStreams.length>0){
-    if(shTitle)shTitle.textContent='🔴 En vivo ahora';
-    if(liveBadge){liveBadge.style.display='flex';if(liveTxt)liveTxt.textContent=_fsStreams.length===1?'1 EN VIVO':_fsStreams.length+' EN VIVO';}
+    if(liveDot)liveDot.style.display='block';
+    if(titleEl)titleEl.textContent='En Vivo Ahora';
+    if(liveBadge){liveBadge.style.display='flex';if(liveTxt)liveTxt.textContent=_fsStreams.length+' en vivo';}
   } else {
-    if(shTitle)shTitle.textContent='🛍️ Populares';
+    if(liveDot)liveDot.style.display='none';
+    if(titleEl)titleEl.textContent='Streams recientes';
     if(liveBadge)liveBadge.style.display='none';
   }
 
@@ -3802,26 +3733,31 @@ function buildGrid(list){
     const desc=s.description||s.title||'';
     // Primera card ocupa 2 columnas para mayor impacto
     const isFeature=i===0;
-    return `<div style="background:#111;border-radius:14px;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;${isFeature?'grid-column:1/-1;':''}" onclick="openStreamFS('${ch}')">
-      <div style="display:flex;align-items:center;gap:8px;padding:10px 10px 6px">
-        <div style="width:32px;height:32px;border-radius:50%;background:#2C2C2E;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px">
+    // Whatnot-style card: seller row on top, big image with Live badge, title+category below
+    return `<div style="background:#000;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;${isFeature?'grid-column:1/-1;':''}" onclick="openStreamFS('${ch}')">
+      <!-- Seller row -->
+      <div style="display:flex;align-items:center;gap:7px;padding:10px 10px 7px;background:#000">
+        <div style="width:34px;height:34px;border-radius:50%;background:#1C1C1E;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;border:1.5px solid rgba(255,255,255,.1)">
           ${s.sellerAvatar?`<img src="${s.sellerAvatar}" style="width:100%;height:100%;object-fit:cover">`:'<span>'+emoji+'</span>'}
         </div>
         <span style="font-size:13px;font-weight:800;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</span>
       </div>
-      <div style="position:relative;width:100%;height:${isFeature?'200':'160'}px;background:#1C1C1E;overflow:hidden">
-        ${thumb?`<img src="${thumb}" onerror="this.style.display='none'" loading="lazy" style="width:100%;height:100%;object-fit:cover">`:'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:44px">'+emoji+'</div>'}
-        <div style="position:absolute;top:8px;left:8px;display:flex;align-items:center;gap:5px;background:var(--rd);border-radius:6px;padding:4px 9px">
+      <!-- Thumbnail -->
+      <div style="position:relative;width:100%;height:${isFeature?'220':'190'}px;background:#111;overflow:hidden">
+        ${thumb?`<img src="${thumb}" onerror="this.style.display='none'" loading="lazy" style="width:100%;height:100%;object-fit:cover">`
+          :`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#111;font-size:52px">${emoji}</div>`}
+        <!-- Live badge — red pill top-left -->
+        <div style="position:absolute;top:9px;left:9px;display:flex;align-items:center;gap:5px;background:var(--rd);border-radius:6px;padding:4px 10px;z-index:2">
           <div style="width:5px;height:5px;border-radius:50%;background:#fff;animation:pulse-live 1s infinite"></div>
-          <span style="font-size:11px;font-weight:900;color:#fff">Live • ${viewers}</span>
+          <span style="font-size:12px;font-weight:900;color:#fff;letter-spacing:.2px">Live • ${viewers}</span>
         </div>
       </div>
-      <div style="padding:8px 10px 10px">
-        <div style="font-size:13px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:.2px;margin-bottom:4px;${isFeature?'':'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'}">${s.title||name}</div>
-        ${desc&&isFeature?`<div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${desc}</div>`:''}
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:11px;font-weight:800;color:#4A9EFF">${s.cat||'General'}</span>
-          ${s.minPrice?`<span style="font-size:11px;color:rgba(255,255,255,.35)">· desde $${s.minPrice}</span>`:''}
+      <!-- Info below image -->
+      <div style="padding:8px 10px 12px;background:#000">
+        <div style="font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;${isFeature?'':'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'}">${s.title||name}</div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+          <span style="font-size:12px;font-weight:700;color:#4A9EFF">${s.cat||'General'}</span>
+          ${desc?`<span style="font-size:12px;color:rgba(255,255,255,.35)">· ${desc.slice(0,28)}${desc.length>28?'...':''}</span>`:''}
         </div>
       </div>
     </div>`;
@@ -3844,16 +3780,13 @@ function buildGrid(list){
     list=[...withPhoto,...noPhoto];
   }
 
-  const first=list.slice(0,8);
-  const rest=list.slice(8);
-  // Si hay streams reales, mostrar menos productos demo para dar protagonismo a los lives
-  const maxDemo=_fsStreams.length>0 ? 4 : 8;
-  const showFirst=first.slice(0,maxDemo);
-  grid.innerHTML=fsLiveCards+showFirst.map((p,i)=>prodCard(p,i,list)).join('');
-  if(rest.length && !_fsStreams.length){
-    requestAnimationFrame(()=>{
-      grid.innerHTML+=rest.map((p,i)=>prodCard(p,i+8,list)).join('');
-    });
+  // Live cards go in pgrid (top)
+  grid.innerHTML=fsLiveCards||'';
+
+  // Product cards go in pgrid-prods (below)
+  if(prodsGrid){
+    const prods=list||[];
+    prodsGrid.innerHTML=prods.slice(0,16).map((p,i)=>prodCard(p,i,prods)).join('');
   }
 }
 function prodCard(p,i,list){
@@ -4410,7 +4343,7 @@ function updateCart(){
   const nb=document.getElementById('cart-nb');
   if(tot){nb.textContent=tot;nb.style.display='';nb.classList.remove('cart-pop');void nb.offsetWidth;nb.classList.add('cart-pop');}
   else{nb.style.display='none';}
-  document.getElementById('cart-prof-badge').textContent=tot;
+  const _cpb=document.getElementById('cart-prof-badge');if(_cpb)_cpb.textContent=tot;
   const body=document.getElementById('cart-body');
   const ft=document.getElementById('cart-ft');
   if(!cart.length){
@@ -4570,8 +4503,8 @@ async function placeOrder(){
     <div class="ok-row"><span class="ok-row-l">Productos</span><span>${cart.length} ítem(s)</span></div>
     <div class="ok-row"><span class="ok-row-l">Pago</span><span>⚡ Saldo</span></div>
     <div class="ok-row"><span class="ok-row-l">Total</span><span>$${tot} USD</span></div>`;
-  document.getElementById('st-spent').textContent=parseInt(document.getElementById('st-spent').textContent||'0')+tot;
-  document.getElementById('st-buy').textContent=parseInt(document.getElementById('st-buy').textContent||'0')+1;
+  (document.getElementById('st-spent')||{}).textContent=parseInt((document.getElementById('st-spent')||{}).textContent||'0')+tot;
+  (document.getElementById('st-buy')||{}).textContent=parseInt((document.getElementById('st-buy')||{}).textContent||'0')+1;
   const cart_snapshot=[...cart];
   cart=[];updateCart();
   if(btn){btn.disabled=false;btn.textContent='✅ Confirmar Pedido';}
@@ -4589,7 +4522,7 @@ function filterCat(el){
   document.querySelectorAll('.cat').forEach(c=>c.classList.remove('on'));el.classList.add('on');
   const k=(el.dataset.key||'').toLowerCase();
   const label=el.querySelector('.cat-label')?.textContent.trim()||el.textContent.trim();
-  if(!k||label==='Para Ti'){buildGrid();return;}
+  if(!k||label==='Para Tí'){buildGrid();return;}
   buildGrid(PRODS.filter(p=>SELLERS[p.s].cat.toLowerCase().includes(k)||p.n.toLowerCase().includes(k)));
 }
 function homeSearch(q){
@@ -7164,7 +7097,7 @@ async function openMyOrders(){
   const totalSpent=_buyOrders.reduce((s,o)=>s+(o.amt||0),0);
   const totalEarned=_sellOrders.filter(o=>o.status==='delivered').reduce((s,o)=>s+(o.amt||0),0);
   const pendingSales=_sellOrders.filter(o=>o.status==='pending').length;
-  document.getElementById('mo-stats').innerHTML=`
+  const _moStats=document.getElementById('mo-stats');if(_moStats)_moStats.innerHTML=`
     <div style="flex:1;background:#1C1C1E;border-radius:12px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.04)">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y)">${_buyOrders.length}</div>
       <div style="font-size:9px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Compras</div>
@@ -7273,9 +7206,9 @@ function openProfEdit(){
   const modal=document.getElementById('prof-edit-modal');
   if(!modal)return;
   document.getElementById('prof-edit-name').value=document.getElementById('prof-name-display').textContent;
-  const h=document.getElementById('prof-handle-display').textContent.split('@')[1]?.split('·')[0]?.trim()||'';
+  const h=(document.getElementById('prof-handle-display')||{}).textContent.split('@')[1]?.split('·')[0]?.trim()||'';
   const _peh=document.getElementById('prof-edit-handle');if(_peh)_peh.value=h;
-  document.getElementById('prof-edit-bio').value=document.getElementById('prof-bio-display').textContent.trim();
+  document.getElementById('prof-edit-bio').value=(document.getElementById('prof-bio-display')||{}).textContent.trim();
   const waEl=document.getElementById('prof-edit-whatsapp');if(waEl)waEl.value=window.fbUser?.whatsapp||'';
   updateBioCount();
   modal.style.display='flex';
@@ -7298,8 +7231,8 @@ async function saveProfEdit(){
   if(!name){toast('⚠️ Escribe tu nombre');return;}
   if(name)document.getElementById('prof-name-display').textContent=name;
   const city=window.fbUser?.city||'';
-  if(handle)document.getElementById('prof-handle-display').textContent=`@${handle}${city?' · '+city+' 🇻🇪':''}`;
-  if(bio)document.getElementById('prof-bio-display').textContent=bio;
+  if(handle)(document.getElementById('prof-handle-display')||{}).textContent=`@${handle}${city?' · '+city+' 🇻🇪':''}`;
+  if(bio)(document.getElementById('prof-bio-display')||{}).textContent=bio;
   // Save to Firestore and local cache
   const updates={name,bio};
   if(handle)updates.username=handle;
@@ -7685,7 +7618,7 @@ function svCtaUpdateBtn(){
   const lbl=document.getElementById('sv-bid-btn-lbl');
   if(!inp||!lbl)return;
   const v=parseFloat(inp.value)||0;
-  lbl.textContent=v>0?'Bid: $'+v+' »':'Ofertar';
+  lbl.textContent=v>0?'Ofertar: $'+v+' »':'Ofertar';
 }
 
 // Toggle custom bid input — en nuevo diseño el botón abre el input inline
@@ -7700,7 +7633,7 @@ function svShowCustomInput(){
 // Update bid button label when auction starts
 function _svUpdateBidBtn(nextBid){
   const lbl=document.getElementById('sv-bid-btn-lbl');
-  if(lbl&&nextBid) lbl.textContent='Bid: $'+nextBid+' »';
+  if(lbl&&nextBid) lbl.textContent='Ofertar: $'+nextBid+' »';
   // Show product row
   const prodRow=document.getElementById('sv-prod-row');
   if(prodRow) prodRow.style.display='flex';
@@ -8157,6 +8090,7 @@ let _liveStripFailCount=0;
 async function _refreshLiveStrip(){
   if(Date.now()<_fsBackoffUntil){return;} // en backoff — usar caché
   try{
+    // streams collection must be public readable in Firestore Rules
     const all=await fsQuery('streams');
     const streams=all.filter(s=>s.isLive===true);
     _liveStripFailCount=0;
@@ -8169,8 +8103,7 @@ async function _refreshLiveStrip(){
     if(streams.length>0){
       console.log('[Live] Streams activos:',streams.map(s=>s.sellerName||s.channelName));
     } else {
-      console.log('[Live] Sin streams activos. Total docs en streams:',all.length,
-        all.length===0?'— verifica Firestore Rules (streams debe ser readable)':'');
+      if(all.length===0) console.log('[Live] Sin streams activos aún');
     }
   }catch(e){
     _liveStripFailCount++;
@@ -9088,6 +9021,49 @@ async function deleteProduct(id){
 }
 
 // sellerhub nav handled in go() hide list below
+
+
+// ══════════════════════════════════════════
+// SPLASH SCREEN — 2 segundos estilo Whatnot
+// ══════════════════════════════════════════
+function runSplash(){
+  const splash = document.getElementById('s-splash');
+  if(!splash) return;
+
+  // Trigger animations on next frame
+  requestAnimationFrame(()=>{
+    // Animate product images in
+    document.querySelectorAll('.sp-img').forEach(el=>{
+      el.style.opacity='1';
+      el.style.transform=el.style.transform.replace('translateY(60px)','translateY(0)');
+    });
+    // Animate SVG icons in
+    document.querySelectorAll('.sp-icon').forEach(el=>{
+      el.style.opacity='1';
+    });
+    // Animate logo in
+    const logo=document.getElementById('sp-logo');
+    if(logo){logo.style.transform='scale(1)';logo.style.opacity='1';}
+    // Animate button in
+    const btn=document.getElementById('sp-btn');
+    if(btn){btn.style.transform='translateX(-50%) translateY(0)';btn.style.opacity='1';}
+  });
+
+  // After 2s — fade out and show onboard
+  setTimeout(()=>{
+    splash.style.transition='opacity .4s ease, transform .4s ease';
+    splash.style.opacity='0';
+    splash.style.transform='scale(1.05)';
+    setTimeout(()=>{
+      splash.style.display='none';
+      // Show onboard if not already logged in
+      const ob=document.getElementById('s-onboard');
+      if(ob){ob.style.opacity='1';}
+    }, 400);
+  }, 2000);
+}
+
+// splash removed
 
 </script>
 
